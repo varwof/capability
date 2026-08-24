@@ -1,0 +1,59 @@
+{
+  "scheme_id": "oracle/mysql",
+  "name": "MySQL",
+  "version": "1.0.0",
+  "description": "MySQL/MariaDB 数据库操作权限",
+  "vendor": "oracle",
+  "product": "mysql",
+  "author": "community",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/mysql/mysql-server",
+  "capabilities": [
+    {
+      "id": "query:users",
+      "description": "查询用户表",
+      "parameters": {
+        "max_rows": {
+          "type": "int",
+          "description": "最大返回行数",
+          "default": 1000,
+          "min": 1,
+          "max": 10000
+        }
+      }
+    },
+    {
+      "id": "query:orders",
+      "description": "查询订单表",
+      "parameters": {
+        "max_rows": {
+          "type": "int",
+          "description": "最大返回行数",
+          "default": 500,
+          "min": 1,
+          "max": 5000
+        }
+      }
+    },
+    {
+      "id": "write:orders",
+      "description": "创建/更新订单"
+    },
+    {
+      "id": "delete:logs",
+      "description": "删除日志记录",
+      "parameters": {
+        "older_than_days": {
+          "type": "int",
+          "description": "仅删除 N 天前的日志",
+          "min": 30,
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "admin:backup",
+      "description": "执行数据库备份"
+    }
+  ]
+}

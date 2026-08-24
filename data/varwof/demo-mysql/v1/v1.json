@@ -1,0 +1,43 @@
+{
+  "scheme_id": "varwof/demo-mysql-v1",
+  "name": "Varwof Demo MySQL API Gateway v1",
+  "version": "1.0.0",
+  "description": "MySQL API 网关操作权限（HTTP 数据面：SELECT/INSERT/UPDATE/DELETE/DDL）",
+  "vendor": "varwof",
+  "product": "demo-mysql",
+  "author": "varwof",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/varwof/mysql-api",
+  "capabilities": [
+    {
+      "id": "SELECT:*",
+      "description": "SELECT 查询任意表",
+      "summary": "允许对任意表执行 SELECT 查询",
+      "examples": ["GET /api/tables/employees/rows"]
+    },
+    {
+      "id": "INSERT:*",
+      "description": "INSERT 写入任意表",
+      "summary": "允许对任意表执行 INSERT 插入",
+      "examples": ["POST /api/tables/employees/rows"]
+    },
+    {
+      "id": "UPDATE:*",
+      "description": "UPDATE 更新任意表",
+      "summary": "允许对任意表执行 UPDATE 更新",
+      "examples": ["PUT /api/tables/employees/rows/1"]
+    },
+    {
+      "id": "DELETE:*",
+      "description": "DELETE 删除任意表",
+      "summary": "允许对任意表执行 DELETE 删除",
+      "examples": ["DELETE /api/tables/employees/rows/1"]
+    },
+    {
+      "id": "DDL:*",
+      "description": "DDL 建表/删表任意表",
+      "summary": "允许执行 CREATE/DROP TABLE 等 DDL",
+      "examples": ["POST /api/tables", "DELETE /api/tables/ops_test"]
+    }
+  ]
+}

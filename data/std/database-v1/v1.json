@@ -1,0 +1,428 @@
+{
+  "scheme_id": "std/database-v1",
+  "name": "Standard Database Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "数据库访问能力标准语义规范：表（对象级）、列（列级）、行过滤 WHERE（行级）三层限定；任何数据库引擎通过适配器对接本契约",
+  "vendor": "std",
+  "product": "database-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/database-v1",
+  "capabilities": [
+    {
+      "id": "query:SELECT",
+      "description": "只读查询：在授权范围内执行 SELECT",
+      "summary": "读取授权表在授权列与行过滤范围内的数据",
+      "usage": "数据分析、报表、审计、业务查询",
+      "when_not": "写操作、未授权表/列、缺少行过滤（多租户数据）时不得授予",
+      "examples": [
+        "SELECT id,name FROM customers WHERE tenant_id='org-a' LIMIT 100"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "tables",
+          "columns"
+        ],
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true
+          },
+          "columns": {
+            "type": "object",
+            "description": "表 -> 允许列列表；'*' 表示全部列",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                {
+                  "const": "*"
+                }
+              ]
+            }
+          },
+          "filter_columns": {
+            "type": "object",
+            "description": "仅 WHERE 可用、不返回的列（如 tenant_id）",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "row_filter": {
+            "type": "object",
+            "description": "表 -> 行级过滤（结构化谓词，禁止原始 SQL）",
+            "additionalProperties": {
+              "$ref": "#/$defs/filter"
+            }
+          },
+          "limit": {
+            "type": "object",
+            "properties": {
+              "max": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100000
+              }
+            },
+            "required": [
+              "max"
+            ]
+          },
+          "aggregate": {
+            "type": "boolean",
+            "description": "true=允许聚合（GROUP BY/聚合函数），默认 false"
+          }
+        },
+        "$defs": {
+          "filter": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "column",
+                  "op",
+                  "value"
+                ],
+                "properties": {
+                  "column": {
+                    "type": "string"
+                  },
+                  "op": {
+                    "enum": [
+                      "=",
+                      "!=",
+                      "<",
+                      "<=",
+                      ">",
+                      ">=",
+                      "in",
+                      "not in",
+                      "between",
+                      "like",
+                      "is null",
+                      "is not null"
+                    ]
+                  },
+                  "value": {}
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "and"
+                ],
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/filter"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "or"
+                ],
+                "properties": {
+                  "or": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/filter"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "not"
+                ],
+                "properties": {
+                  "not": {
+                    "$ref": "#/$defs/filter"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "query:INSERT",
+      "description": "写入：在授权表与授权列范围内执行 INSERT",
+      "summary": "向授权表插入数据，只能写入授权列",
+      "usage": "业务数据录入、事件落库",
+      "when_not": "未授权表/列、批量灌数（应使用专用导入能力）时不得授予",
+      "examples": [
+        "INSERT INTO orders (id, amount) VALUES (?, ?)"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "tables",
+          "columns"
+        ],
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                {
+                  "const": "*"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "query:UPDATE",
+      "description": "更新：必须携带行级过滤，防止全表/越权行更新",
+      "summary": "在授权列与行过滤范围内更新数据",
+      "usage": "状态流转、纠错、业务变更",
+      "when_not": "无行过滤条件、更新未授权列时不得授予",
+      "examples": [
+        "UPDATE orders SET status='paid' WHERE id=? AND tenant_id='org-a'"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "tables",
+          "columns",
+          "row_filter"
+        ],
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                {
+                  "const": "*"
+                }
+              ]
+            }
+          },
+          "row_filter": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/$defs/filter"
+            }
+          }
+        },
+        "$defs": {
+          "filter": {
+            "type": "object",
+            "description": "同 query:SELECT 的 Filter 文法"
+          }
+        }
+      }
+    },
+    {
+      "id": "query:DELETE",
+      "description": "删除：必须携带行级过滤，防止全表/越权行删除",
+      "summary": "仅删除满足行过滤条件的数据",
+      "usage": "数据清理、合规删除",
+      "when_not": "无行过滤条件时不得授予",
+      "examples": [
+        "DELETE FROM logs WHERE ts < ? AND tenant_id='org-a'"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "tables",
+          "row_filter"
+        ],
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true
+          },
+          "row_filter": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/$defs/filter"
+            }
+          }
+        },
+        "$defs": {
+          "filter": {
+            "type": "object",
+            "description": "同 query:SELECT 的 Filter 文法"
+          }
+        }
+      }
+    },
+    {
+      "id": "query:EXECUTE",
+      "description": "执行：调用授权存储过程/函数",
+      "summary": "执行白名单内的存储过程或函数",
+      "usage": "封装业务事务、批量作业",
+      "when_not": "过程不在白名单、过程内部访问未授权对象时不得授予",
+      "examples": [
+        "CALL sp_reconcile('org-a')"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "procedures"
+        ],
+        "properties": {
+          "procedures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    {
+      "id": "admin:DDL",
+      "description": "结构变更：建表/改表/删表（高危，需最小范围）",
+      "summary": "对白名单表执行结构变更",
+      "usage": "发布迁移、初始化建表",
+      "when_not": "生产库结构变更应由迁移工具专用能力承载时不得授予",
+      "examples": [
+        "ALTER TABLE customers ADD COLUMN vip BOOLEAN"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "operations",
+          "tables"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "create",
+                "alter",
+                "drop"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    {
+      "id": "admin:TRUNCATE",
+      "description": "清空：高危操作，仅限白名单表",
+      "summary": "清空白名单表",
+      "usage": "测试环境重置、归档后清理",
+      "when_not": "生产环境、存在外键引用时应拒绝",
+      "examples": [
+        "TRUNCATE TABLE staging_import"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "tables"
+        ],
+        "properties": {
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  ],
+  "roles": {
+    "readonly": {
+      "display_name": "只读分析师",
+      "profiles": [
+        "analyst"
+      ],
+      "grants": [
+        "query:SELECT"
+      ]
+    },
+    "operator": {
+      "display_name": "运维",
+      "profiles": [
+        "dba"
+      ],
+      "grants": [
+        "query:SELECT",
+        "query:UPDATE",
+        "query:DELETE",
+        "admin:TRUNCATE"
+      ]
+    }
+  }
+}

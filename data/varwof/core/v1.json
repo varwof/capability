@@ -1,0 +1,801 @@
+{
+  "scheme_id": "varwof/core",
+  "name": "Varwof PKI Core",
+  "version": "1.1.0",
+  "description": "Varwof PKI 核心引擎操作权限",
+  "vendor": "varwof",
+  "product": "core",
+  "author": "varwof",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/varwof/core",
+  "capabilities": [
+    {
+      "id": "ca:create",
+      "description": "创建 CA",
+      "summary": "创建新的证书颁发机构（CA）",
+      "usage": "需要初始化新的 PKI 层级、建立新的信任根或签发子 CA 时使用。属于一次性初始化操作，创建完成后通常不需要重复授权。",
+      "when_not": "常规证书签发/查询任务不需要；仅运维管理员初始化 PKI 时需要。",
+      "examples": [
+        "初始化 Root CA",
+        "创建新的 Sub CA"
+      ],
+      "related": [
+        "ca:list",
+        "ca:info",
+        "ca:issue-sub"
+      ]
+    },
+    {
+      "id": "ca:delete",
+      "description": "删除 CA",
+      "summary": "删除已存在的证书颁发机构",
+      "usage": "彻底移除不再使用的 CA 及其关联配置时使用。危险操作，通常仅限超级管理员。",
+      "when_not": "日常签发、查询任务严禁授权；删除操作影响整个信任链。",
+      "examples": [
+        "清理废弃的测试 CA"
+      ],
+      "related": [
+        "ca:create"
+      ]
+    },
+    {
+      "id": "ca:list",
+      "description": "列出 CA",
+      "summary": "列出所有 CA",
+      "usage": "需要查看系统中存在哪些 CA（浏览 PKI 结构、选择签发目标）时使用。",
+      "when_not": "无特殊限制，属于只读能力，可作为多数角色的基础授权。",
+      "examples": [
+        "浏览可用 CA 列表",
+        "确认签发目标 CA 存在"
+      ],
+      "related": [
+        "ca:info"
+      ]
+    },
+    {
+      "id": "ca:info",
+      "description": "查看 CA 详情",
+      "summary": "查看单个 CA 的详细信息",
+      "usage": "查看 CA 的证书、有效期、状态等详情时使用。",
+      "when_not": "无特殊限制，只读能力。",
+      "examples": [
+        "检查 CA 证书有效期",
+        "查看 CA 基本信息"
+      ],
+      "related": [
+        "ca:list"
+      ]
+    },
+    {
+      "id": "ca:issue-sub",
+      "description": "签发子 CA 证书",
+      "parameters": {
+        "ca_scope": {
+          "type": "list",
+          "description": "可签发的子 CA 范围（限制 sub-CA 作用范围）",
+          "required": false
+        },
+        "max_validity_days": {
+          "type": "int",
+          "description": "最大有效期（天）",
+          "default": 1825,
+          "min": 1,
+          "max": 3650
+        }
+      },
+      "summary": "签发子 CA 证书（层级扩展）",
+      "usage": "需要扩展 PKI 层级、为独立业务域创建子 CA 时使用。",
+      "when_not": "普通证书签发（cert:issue）不需要此能力；仅在创建新 CA 层级时需要。",
+      "examples": [
+        "为部门创建独立子 CA",
+        "建立多级信任链"
+      ],
+      "related": [
+        "ca:create",
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "cert:issue",
+      "description": "签发证书",
+      "parameters": {
+        "ca_scope": {
+          "type": "list",
+          "description": "允许签发的 CA 列表（限制子 CA 发行范围）",
+          "required": false
+        },
+        "max_validity_days": {
+          "type": "int",
+          "description": "最大有效期（天）",
+          "default": 365,
+          "min": 1,
+          "max": 3650
+        }
+      },
+      "summary": "签发终端实体证书",
+      "usage": "为服务、设备、用户或 Agent 签发新证书时使用。最常见的证书操作。",
+      "when_not": "纯查询任务（list/info）不需要；已有证书续期应使用 cert:renew 而非重新签发。",
+      "examples": [
+        "为 HTTPS 服务签发证书",
+        "为 AI Agent 签发 AIC 证书",
+        "签发客户端 mTLS 证书"
+      ],
+      "related": [
+        "cert:renew",
+        "cert:revoke",
+        "cert:list"
+      ]
+    },
+    {
+      "id": "cert:revoke",
+      "description": "吊销证书",
+      "parameters": {
+        "ca_scope": {
+          "type": "list",
+          "description": "允许吊销的 CA 列表",
+          "required": false
+        }
+      },
+      "summary": "吊销已签发的证书",
+      "usage": "证书私钥泄露、主体不再合法、任务完成回收证书时使用。",
+      "when_not": "只读任务不需要；吊销是敏感操作，应控制到最小范围。",
+      "examples": [
+        "私钥泄露后吊销证书",
+        "Agent 任务完成后吊销临时证书"
+      ],
+      "related": [
+        "cert:issue",
+        "cert:list"
+      ]
+    },
+    {
+      "id": "cert:renew",
+      "description": "续期证书",
+      "summary": "续期已有证书",
+      "usage": "证书即将到期、需要保持同一主体继续使用时使用。通常保留原公钥或重新生成。",
+      "when_not": "新主体首次接入应使用 cert:issue；到期回收应使用 cert:revoke。",
+      "examples": [
+        "自动续期服务证书",
+        "Agent 证书到期续签"
+      ],
+      "related": [
+        "cert:issue",
+        "cert:revoke"
+      ]
+    },
+    {
+      "id": "cert:list",
+      "description": "查询证书列表",
+      "summary": "查询证书列表（可按 CA/状态/主体筛选）",
+      "usage": "需要检索已签发的证书、查看证书状态（有效/吊销/过期）时使用。只读能力。",
+      "when_not": "无特殊限制，只读能力，可作为基础授权。",
+      "examples": [
+        "列出某 CA 下全部证书",
+        "查找某证书的吊销状态"
+      ],
+      "related": [
+        "ca:list",
+        "cert:info"
+      ]
+    },
+    {
+      "id": "cert:export",
+      "description": "导出证书",
+      "summary": "导出证书（PEM/DER 格式）",
+      "usage": "需要下载证书文件、交付给对端、备份时使用。只读能力。",
+      "when_not": "无特殊限制，但注意导出的是公开证书而非私钥。",
+      "examples": [
+        "导出服务证书给 Nginx 配置",
+        "下载证书用于客户端部署"
+      ],
+      "related": [
+        "cert:list"
+      ]
+    },
+    {
+      "id": "cert:batch",
+      "description": "批量签发证书",
+      "summary": "批量签发多张证书",
+      "usage": "一次性为大量设备/服务签发证书（批量上线、批量扩展）时使用。",
+      "when_not": "单张证书签发用 cert:issue 即可，无需批量权限。",
+      "examples": [
+        "批量签发 100 台设备证书"
+      ],
+      "related": [
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "crl:generate",
+      "description": "生成 CRL",
+      "summary": "生成证书吊销列表（CRL）",
+      "usage": "吊销发生后需要生成/更新 CRL 供客户端校验时使用。",
+      "when_not": "纯查询任务不需要；通常由吊销流程自动触发。",
+      "examples": [
+        "吊销后生成最新 CRL"
+      ],
+      "related": [
+        "cert:revoke",
+        "crl:read"
+      ]
+    },
+    {
+      "id": "crl:read",
+      "description": "读取 CRL",
+      "summary": "读取 CRL 内容",
+      "usage": "客户端校验证书吊销状态、审计检查时使用。只读能力。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "检查 CRL 是否包含某证书"
+      ],
+      "related": [
+        "crl:generate",
+        "cert:list"
+      ]
+    },
+    {
+      "id": "ocsp:respond",
+      "description": "OCSP 响应",
+      "summary": "OCSP 在线证书状态响应",
+      "usage": "提供 OCSP 在线吊销状态查询服务时使用。通常由核心服务自身持有。",
+      "when_not": "普通 Agent/用户任务不需要此能力。",
+      "examples": [
+        "OCSP 响应器服务运行"
+      ],
+      "related": [
+        "cert:revoke",
+        "crl:read"
+      ]
+    },
+    {
+      "id": "user:manage",
+      "description": "管理用户",
+      "summary": "管理用户账号（创建/删除/改角色）",
+      "usage": "需要管理 PKI 用户身份、分配角色权限时使用。敏感管理操作。",
+      "when_not": "普通证书操作任务不需要用户管理权限。",
+      "examples": [
+        "创建新用户",
+        "为用户分配角色"
+      ],
+      "related": [
+        "user:list",
+        "user:revoke-all"
+      ]
+    },
+    {
+      "id": "user:list",
+      "description": "查询用户列表",
+      "summary": "查询用户列表",
+      "usage": "需要查看系统用户、确认身份时使用。只读能力。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "列出所有用户"
+      ],
+      "related": [
+        "user:manage"
+      ]
+    },
+    {
+      "id": "user:revoke-all",
+      "description": "吊销用户全部证书",
+      "summary": "吊销某用户的全部证书",
+      "usage": "用户离职、账号泄露时需要吊销其名下所有证书时使用。",
+      "when_not": "单张证书吊销用 cert:revoke 即可。",
+      "examples": [
+        "用户离职后吊销其全部证书"
+      ],
+      "related": [
+        "user:manage",
+        "cert:revoke"
+      ]
+    },
+    {
+      "id": "log:read",
+      "description": "读取审计日志",
+      "summary": "读取审计日志",
+      "usage": "需要查看操作记录、排查问题时使用。只读能力。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "查看最近的证书签发记录"
+      ],
+      "related": [
+        "log:export"
+      ]
+    },
+    {
+      "id": "log:export",
+      "description": "导出审计日志",
+      "summary": "导出审计日志",
+      "usage": "需要将日志交付给 SIEM、离线归档或合规审计时使用。",
+      "when_not": "仅查看用 log:read 即可。",
+      "examples": [
+        "导出近 30 天日志给审计系统"
+      ],
+      "related": [
+        "log:read"
+      ]
+    },
+    {
+      "id": "report:view",
+      "description": "查看报表",
+      "summary": "查看统计报表",
+      "usage": "需要查看证书签发量、吊销量等统计报表时使用。只读。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "查看月度签发报表"
+      ],
+      "related": [
+        "report:generate",
+        "report:export"
+      ]
+    },
+    {
+      "id": "report:export",
+      "description": "导出报表",
+      "summary": "导出报表数据",
+      "usage": "需要下载报表数据（CSV/JSON）时使用。",
+      "when_not": "仅页面查看用 report:view。",
+      "examples": [
+        "导出报表给财务系统"
+      ],
+      "related": [
+        "report:view",
+        "report:generate"
+      ]
+    },
+    {
+      "id": "report:generate",
+      "description": "生成报表",
+      "summary": "生成新报表",
+      "usage": "需要按自定义条件生成统计报表时使用。",
+      "when_not": "仅查看预置报表用 report:view。",
+      "examples": [
+        "生成自定义时间段签发报表"
+      ],
+      "related": [
+        "report:view"
+      ]
+    },
+    {
+      "id": "config:read",
+      "description": "读取配置",
+      "summary": "读取系统配置",
+      "usage": "需要查看当前配置（监听端口、CA 路径等）时使用。只读。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "查看当前配置"
+      ],
+      "related": [
+        "config:write"
+      ]
+    },
+    {
+      "id": "config:write",
+      "description": "修改配置",
+      "summary": "修改系统配置",
+      "usage": "需要变更配置并热重载时使用。敏感操作，修改可能影响全部服务。",
+      "when_not": "常规任务严禁授权；仅运维管理员需要。",
+      "examples": [
+        "修改证书有效期配置"
+      ],
+      "related": [
+        "config:read"
+      ]
+    },
+    {
+      "id": "ra:approve",
+      "description": "RA 审批通过",
+      "summary": "RA 审批通过（注册机构审批）",
+      "usage": "需要审批待签发的证书请求（人工复核流程）时使用。",
+      "when_not": "纯自动化签发不需要 RA 审批能力。",
+      "examples": [
+        "审批待签发的服务器证书"
+      ],
+      "related": [
+        "ra:reject",
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "ra:reject",
+      "description": "RA 审批拒绝",
+      "summary": "RA 审批拒绝",
+      "usage": "需要拒绝不合规的证书请求时使用。",
+      "when_not": "同 ra:approve，仅审批人员需要。",
+      "examples": [
+        "拒绝伪造的证书请求"
+      ],
+      "related": [
+        "ra:approve"
+      ]
+    },
+    {
+      "id": "cross-cert:issue",
+      "description": "签发交叉证书",
+      "summary": "签发交叉证书（跨信任域桥接）",
+      "usage": "需要建立两个 PKI 域之间的信任桥接时使用。高级 PKI 操作。",
+      "when_not": "单域内部签发不需要。",
+      "examples": [
+        "两个企业 PKI 互信"
+      ],
+      "related": [
+        "ca:issue-sub"
+      ]
+    },
+    {
+      "id": "cross-cert:revoke",
+      "description": "吊销交叉证书",
+      "summary": "吊销交叉证书",
+      "usage": "需要撤销跨域信任桥接时使用。",
+      "when_not": "单域操作不需要。",
+      "examples": [
+        "撤销企业间信任"
+      ],
+      "related": [
+        "cross-cert:issue"
+      ]
+    },
+    {
+      "id": "webhook:manage",
+      "description": "管理 webhook",
+      "summary": "管理 Webhook 通知（创建/删除/改地址）",
+      "usage": "需要配置证书事件通知（签发/吊销/到期）到外部系统时使用。",
+      "when_not": "不订阅通知的任务不需要。",
+      "examples": [
+        "配置证书到期提醒 Webhook"
+      ],
+      "related": [
+        "cert:issue",
+        "cert:revoke"
+      ]
+    },
+    {
+      "id": "key:recover",
+      "description": "密钥恢复",
+      "summary": "密钥恢复（私钥找回）",
+      "usage": "需要从密钥托管中恢复私钥时使用。极高敏感度操作。",
+      "when_not": "常规任务严禁授权；仅授权密钥托管管理员。",
+      "examples": [
+        "恢复丢失的服务私钥"
+      ],
+      "related": [
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "dns:manage",
+      "description": "管理 DNS",
+      "summary": "管理 DNS 记录（证书签发前的域名验证）",
+      "usage": "需要为签发证书创建 DNS 验证记录时使用（ACME 挑战等）。",
+      "when_not": "不涉及域名验证的签发任务不需要。",
+      "examples": [
+        "创建 _acme-challenge DNS 记录"
+      ],
+      "related": [
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "trust:import",
+      "description": "导入信任锚",
+      "summary": "导入信任锚/根证书",
+      "usage": "需要信任新的外部 CA 时使用。",
+      "when_not": "不涉及外部信任的任务不需要。",
+      "examples": [
+        "导入客户 CA 证书"
+      ],
+      "related": [
+        "trust:list",
+        "trust:delete"
+      ]
+    },
+    {
+      "id": "trust:list",
+      "description": "查询信任锚",
+      "summary": "查询信任锚列表",
+      "usage": "需要查看当前信任哪些外部 CA 时使用。只读。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "查看已信任的 CA"
+      ],
+      "related": [
+        "trust:import"
+      ]
+    },
+    {
+      "id": "trust:delete",
+      "description": "删除信任锚",
+      "summary": "删除信任锚",
+      "usage": "需要撤销对某外部 CA 的信任时使用。",
+      "when_not": "不涉及外部信任管理不需要。",
+      "examples": [
+        "移除不再信任的 CA"
+      ],
+      "related": [
+        "trust:import"
+      ]
+    },
+    {
+      "id": "agent:manage",
+      "description": "管理 AI Agent",
+      "summary": "管理 AI Agent（注册/踢线/配置）",
+      "usage": "需要管理接入网关的 AI Agent 身份、会话时使用。",
+      "when_not": "Agent 自身执行任务不需要管理其他 Agent 的能力。",
+      "examples": [
+        "踢掉异常 Agent 连接"
+      ],
+      "related": [
+        "cert:issue"
+      ]
+    },
+    {
+      "id": "swagger:view",
+      "description": "查看 API 文档",
+      "summary": "查看 API 文档（Swagger/OpenAPI）",
+      "usage": "需要浏览 API 接口文档时使用。只读。",
+      "when_not": "无特殊限制，只读。",
+      "examples": [
+        "查看 API 接口说明"
+      ],
+      "related": [
+        "web:view"
+      ]
+    },
+    {
+      "id": "web:view",
+      "description": "访问 Web 控制台",
+      "summary": "访问 Web 控制台",
+      "usage": "需要登录 Web 管理界面时使用。",
+      "when_not": "纯 API 调用任务不需要。",
+      "examples": [
+        "登录管理控制台"
+      ],
+      "related": [
+        "swagger:view"
+      ]
+    }
+  ],
+  "roles": {
+    "superadmin": {
+      "display_name": "超级管理员",
+      "profiles": [
+        "m-superadmin"
+      ],
+      "ous": [
+        "SuperAdmin"
+      ],
+      "grants": [
+        "ca:create",
+        "ca:delete",
+        "ca:list",
+        "ca:info",
+        "cert:issue",
+        "cert:revoke",
+        "cert:renew",
+        "cert:batch",
+        "cert:list",
+        "cert:export",
+        "crl:generate",
+        "user:manage",
+        "user:list",
+        "user:revoke-all",
+        "log:read",
+        "log:export",
+        "config:read",
+        "config:write",
+        "report:view",
+        "report:export",
+        "report:generate",
+        "ra:approve",
+        "ra:reject",
+        "cross-cert:issue",
+        "cross-cert:revoke",
+        "webhook:manage",
+        "key:recover",
+        "dns:manage",
+        "trust:import",
+        "trust:list",
+        "trust:delete",
+        "agent:manage",
+        "swagger:view",
+        "web:view"
+      ]
+    },
+    "admin": {
+      "display_name": "管理员",
+      "profiles": [
+        "m-admin"
+      ],
+      "ous": [
+        "admin",
+        "Admin"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:issue",
+        "cert:revoke",
+        "cert:renew",
+        "cert:list",
+        "cert:export",
+        "cert:batch",
+        "crl:generate",
+        "log:read",
+        "log:export",
+        "report:view",
+        "report:export",
+        "report:generate",
+        "ra:approve",
+        "ra:reject",
+        "cross-cert:issue",
+        "cross-cert:revoke",
+        "webhook:manage",
+        "key:recover",
+        "dns:manage",
+        "trust:import",
+        "trust:list",
+        "trust:delete",
+        "agent:manage",
+        "swagger:view",
+        "web:view"
+      ]
+    },
+    "operator": {
+      "display_name": "运营操作员",
+      "profiles": [
+        "m-operator"
+      ],
+      "ous": [
+        "operator",
+        "Operator"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:issue",
+        "cert:revoke",
+        "cert:renew",
+        "cert:list",
+        "cert:export",
+        "cert:batch",
+        "crl:generate",
+        "log:read",
+        "report:view",
+        "web:view"
+      ]
+    },
+    "revoker": {
+      "display_name": "自动吊销器",
+      "profiles": [
+        "m-revoker"
+      ],
+      "ous": [
+        "revoker",
+        "Revoker"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:list",
+        "cert:revoke",
+        "log:read",
+        "report:view",
+        "web:view"
+      ]
+    },
+    "auditor": {
+      "display_name": "审计员",
+      "profiles": [
+        "m-auditor"
+      ],
+      "ous": [
+        "auditor",
+        "Auditor"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:list",
+        "log:read",
+        "log:export",
+        "report:view",
+        "report:export",
+        "swagger:view",
+        "web:view"
+      ]
+    },
+    "readonly": {
+      "display_name": "只读用户",
+      "profiles": [
+        "m-readonly"
+      ],
+      "ous": [
+        "readonly",
+        "ReadOnly"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:list",
+        "swagger:view",
+        "web:view"
+      ]
+    },
+    "console": {
+      "display_name": "控制台用户",
+      "profiles": [
+        "m-console"
+      ],
+      "ous": [
+        "console",
+        "Console"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:issue",
+        "cert:revoke",
+        "cert:renew",
+        "cert:list",
+        "cert:export",
+        "crl:generate",
+        "log:read",
+        "report:view",
+        "report:generate",
+        "ra:approve",
+        "ra:reject",
+        "trust:list",
+        "swagger:view",
+        "web:view"
+      ]
+    },
+    "auto-renew": {
+      "display_name": "自动续期服务",
+      "profiles": [
+        "m-auto-renew"
+      ],
+      "ous": [
+        "auto-renew",
+        "AutoRenew"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:list",
+        "cert:renew",
+        "cert:export",
+        "log:read",
+        "web:view"
+      ]
+    },
+    "reporter": {
+      "display_name": "报表用户",
+      "profiles": [
+        "m-reporter"
+      ],
+      "ous": [
+        "reporter",
+        "Reporter"
+      ],
+      "grants": [
+        "ca:list",
+        "ca:info",
+        "cert:list",
+        "log:read",
+        "report:view",
+        "report:export",
+        "report:generate",
+        "web:view"
+      ]
+    },
+    "agent": {
+      "display_name": "AI Agent",
+      "profiles": [
+        "agent-proxy"
+      ],
+      "grants": [
+        "gateway:*"
+      ]
+    }
+  }
+}

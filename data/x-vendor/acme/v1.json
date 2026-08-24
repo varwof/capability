@@ -1,0 +1,41 @@
+{
+  "scheme_id": "x-vendor/acme",
+  "name": "ACME Corp Internal",
+  "version": "1.0.0",
+  "description": "ACME 公司内部能力定义（私有扩展示例）",
+  "vendor": "x-vendor",
+  "product": "acme",
+  "author": "acme-security",
+  "license": "Proprietary",
+  "capabilities": [
+    {
+      "id": "order:create",
+      "description": "创建订单",
+      "parameters": {
+        "max_amount": {
+          "type": "int",
+          "description": "最大订单金额（元）",
+          "default": 10000,
+          "min": 1,
+          "max": 1000000
+        }
+      }
+    },
+    {
+      "id": "order:approve",
+      "description": "审批订单",
+      "parameters": {
+        "threshold": {
+          "type": "int",
+          "description": "审批阈值（元）",
+          "min": 1,
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "inventory:read",
+      "description": "查询库存"
+    }
+  ]
+}
