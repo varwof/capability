@@ -2,7 +2,7 @@
   "scheme_id": "varwof/constraint-v1",
   "name": "System Constraints",
   "version": "1.0.0",
-  "description": "系统级执行约束（会话/网络/时间/操作模式）",
+  "description": "System-level execution constraints (session/network/time/operation mode)",
   "vendor": "varwof",
   "product": "constraint",
   "author": "varwof",
@@ -10,35 +10,35 @@
   "capabilities": [
     {
       "id": "session:max-concurrent",
-      "description": "最大并发会话数",
+      "description": "Maximum concurrent sessions",
       "parameters": {
         "value": { "type": "int", "min": 1, "max": 1000, "required": true }
       }
     },
     {
       "id": "session:hard-timeout",
-      "description": "会话硬超时（秒）",
+      "description": "Session hard timeout (seconds)",
       "parameters": {
         "value": { "type": "int", "min": 60, "max": 86400, "required": true }
       }
     },
     {
       "id": "session:idle-timeout",
-      "description": "空闲超时（秒）",
+      "description": "Session idle timeout (seconds)",
       "parameters": {
         "value": { "type": "int", "min": 30, "max": 3600, "required": true }
       }
     },
     {
       "id": "network:cidr",
-      "description": "允许的网络 CIDR",
+      "description": "Allowed network CIDR",
       "parameters": {
         "value": { "type": "string", "description": "CIDR notation", "required": true }
       }
     },
     {
       "id": "time:window",
-      "description": "允许的操作时间窗口",
+      "description": "Allowed operation time window",
       "parameters": {
         "start": { "type": "string", "description": "HH:MM", "required": true },
         "end":   { "type": "string", "description": "HH:MM", "required": true }
@@ -46,14 +46,14 @@
     },
     {
       "id": "op:readonly",
-      "description": "限制为只读操作",
+      "description": "Restrict to read-only operations",
       "parameters": {
         "value": { "type": "bool", "required": true }
       }
     },
     {
       "id": "op:audit:required",
-      "description": "操作必须记录审计日志"
+      "description": "Operation must write an audit log"
     }
   ]
 }

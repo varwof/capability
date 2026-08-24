@@ -2,7 +2,7 @@
   "scheme_id": "x-vendor/acme",
   "name": "ACME Corp Internal",
   "version": "1.0.0",
-  "description": "ACME 公司内部能力定义（私有扩展示例）",
+  "description": "ACME Corp internal capability definitions (private extension example)",
   "vendor": "x-vendor",
   "product": "acme",
   "author": "acme-security",
@@ -10,11 +10,11 @@
   "capabilities": [
     {
       "id": "order:create",
-      "description": "创建订单",
+      "description": "Create an order",
       "parameters": {
         "max_amount": {
           "type": "int",
-          "description": "最大订单金额（元）",
+          "description": "Maximum order amount",
           "default": 10000,
           "min": 1,
           "max": 1000000
@@ -23,11 +23,11 @@
     },
     {
       "id": "order:approve",
-      "description": "审批订单",
+      "description": "Approve an order",
       "parameters": {
         "threshold": {
           "type": "int",
-          "description": "审批阈值（元）",
+          "description": "Approval threshold",
           "min": 1,
           "required": true
         }
@@ -35,7 +35,7 @@
     },
     {
       "id": "inventory:read",
-      "description": "查询库存"
+      "description": "Query inventory"
     }
   ]
 }

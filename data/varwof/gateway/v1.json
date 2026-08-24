@@ -2,7 +2,7 @@
   "scheme_id": "varwof/gateway",
   "name": "Varwof Gateway",
   "version": "1.1.0",
-  "description": "Varwof 网关操作权限（管理 API + 数据面）",
+  "description": "Varwof gateway operation permissions (management API + data plane)",
   "vendor": "varwof",
   "product": "gateway",
   "author": "varwof",
@@ -11,13 +11,13 @@
   "capabilities": [
     {
       "id": "proxy:http",
-      "description": "HTTP/HTTPS 反向代理数据面",
-      "summary": "HTTP/HTTPS 反向代理数据面",
-      "usage": "需要经网关访问 HTTP/HTTPS 后端服务（Web 应用、REST API）时使用。最常见的数据面能力。",
-      "when_not": "TCP/UDP 专有协议服务不需要；纯管理操作不需要。",
+      "description": "HTTP/HTTPS reverse proxy data plane",
+      "summary": "HTTP/HTTPS reverse proxy data plane",
+      "usage": "Used to access HTTP/HTTPS backend services (web apps, REST APIs) through the gateway. The most common data-plane capability.",
+      "when_not": "Proprietary TCP/UDP protocol services do not need it; pure administrative operations do not need it.",
       "examples": [
-        "经网关访问内网 Web 服务",
-        "调用后端 REST API"
+        "Access an internal web service through the gateway",
+        "Call a backend REST API"
       ],
       "related": [
         "proxy:websocket",
@@ -26,13 +26,13 @@
     },
     {
       "id": "proxy:tcp",
-      "description": "TCP 透明代理数据面",
-      "summary": "TCP 透明代理数据面",
-      "usage": "需要转发任意 TCP 协议（SSH、数据库、自定义协议）时使用。",
-      "when_not": "HTTP 服务用 proxy:http 即可。",
+      "description": "TCP transparent proxy data plane",
+      "summary": "TCP transparent proxy data plane",
+      "usage": "Used to forward arbitrary TCP protocols (SSH, databases, custom protocols).",
+      "when_not": "Use proxy:http for HTTP services.",
       "examples": [
-        "经网关访问 SSH 服务",
-        "转发 MySQL 连接"
+        "Access an SSH service through the gateway",
+        "Forward a MySQL connection"
       ],
       "related": [
         "proxy:http"
@@ -40,12 +40,12 @@
     },
     {
       "id": "proxy:udp",
-      "description": "UDP 转发数据面",
-      "summary": "UDP 转发数据面",
-      "usage": "需要转发 UDP 流量（DNS、音视频、游戏）时使用。",
-      "when_not": "TCP/HTTP 服务不需要。",
+      "description": "UDP forwarding data plane",
+      "summary": "UDP forwarding data plane",
+      "usage": "Used to forward UDP traffic (DNS, audio/video, games).",
+      "when_not": "TCP/HTTP services do not need it.",
       "examples": [
-        "经网关转发 DNS 查询"
+        "Forward a DNS query through the gateway"
       ],
       "related": [
         "proxy:quic"
@@ -53,12 +53,12 @@
     },
     {
       "id": "proxy:quic",
-      "description": "QUIC/HTTP3 代理数据面",
-      "summary": "QUIC/HTTP3 代理数据面",
-      "usage": "需要支持 QUIC/HTTP3 客户端访问时使用。",
-      "when_not": "传统 TCP 客户端不需要。",
+      "description": "QUIC/HTTP3 proxy data plane",
+      "summary": "QUIC/HTTP3 proxy data plane",
+      "usage": "Used to support QUIC/HTTP3 client access.",
+      "when_not": "Legacy TCP clients do not need it.",
       "examples": [
-        "支持 HTTP3 的 Web 服务"
+        "A web service with HTTP3 support"
       ],
       "related": [
         "proxy:udp",
@@ -67,12 +67,12 @@
     },
     {
       "id": "proxy:websocket",
-      "description": "WebSocket 代理数据面",
-      "summary": "WebSocket 代理数据面",
-      "usage": "需要代理 WebSocket 长连接（实时推送、聊天）时使用。",
-      "when_not": "普通 HTTP 请求不需要。",
+      "description": "WebSocket proxy data plane",
+      "summary": "WebSocket proxy data plane",
+      "usage": "Used to proxy WebSocket long-lived connections (real-time push, chat).",
+      "when_not": "Ordinary HTTP requests do not need it.",
       "examples": [
-        "代理实时消息推送服务"
+        "Proxy a real-time message push service"
       ],
       "related": [
         "proxy:http"
@@ -80,12 +80,12 @@
     },
     {
       "id": "proxy:grpc",
-      "description": "gRPC 代理数据面",
-      "summary": "gRPC 代理数据面",
-      "usage": "需要代理 gRPC 双向流服务时使用。",
-      "when_not": "REST/HTTP 服务不需要。",
+      "description": "gRPC proxy data plane",
+      "summary": "gRPC proxy data plane",
+      "usage": "Used to proxy gRPC bidirectional-stream services.",
+      "when_not": "REST/HTTP services do not need it.",
       "examples": [
-        "代理 gRPC 微服务"
+        "Proxy a gRPC microservice"
       ],
       "related": [
         "proxy:http"
@@ -93,19 +93,19 @@
     },
     {
       "id": "admin:config",
-      "description": "读取/修改网关配置",
+      "description": "Read/modify gateway configuration",
       "parameters": {
         "config_key": {
           "type": "string",
-          "description": "允许访问的配置键（空 = 全部）",
+          "description": "Config keys that may be accessed (empty = all)",
           "required": false
         }
       },
-      "summary": "读取/修改网关配置",
-      "usage": "需要调整网关监听器、路由、上游配置时使用。",
-      "when_not": "常规数据面任务严禁授权；仅运维管理员需要。",
+      "summary": "Read/modify gateway configuration",
+      "usage": "Used to adjust gateway listeners, routes, and upstream configuration.",
+      "when_not": "Must never be granted for routine data-plane tasks; only needed by operations administrators.",
       "examples": [
-        "修改路由映射"
+        "Modify route mappings"
       ],
       "related": [
         "admin:reload"
@@ -113,12 +113,12 @@
     },
     {
       "id": "admin:reload",
-      "description": "热重载配置",
-      "summary": "热重载配置",
-      "usage": "配置变更后需要无中断热加载时使用。",
-      "when_not": "无配置变更任务不需要。",
+      "description": "Hot-reload configuration",
+      "summary": "Hot-reload configuration",
+      "usage": "Used when configuration changes need to be hot-loaded without interruption.",
+      "when_not": "Tasks with no configuration changes do not need it.",
       "examples": [
-        "SIGHUP 触发配置重载"
+        "SIGHUP-triggered configuration reload"
       ],
       "related": [
         "admin:config"
@@ -126,12 +126,12 @@
     },
     {
       "id": "admin:plugins",
-      "description": "管理能力插件（注册/替换/删除）",
-      "summary": "管理能力插件（注册/替换/删除）",
-      "usage": "需要动态调整能力判定插件（allowlist/denylist/rbac）时使用。",
-      "when_not": "纯数据面任务不需要。",
+      "description": "Manage capability plugins (register/replace/delete)",
+      "summary": "Manage capability plugins (register/replace/delete)",
+      "usage": "Used to dynamically adjust capability-decision plugins (allowlist/denylist/rbac).",
+      "when_not": "Pure data-plane tasks do not need it.",
       "examples": [
-        "替换 RBAC 插件"
+        "Replace RBAC plugin"
       ],
       "related": [
         "ops:plugins"
@@ -139,12 +139,12 @@
     },
     {
       "id": "admin:policy",
-      "description": "策略版本化与回滚",
-      "summary": "策略版本化与回滚",
-      "usage": "需要管理授权策略版本、执行回滚时使用。",
-      "when_not": "只读策略查看用 ops:plugins 即可。",
+      "description": "Policy versioning and rollback",
+      "summary": "Policy versioning and rollback",
+      "usage": "Used to manage authorization policy versions and perform rollbacks.",
+      "when_not": "Use ops:plugins for read-only policy viewing.",
       "examples": [
-        "回滚到上一策略版本"
+        "Roll back to the previous policy version"
       ],
       "related": [
         "admin:branch"
@@ -152,12 +152,12 @@
     },
     {
       "id": "admin:branch",
-      "description": "策略分支控制（灰度发布）",
-      "summary": "策略分支控制（灰度发布）",
-      "usage": "需要按 Agent 分组灰度下发不同策略版本时使用。",
-      "when_not": "全局统一策略不需要。",
+      "description": "Policy branch control (canary release)",
+      "summary": "Policy branch control (canary release)",
+      "usage": "Used to canary-deliver different policy versions per agent group.",
+      "when_not": "Global unified policy is not needed.",
       "examples": [
-        "对指定 Agent 灰度新策略"
+        "Canary a new policy to a specific agent"
       ],
       "related": [
         "admin:policy"
@@ -165,12 +165,12 @@
     },
     {
       "id": "admin:renewal",
-      "description": "确认续签管理（request/confirm/reject）",
-      "summary": "确认续签管理（request/confirm/reject）",
-      "usage": "需要管理短命证书的确认续签流程时使用。",
-      "when_not": "无短命证书场景不需要。",
+      "description": "Confirmed renewal management (request/confirm/reject)",
+      "summary": "Confirmed renewal management (request/confirm/reject)",
+      "usage": "Used to manage the confirmed renewal flow for short-lived certificates.",
+      "when_not": "Scenarios without short-lived certificates do not need it.",
       "examples": [
-        "确认 Agent 证书续签"
+        "Confirm an agent certificate renewal"
       ],
       "related": [
         "admin:agents"
@@ -178,12 +178,12 @@
     },
     {
       "id": "admin:agents",
-      "description": "Agent 目录与踢线管理",
-      "summary": "Agent 目录与踢线管理",
-      "usage": "需要查看在线 Agent、主动断开异常 Agent 时使用。",
-      "when_not": "Agent 自身任务不需要管理其他 Agent。",
+      "description": "Agent directory and disconnect management",
+      "summary": "Agent directory and disconnect management",
+      "usage": "Used to view online agents and proactively disconnect abnormal ones.",
+      "when_not": "An agent's own tasks do not need to manage other agents.",
       "examples": [
-        "踢掉异常 Agent 连接"
+        "Disconnect an abnormal agent connection"
       ],
       "related": [
         "admin:connections"
@@ -191,12 +191,12 @@
     },
     {
       "id": "admin:connections",
-      "description": "实时连接/接入点查看",
-      "summary": "实时连接/接入点查看",
-      "usage": "需要监控当前活跃连接、查看接入点时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Live connections / access points view",
+      "summary": "Live connections / access points view",
+      "usage": "Used to monitor active connections and view access points. Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "查看当前连接数"
+        "View current connection count"
       ],
       "related": [
         "ops:metrics"
@@ -204,12 +204,12 @@
     },
     {
       "id": "ops:metrics",
-      "description": "读取 Prometheus 指标",
-      "summary": "读取 Prometheus 指标",
-      "usage": "需要拉取网关监控指标（连接数/PPS/延迟）时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Read Prometheus metrics",
+      "summary": "Read Prometheus metrics",
+      "usage": "Used to scrape gateway monitoring metrics (connections/PPS/latency). Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "Prometheus 抓取指标"
+        "Prometheus metric scraping"
       ],
       "related": [
         "ops:health"
@@ -217,12 +217,12 @@
     },
     {
       "id": "ops:plugins",
-      "description": "查看能力插件列表",
-      "summary": "查看能力插件列表",
-      "usage": "需要查看当前加载的插件、其方案定义时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "View capability plugin list",
+      "summary": "View capability plugin list",
+      "usage": "Used to view currently loaded plugins and their scheme definitions. Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "查看已注册插件"
+        "View registered plugins"
       ],
       "related": [
         "admin:plugins"
@@ -230,12 +230,12 @@
     },
     {
       "id": "audit:read",
-      "description": "读取审计日志",
-      "summary": "读取审计日志",
-      "usage": "需要查看网关访问/连接审计记录时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Read audit log",
+      "summary": "Read audit log",
+      "usage": "Used to view gateway access/connection audit records. Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "查看连接审计"
+        "View connection audit"
       ],
       "related": [
         "audit:verify",
@@ -244,12 +244,12 @@
     },
     {
       "id": "audit:verify",
-      "description": "验证审计链/Merkle",
-      "summary": "验证审计链/Merkle 完整性",
-      "usage": "需要验证审计日志哈希链完整性（防篡改）时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Verify audit chain / Merkle",
+      "summary": "Verify audit chain / Merkle integrity",
+      "usage": "Used to verify the integrity of the audit hash chain (tamper-evident). Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "校验审计链"
+        "Verify audit chain"
       ],
       "related": [
         "audit:read"
@@ -257,12 +257,12 @@
     },
     {
       "id": "audit:search",
-      "description": "审计全文检索",
-      "summary": "审计全文检索",
-      "usage": "需要按关键字/时间段检索审计记录时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Audit full-text search",
+      "summary": "Audit full-text search",
+      "usage": "Used to search audit records by keyword/time range. Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "搜索某 Agent 的审计记录"
+        "Search an agent's audit records"
       ],
       "related": [
         "audit:read"
@@ -270,12 +270,12 @@
     },
     {
       "id": "audit:chain",
-      "description": "跨网关审计链 DAG 引用",
-      "summary": "跨网关审计链 DAG 引用",
-      "usage": "需要查看多网关审计链引用关系时使用。只读。",
-      "when_not": "无特殊限制，只读。",
+      "description": "Cross-gateway audit chain DAG references",
+      "summary": "Cross-gateway audit chain DAG references",
+      "usage": "Used to view reference relationships between multi-gateway audit chains. Read-only.",
+      "when_not": "No special restrictions; read-only.",
       "examples": [
-        "查看跨网关审计链"
+        "View cross-gateway audit chain"
       ],
       "related": [
         "audit:read"
@@ -283,12 +283,12 @@
     },
     {
       "id": "ops:health",
-      "description": "健康检查",
-      "summary": "健康检查",
-      "usage": "需要探测网关存活状态时使用。公开能力。",
-      "when_not": "无限制，通常公开。",
+      "description": "Health check",
+      "summary": "Health check",
+      "usage": "Used to probe gateway liveness. A public capability.",
+      "when_not": "No restrictions; typically public.",
       "examples": [
-        "负载均衡健康检查"
+        "Load-balancer health check"
       ],
       "related": [
         "ops:metrics"
@@ -297,7 +297,7 @@
   ],
   "roles": {
     "gateway:admin": {
-      "display_name": "网关管理员",
+      "display_name": "Gateway Administrator",
       "profiles": [
         "m-admin"
       ],
@@ -324,7 +324,7 @@
       ]
     },
     "gateway:ops": {
-      "display_name": "网关运维",
+      "display_name": "Gateway Operator",
       "profiles": [
         "m-operator"
       ],
@@ -342,7 +342,7 @@
       ]
     },
     "gateway:audit": {
-      "display_name": "网关审计",
+      "display_name": "Gateway Auditor",
       "profiles": [
         "m-auditor"
       ],
@@ -358,7 +358,7 @@
       ]
     },
     "gateway:read": {
-      "display_name": "网关只读",
+      "display_name": "Gateway Read-Only",
       "profiles": [
         "m-readonly"
       ],
@@ -371,7 +371,7 @@
       ]
     },
     "agent": {
-      "display_name": "AI Agent（数据面）",
+      "display_name": "AI agent (data plane)",
       "profiles": [
         "agent-proxy"
       ],
