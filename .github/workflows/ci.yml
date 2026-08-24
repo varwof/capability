@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate JSON data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Validate JSON files
+        run: |
+          set -e
+          find data -name '*.json' | while read -r f; do
+            jq -e . "$f" > /dev/null || { echo "invalid JSON: $f"; exit 1; }
+          done
+          echo "all JSON files valid"
+
+      - name: Verify scheme structure
+        run: |
+          set -e
+          for f in $(find data -name 'v*.json'); do
+            scheme_id=$(jq -r '.scheme_id // empty' "$f")
+            if [ -z "$scheme_id" ]; then
+              echo "missing scheme_id: $f"
+              exit 1
+            fi
+            echo "  $f -> $scheme_id"
+          done
