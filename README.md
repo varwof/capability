@@ -1,30 +1,63 @@
 # varwof-capability
 
-Capability schema data for varwof zero-trust gateways: JSON capability definitions for `std`, `varwof`, `oracle` and `x-vendor` namespaces. Consumed by the `register` module for PKCS#7-signed rules and validation.
+> JSON capability declaration dataset for varwof zero-trust gateways.
 
-## Structure
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-```
-data/
-  std/database-v1/v1.json         — standard database capability schema
-  varwof/core/v1.json             — varwof core capabilities
-  varwof/gateway/v1.json          — gateway capabilities
-  varwof/constraint/v1.json       — execution constraint capabilities
-  varwof/demo-mysql/v1/v1.json    — demo MySQL capabilities
-  oracle/mysql/v1.json            — Oracle MySQL capabilities
-  x-vendor/acme/v1.json           — example vendor capability
-```
+[中文](README_CN.md)
 
-## Usage
+## What is varwof-capability?
 
-Point `capability_schemes` (core) or the capreg directory (gateways) at the `data/` directory:
+JSON-format capability definitions for varwof zero-trust gateways: `std` (standard database capabilities), `varwof` (core/gateway/constraint capabilities), `oracle` (MySQL operation capabilities), and `x-vendor` (private extensions). Loaded by the `register` module for PKCS#7 signature verification and permission validation.
+
+## Quick Start
 
 ```bash
 export CAPABILITY_DIR=/path/to/capability/data
+ls data/
+# std/database-v1/v1.json
+# varwof/core/v1.json
+# varwof/gateway/v1.json
+# varwof/constraint/v1.json
+# oracle/mysql/v1.json
+# x-vendor/acme/v1.json
 ```
 
-The directory layout is `<vendor>/<product>/v*.json`; every JSON file declares `scheme_id`.
+## Data Structure
 
-## License
+```
+data/
+├── std/database-v1/v1.json         — Standard database capability schema
+├── varwof/core/v1.json             — Core permissions (37 capabilities + 10 roles)
+├── varwof/gateway/v1.json          — Gateway permissions (21 capabilities + 5 roles)
+├── varwof/constraint/v1.json       — Execution constraint capabilities
+├── oracle/mysql/v1.json            — MySQL operation permissions
+└── x-vendor/acme/v1.json           — Private extension example
+```
 
-Apache-2.0
+## Ecosystem
+
+```mermaid
+graph TB
+    subgraph varwof["varwof Ecosystem"]
+        core["core"]
+        gw["gateway"]
+        cap["capability<br/>JSON Data"]
+        reg["register<br/>Capability Registry"]
+    end
+    reg -->|loads| cap
+    core -->|validates against| reg
+    gw -->|validates against| reg
+```
+
+capability is the **capability data layer** of the varwof ecosystem. This project is a member of the [Open Invention Network](https://openinventionnetwork.com/).
+
+## Links
+
+| | |
+|---|---|
+| Homepage | https://varwof.com |
+| Community | https://varwof.org |
+| IETF Draft | [draft-wei-aic-identity-cert](https://datatracker.ietf.org/doc/draft-wei-aic-identity-cert/) |
+| License | Apache-2.0 |
+| Member | [Open Invention Network](https://openinventionnetwork.com/) |
