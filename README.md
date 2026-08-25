@@ -2,6 +2,8 @@
 
 > JSON capability declaration dataset for varwof zero-trust gateways.
 
+> ⚠️ **Preview** — Not for production use. APIs and features may change before official release.
+
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
 [中文](README_CN.md)
