@@ -1,0 +1,37 @@
+{
+  "scheme_id": "varwof/llm",
+  "name": "LLM API Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Capabilities for AI agents calling LLM inference APIs through the gateway",
+  "vendor": "varwof",
+  "product": "llm",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/llm-v1",
+  "capabilities": [
+    {
+      "id": "chat",
+      "description": "Call a chat-completion API",
+      "summary": "Send chat completion requests to an LLM backend",
+      "usage": "Agents that need LLM inference through the gateway",
+      "when_not": "Read-only data agents that never call LLM APIs",
+      "examples": [
+        "POST /v1/chat/completions"
+      ],
+      "parameters": {
+        "model": {
+          "type": "list",
+          "description": "Allowed models (empty = any)",
+          "required": false
+        },
+        "max_tokens": {
+          "type": "int",
+          "description": "Maximum output tokens",
+          "default": 2048,
+          "min": 1,
+          "max": 32768
+        }
+      }
+    }
+  ]
+}
