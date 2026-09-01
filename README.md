@@ -1,5 +1,8 @@
 # varwof-capability
 
+> ⚠️ **Preview** — Not for production use. Schemas may change before official
+> release. Contributions welcome (PRs).
+
 Capability schema data for varwof zero-trust gateways: JSON capability definitions for `std`, `varwof`, `oracle` and `x-vendor` namespaces. Consumed by the `register` module for PKCS#7-signed rules and validation.
 
 ## Structure
