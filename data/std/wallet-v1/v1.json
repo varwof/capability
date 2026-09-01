@@ -1,0 +1,130 @@
+{
+  "scheme_id": "std/wallet-v1",
+  "name": "Standard Digital Wallet Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent access to digital wallets: balance reads, transfers with amount/recipient bounds, and history queries. Any wallet backend can implement this contract through an adapter.",
+  "vendor": "std",
+  "product": "wallet-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/wallet-v1",
+  "capabilities": [
+    {
+      "id": "balance",
+      "description": "Read wallet balances for authorized assets/networks",
+      "summary": "Query balance of authorized assets on authorized networks",
+      "usage": "Agents that need to check funds before proposing actions",
+      "when_not": "Must not be granted when the agent should not know balances",
+      "examples": [
+        "GET /v1/wallet/balance?asset=USDC"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "assets"
+        ],
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    {
+      "id": "transfer",
+      "description": "Transfer funds within amount, recipient, asset and network bounds",
+      "summary": "Send authorized assets to allowlisted recipients, bounded per transaction",
+      "usage": "Agents that pay invoices, refunds, or bounties on behalf of the principal",
+      "when_not": "High-risk: never without amount/recipient/asset bounds; recipient allowlist required",
+      "examples": [
+        "POST /v1/wallet/transfer {\"asset\":\"USDC\",\"amount\":50,\"recipient\":\"0xVendor\"}"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "assets",
+          "max_amount_per_tx",
+          "recipients"
+        ],
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "max_amount_per_tx": {
+            "type": "number",
+            "minimum": 0
+          },
+          "max_amount_daily": {
+            "type": "number",
+            "minimum": 0
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    {
+      "id": "history",
+      "description": "Read transaction history",
+      "summary": "Query past transactions within scope",
+      "usage": "Agents that reconcile payments or report spend",
+      "when_not": "Not needed for agents that only initiate payments",
+      "examples": [
+        "GET /v1/wallet/history?limit=50"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "assets"
+        ],
+        "properties": {
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  ]
+}
