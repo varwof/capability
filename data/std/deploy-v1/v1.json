@@ -1,0 +1,131 @@
+{
+  "scheme_id": "std/deploy-v1",
+  "name": "Standard Deployment/Infra Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent access to deployment and infrastructure operations: apply changes only to allowlisted environments, read infra state, read only allowlisted secrets. Production environments are excluded unless explicitly granted.",
+  "vendor": "std",
+  "product": "deploy-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/deploy-v1",
+  "capabilities": [
+    {
+      "id": "deploy:apply",
+      "description": "Apply deployment changes to allowlisted environments",
+      "summary": "Deploy resources into environments/namespaces the principal authorized",
+      "usage": "Agents that release, scale, or roll back workloads",
+      "when_not": "Never granted with production in environments unless explicitly intended; resource/namespace bounds should be narrow",
+      "examples": [
+        "POST /v1/deploy/apply {\"environment\":\"staging\",\"namespace\":\"web\",\"replicas\":3}"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "environments"
+        ],
+        "properties": {
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "namespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "max_replicas": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      }
+    },
+    {
+      "id": "infra:read",
+      "description": "Read infrastructure state",
+      "summary": "Query resources/namespaces in authorized environments",
+      "usage": "Agents that inspect state before acting",
+      "when_not": "Reads outside the authorized environments must be rejected",
+      "examples": [
+        "GET /v1/infra/read?environment=staging&resource=deployments"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "environments"
+        ],
+        "properties": {
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "namespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    {
+      "id": "secret:read",
+      "description": "Read allowlisted secrets",
+      "summary": "Read only the secrets the principal authorized",
+      "usage": "Agents that need specific credentials",
+      "when_not": "Secret name allowlist required; never grant '*'",
+      "examples": [
+        "GET /v1/secrets/read?secret=api-key-staging"
+      ],
+      "params_schema": {
+        "type": "object",
+        "required": [
+          "secrets"
+        ],
+        "properties": {
+          "secrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  ]
+}
