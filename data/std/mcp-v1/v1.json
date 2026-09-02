@@ -1,7 +1,7 @@
 {
   "scheme_id": "std/mcp-v1",
   "name": "Standard MCP Tool-Access Capabilities (v1)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Standard semantics for AI-agent access to Model Context Protocol servers: only allowlisted tools may be called, per the capability parameters in the AIC.",
   "vendor": "std",
   "product": "mcp-v1",
@@ -35,6 +35,24 @@
           "max_requests_per_minute": {
             "type": "integer",
             "minimum": 1
+          },
+          "tool_args": {
+            "type": "object",
+            "description": "Per-tool argument constraints (tool name -> constraint set)",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "path_prefixes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              },
+              "additionalProperties": false
+            }
           }
         }
       }
