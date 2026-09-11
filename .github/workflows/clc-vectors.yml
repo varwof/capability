@@ -1,0 +1,59 @@
+name: clc-vectors
+
+# 向量仓自身的最小校验：JSON 可解析、schema 校验通过、条数与附录声明一致。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install jsonschema
+        run: pip install --quiet jsonschema
+
+      - name: Validate vectors against schema, and against the documented count
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema, re, sys
+          base = "data/_vectors/clc-v1"
+          vectors = json.load(open(f"{base}/vectors.json"))
+          schema = json.load(open(f"{base}/vectors.schema.json"))
+          vs = vectors["vectors"] if isinstance(vectors, dict) and "vectors" in vectors else vectors
+          jsonschema.validate(vs, schema)
+          print(f"schema OK, {len(vs)} vectors")
+
+          # The comment in this file claims the count matches the documented
+          # count, so actually check it: the normative spec states the corpus
+          # size in its appendix, and the READMEs state it too.
+          spec = open("docs/capability-language-core-v1.md").read()
+          m = re.search(r"\*\*Total: (\d+) vectors\*\*", spec)
+          if not m:
+              sys.exit("spec appendix does not state '**Total: N vectors**'")
+          claimed = int(m.group(1))
+          if len(vs) != claimed:
+              sys.exit(f"corpus has {len(vs)} vectors but the spec appendix claims {claimed}")
+          for path in ("README.md", "README_CN.md", "data/_vectors/clc-v1/README.md"):
+              text = open(path).read()
+              for pat in (r"\*\*(\d+) conformance vectors\*\*", r"\*\*(\d+) 条一致性向量\*\*", r"\*\*(\d+)\*\* vectors"):
+                  mm = re.search(pat, text)
+                  if mm and int(mm.group(1)) != len(vs):
+                      sys.exit(f"{path} claims {mm.group(1)} vectors, corpus has {len(vs)}")
+          print(f"documented count matches: {claimed}")
+          PY
+
+      - name: Property cases are reproducible
+        run: |
+          python3 scripts/gen-property-cases.py --out /tmp/property-cases.json
+          diff -u data/_vectors/clc-v1/property-cases.json /tmp/property-cases.json \
+            || (echo "property-cases.json is stale: re-run scripts/gen-property-cases.py"; exit 1)
+
+      - name: OCMP offline vectors (coverage + vocabulary)
+        run: python3 scripts/check-offline-vectors.py

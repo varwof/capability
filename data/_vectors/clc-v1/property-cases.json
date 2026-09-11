@@ -1,0 +1,9703 @@
+{
+  "_meta": {
+    "title": "CLC-v1 intersection property cases",
+    "principle": "P11 — composition narrows only",
+    "spec_clause": "CLC-v1 §7 rules 2/5/6, §9.3 layer 10",
+    "property": "if Intersect(sources) succeeds, the result MUST be covered by every source and MUST NOT depend on the order of the sources; otherwise it MUST deny with a normative reason code and never raise",
+    "generator": "capability/scripts/gen-property-cases.py",
+    "status": "reference",
+    "count": 524
+  },
+  "cases": [
+    {
+      "id": "prop-0001",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0002",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0003",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0004",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0005",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0006",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0007",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0008",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0009",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0010",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0011",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0012",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0013",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0014",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0015",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0016",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0017",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0018",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0019",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0020",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0021",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0022",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0023",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0024",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0025",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0026",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0027",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0028",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0029",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0030",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0031",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0032",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0033",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0034",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0035",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0036",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0037",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0038",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0039",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0040",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0041",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0042",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0043",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0044",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0045",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0046",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0047",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0048",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0049",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0050",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0051",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0052",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0053",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0054",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0055",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0056",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0057",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0058",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0059",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0060",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0061",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0062",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0063",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0064",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0065",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0066",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0067",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0068",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0069",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0070",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0071",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0072",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0073",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0074",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0075",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0076",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0077",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0078",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0079",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0080",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0081",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0082",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0083",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0084",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0085",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0086",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0087",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0088",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0089",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0090",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0091",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0092",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0093",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0094",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0095",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0096",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0097",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0098",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0099",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0100",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0101",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0102",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0103",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0104",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0105",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0106",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0107",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0108",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0109",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0110",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0111",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0112",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0113",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0114",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0115",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0116",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0117",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0118",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0119",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0120",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0121",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0122",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0123",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0124",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0125",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0126",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0127",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0128",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0129",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0130",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0131",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0132",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0133",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0134",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0135",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0136",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0137",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0138",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0139",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0140",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0141",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0142",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0143",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0144",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0145",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0146",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0147",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0148",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0149",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0150",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0151",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0152",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0153",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0154",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0155",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0156",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0157",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0158",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0159",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0160",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0161",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0162",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0163",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0164",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0165",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0166",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0167",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0168",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0169",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0170",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0171",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0172",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0173",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0174",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0175",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0176",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0177",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0178",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0179",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0180",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0181",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0182",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0183",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0184",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0185",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0186",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0187",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0188",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0189",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0190",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0191",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0192",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0193",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0194",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0195",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0196",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0197",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0198",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0199",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0200",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0201",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0202",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0203",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0204",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0205",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0206",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0207",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0208",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0209",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0210",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0211",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0212",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0213",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0214",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0215",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0216",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0217",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0218",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0219",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0220",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0221",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0222",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0223",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0224",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0225",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0226",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0227",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0228",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0229",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0230",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0231",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0232",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0233",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0234",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0235",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0236",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0237",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0238",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0239",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0240",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0241",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0242",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0243",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0244",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0245",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0246",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0247",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0248",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0249",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0250",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0251",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0252",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0253",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0254",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0255",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0256",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0257",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0258",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0259",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0260",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0261",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0262",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0263",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0264",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0265",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0266",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0267",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0268",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0269",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0270",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0271",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0272",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0273",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0274",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0275",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0276",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0277",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0278",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0279",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0280",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0281",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0282",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0283",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0284",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0285",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0286",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0287",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0288",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0289",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0290",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0291",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0292",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0293",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0294",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0295",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0296",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0297",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0298",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0299",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0300",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0301",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0302",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0303",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0304",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0305",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0306",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0307",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0308",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0309",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0310",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0311",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, two param forms"
+    },
+    {
+      "id": "prop-0312",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, reversed"
+    },
+    {
+      "id": "prop-0313",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0314",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0315",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0316",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0317",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0318",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0319",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": []
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0320",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a"
+            ],
+            "limit": 100
+          }
+        }
+      ],
+      "note": "same id, identical params"
+    },
+    {
+      "id": "prop-0321",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0322",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0323",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0324",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0325",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0326",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0327",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0328",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0329",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0330",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0331",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0332",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0333",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0334",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0335",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0336",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0337",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0338",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0339",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0340",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0341",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0342",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0343",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0344",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0345",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0346",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0347",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0348",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0349",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0350",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0351",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0352",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0353",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0354",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0355",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0356",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0357",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0358",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0359",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0360",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0361",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0362",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0363",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0364",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0365",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0366",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0367",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0368",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0369",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0370",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0371",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0372",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0373",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0374",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0375",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0376",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0377",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0378",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0379",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0380",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0381",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0382",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0383",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0384",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0385",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0386",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0387",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0388",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0389",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0390",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0391",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0392",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0393",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0394",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0395",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0396",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0397",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0398",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0399",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0400",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0401",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0402",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0403",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0404",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0405",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0406",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0407",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0408",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0409",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0410",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0411",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0412",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0413",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0414",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0415",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0416",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0417",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0418",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0419",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0420",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0421",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0422",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0423",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0424",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0425",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0426",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0427",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0428",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0429",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0430",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0431",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0432",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0433",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0434",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0435",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0436",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0437",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0438",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0439",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0440",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0441",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0442",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0443",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0444",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0445",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0446",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0447",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0448",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0449",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0450",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0451",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0452",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0453",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0454",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0455",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0456",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0457",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0458",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0459",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0460",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0461",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0462",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0463",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0464",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0465",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0466",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0467",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0468",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0469",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0470",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0471",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0472",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0473",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0474",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0475",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0476",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0477",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0478",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0479",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0480",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0481",
+      "sources": [
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0482",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:admin:DDL",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0483",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0484",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0485",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0486",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0487",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT"
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0488",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT"
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0489",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0490",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0491",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0492",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0493",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0494",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0495",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*"
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0496",
+      "sources": [
+        {
+          "id": "std/database-v1:*"
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0497",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0498",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0499",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "cross id"
+    },
+    {
+      "id": "prop-0500",
+      "sources": [
+        {
+          "id": "std/database-v1:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "cross id, reversed"
+    },
+    {
+      "id": "prop-0501",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0502",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0503",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0504",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0505",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0506",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0507",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0508",
+      "sources": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0509",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0510",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0511",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0512",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0513",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0514",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0515",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0516",
+      "sources": [
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:*",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0517",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0518",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0519",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0520",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0521",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0522",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 50
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {}
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "limit": 100
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    },
+    {
+      "id": "prop-0523",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources"
+    },
+    {
+      "id": "prop-0524",
+      "sources": [
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": []
+          }
+        },
+        {
+          "id": "std/database-v1:query:INSERT",
+          "params": {
+            "tables": [
+              "a"
+            ]
+          }
+        }
+      ],
+      "note": "three sources, reversed"
+    }
+  ]
+}

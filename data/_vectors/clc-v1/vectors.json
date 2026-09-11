@@ -1,0 +1,1953 @@
+[
+  {
+    "id": "syntax-001",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "valid"
+    },
+    "derivation": "literal identifier"
+  },
+  {
+    "id": "syntax-002",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/database-v1:query:*"
+    },
+    "expect": {
+      "verdict": "valid"
+    },
+    "derivation": "trailing wildcard"
+  },
+  {
+    "id": "syntax-003",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "*:query:SELECT"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "bare * illegal"
+  },
+  {
+    "id": "syntax-004",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/database-v1:query:SEL*"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "partial segment wildcard"
+  },
+  {
+    "id": "syntax-005",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/database-v1:query:{read,write}"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "alternation not v1"
+  },
+  {
+    "id": "syntax-006",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/database-v1:query:[a-z]"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "character class not v1"
+  },
+  {
+    "id": "entail-001",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "literal match"
+  },
+  {
+    "id": "entail-002",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "trailing wildcard matches"
+  },
+  {
+    "id": "entail-003",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT:deep"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "wildcard matches multi-segment"
+  },
+  {
+    "id": "entail-004",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*"
+    },
+    "request": {
+      "id": "std/database-v1:admin:DDL"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "different_namespace"
+    },
+    "derivation": "action-class 'query' vs 'admin' under same scheme -> different namespace (scheme + class, §9.3 layer 3)"
+  },
+  {
+    "id": "entail-005",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*"
+    },
+    "request": {
+      "id": "std/database-v1:query"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "wildcard_requires_trailing_segment"
+    },
+    "derivation": "no trailing segment to match"
+  },
+  {
+    "id": "entail-006",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:INSERT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "literal_mismatch"
+    },
+    "derivation": "literal mismatch"
+  },
+  {
+    "id": "params-001",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "50 <= 100"
+  },
+  {
+    "id": "params-002",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 150
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "150 > 100"
+  },
+  {
+    "id": "params-003",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "subset of array"
+  },
+  {
+    "id": "params-004",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "b not a member of allowed set (enum)"
+  },
+  {
+    "id": "params-005",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "columns": {
+          "t": [
+            "id"
+          ]
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "columns": {
+          "t": [
+            "id",
+            "name"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "name not a member of allowed set (enum)"
+  },
+  {
+    "id": "params-006",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "grant unconstrained"
+  },
+  {
+    "id": "params-007",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "empty_bound_denies_class"
+    },
+    "derivation": "explicit empty bound denies the class"
+  },
+  {
+    "id": "params-008",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": null
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_null"
+    },
+    "derivation": "null invalid in v1"
+  },
+  {
+    "id": "intersect-001",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": [
+            "a"
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "derivation": "overlap"
+  },
+  {
+    "id": "intersect-002",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": []
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "empty_bound_denies_class"
+    },
+    "derivation": "deny-when-declared"
+  },
+  {
+    "id": "intersect-003",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "others": [
+      {
+        "id": "std/database-v1:admin:DDL"
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "no_overlap"
+    },
+    "derivation": "absent source"
+  },
+  {
+    "id": "intersect-004",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "limit": 50
+      }
+    },
+    "derivation": "tighter bound wins"
+  },
+  {
+    "id": "intersect-005",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:time:window:3600"
+        ]
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_constraints": [
+        "varwof/constraint-v1:time:window:3600"
+      ]
+    },
+    "derivation": "constraint added"
+  },
+  {
+    "id": "intersect-006",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": [
+            "b"
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "no_overlap"
+    },
+    "derivation": "no overlap"
+  },
+  {
+    "id": "decide-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "all checks pass"
+  },
+  {
+    "id": "decide-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": null,
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "no matching grant"
+  },
+  {
+    "id": "decide-003",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "unknown:constraint:type"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "unknown_constraint"
+    },
+    "derivation": "unknown constraint type"
+  },
+  {
+    "id": "decide-004",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "invalid"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_capability_id"
+    },
+    "derivation": "malformed capability_id"
+  },
+  {
+    "id": "decide-005",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "deterministic: same input twice"
+  },
+  {
+    "id": "decide-006",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 50
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "constraint violation"
+  },
+  {
+    "id": "decide-007",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_missing"
+    },
+    "derivation": "bounded grant, operation omits params"
+  },
+  {
+    "id": "decide-008",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": null
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_null"
+    },
+    "derivation": "null param value"
+  },
+  {
+    "id": "decide-009",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ],
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_missing"
+    },
+    "derivation": "bounded grant, operation has no params field at all (§6.3 step 4 fail-closed)"
+  },
+  {
+    "id": "decide-015",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9 Algorithm",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {},
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "Authorize called with an empty grant record (no id) resolves to no grant (§9 fail-closed, no exception)"
+  },
+  {
+    "id": "combined-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6+§9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "wildcard + params within bounds"
+  },
+  {
+    "id": "combined-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6+§9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 150
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "wildcard + params exceed bounds"
+  },
+  {
+    "id": "combined-003",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §7+§9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 100
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_missing"
+    },
+    "derivation": "intersection of {limit:100}/{limit:50} -> {limit:50}; operation requests only max_rows (no limit key) -> params_missing (§9.3 layer 7); no max_rows constraint is declared"
+  },
+  {
+    "id": "combined-004",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ],
+        "limit": 100
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": [
+            "a"
+          ],
+          "limit": 50
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "tables": [
+          "a"
+        ],
+        "limit": 50
+      }
+    },
+    "derivation": "two-source intersection, both narrow"
+  },
+  {
+    "id": "combined-005",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": [
+            "a"
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "empty_bound_denies_class"
+    },
+    "derivation": "empty bound in params"
+  },
+  {
+    "id": "combined-006",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "unknown:scheme:action"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "grant declares unknown scheme 'unknown' -> namespace differs from std/database-v1 -> no grant covers (§9.3 layers 3/10, collapsed in Authorize); not a constraint-type failure"
+  },
+  {
+    "id": "combined-007",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6+§9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:*",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "wildcard match but params mismatch (P4 enum)"
+  },
+  {
+    "id": "combined-008",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "others": [
+      {
+        "id": "std/database-v1:admin:DDL"
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "no_overlap"
+    },
+    "derivation": "three-source intersection, one absent"
+  },
+  {
+    "id": "combined-009",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "valid grant + valid constraint + valid op"
+  },
+  {
+    "id": "combined-010",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "not-a-valid-id"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_capability_id"
+    },
+    "derivation": "malformed id in operation"
+  },
+  {
+    "id": "combined-011",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "tables": [
+            "a"
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "empty_bound_denies_class"
+    },
+    "derivation": "delegation chain, intermediate hop declares empty bound"
+  },
+  {
+    "id": "params-009",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": 2
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "scalar member of array set"
+  },
+  {
+    "id": "params-010",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": 9
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "9 not in allowed set"
+  },
+  {
+    "id": "params-011",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          3
+        ]
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          3
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "array, every element a member"
+  },
+  {
+    "id": "params-012",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          3
+        ]
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "2 not in allowed set"
+  },
+  {
+    "id": "params-013",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          1
+        ],
+        "speed": 0.3
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": 1,
+        "speed": 0.25
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "member + number bound unaffected"
+  },
+  {
+    "id": "params-014",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": [
+          3
+        ]
+      }
+    },
+    "request": {
+      "id": "std/robot-line-v1:move:joint",
+      "params": {
+        "station": 2
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "categorical: granting 3 does not cover 1/2 (fail-open regression guard)"
+  },
+  {
+    "id": "params-015",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "columns": {
+          "t": [
+            "id",
+            "name"
+          ]
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "columns": {
+          "t": [
+            "id"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "object recursion allow direction: request element 'id' is a member of granted set ['id','name'] (§6.2 v1.1; inverse = params-005)"
+  },
+  {
+    "id": "params-016",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "raw_params": "{\"limit\":100,\"limit\":150}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_duplicate_key"
+    },
+    "derivation": "duplicate JSON key in raw request params rejected at input normalization (§6.2 step 2, §9.3 layer 2); a map decode would silently drop it"
+  },
+  {
+    "id": "params-017",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "raw_params": "{\"limit\":1e400}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "non-finite number literal 1e400 rejected at input normalization (§6.2 step 3, §9.3 layer 2); JSON cannot carry +Inf as a plain value"
+  },
+  {
+    "id": "params-018",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "raw_params": "{\"s\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_size"
+    },
+    "derivation": "params serialized form exceeds 512 bytes -> invalid_params_size (§6.2 step 4, §9.3 layer 2)"
+  },
+  {
+    "id": "params-019",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "d": 0
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "raw_params": "{\"d\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":{\"x\":0}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_size"
+    },
+    "derivation": "nesting depth 33 exceeds the depth-32 limit -> invalid_params_size (§6.2 step 4, §9.3 layer 2)"
+  },
+  {
+    "id": "revision-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §12.1",
+    "clc_revision": "CLC-1.0",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "input declares CLC-1.0; impl declares CLC-1.1, same major and 1.0 <= 1.1 -> compatible, normal evaluation (§12.1)"
+  },
+  {
+    "id": "revision-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §12.1",
+    "clc_revision": "CLC-2.0",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "unsupported_language_revision"
+    },
+    "derivation": "input declares CLC-2.0, major differs from impl's CLC-1.1 -> fail-closed unsupported_language_revision, no silent downgrade (§12.1)"
+  },
+  {
+    "id": "clinical-001",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/clinical-v1:prescribe:medication",
+      "params": {
+        "patient": "P-1001",
+        "drug-class": [
+          "narcotic"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/clinical-v1:prescribe:medication",
+      "params": {
+        "patient": "P-1001",
+        "drug-class": [
+          "narcotic",
+          "anesthetic"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "drug-class categorical allowlist: 'anesthetic' is not a member of the granted set ['narcotic'] (§9.3 layer 8); scheme std/clinical-v1 declares drug-class as an array domain"
+  },
+  {
+    "id": "clinical-002",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/clinical-v1:prescribe:medication",
+      "params": {
+        "patient": "P-1001",
+        "dose": 10
+      }
+    },
+    "request": {
+      "id": "std/clinical-v1:prescribe:medication",
+      "params": {
+        "patient": "P-1001",
+        "dose": 15
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "dose is an ordered upper bound: requested 15 > granted 10 (§9.3 layer 9)"
+  },
+  {
+    "id": "payments-001",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/payments-v1:transfer",
+      "params": {
+        "counterparty": [
+          "acme-eu",
+          "globex-asia"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/payments-v1:transfer",
+      "params": {
+        "counterparty": "paypal-ltd"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "counterparty whitelist: scalar request must be a member; 'paypal-ltd' is not in the granted allowlist (§9.3 layer 8)"
+  },
+  {
+    "id": "payments-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/payments-v1:transfer",
+      "params": {
+        "amount": 100000,
+        "currency": [
+          "USD"
+        ],
+        "counterparty": [
+          "acme-eu"
+        ]
+      },
+      "constraints": [
+        "payments:quota:daily:1000000"
+      ]
+    },
+    "request": {
+      "id": "std/payments-v1:transfer",
+      "params": {
+        "amount": 100000,
+        "currency": "USD",
+        "counterparty": "acme-eu"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "unknown_constraint"
+    },
+    "derivation": "scheme-scoped constraint type payments:quota:daily is not in the CLC v1 known set (max_rows/time:window/network:cidr) -> fail-closed unknown_constraint (§8); cumulative-daily-quota semantics recorded as CLC v2 requirement (design-notes §18), not evaluated by v1"
+  },
+  {
+    "id": "data-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/data-v1:read:dataset",
+      "params": {
+        "dataset": [
+          "public-health"
+        ],
+        "purpose": [
+          "research"
+        ],
+        "region": [
+          "cn"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/data-v1:read:dataset",
+      "params": {
+        "dataset": "public-health",
+        "purpose": "research",
+        "region": "cn"
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "purpose/region classification expressed as params (allowed-set arrays); scalar request members are within the grant -> allow; this is the CLC-v1-decidable form (§9.3 layers 3-8); the constraint-triple form data:purpose:/data:region: is recorded for CLC v2 (design-notes §18)"
+  },
+  {
+    "id": "data-002",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (v1.1)",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/data-v1:read:dataset",
+      "params": {
+        "rows": 10000
+      }
+    },
+    "request": {
+      "id": "std/data-v1:read:dataset",
+      "params": {
+        "rows": 20000
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "rows is an ordered upper bound: requested 20000 > granted 10000 (§9.3 layer 9)"
+  },
+  {
+    "id": "undeclared-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2 / §9.3 layer 7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a"
+        ],
+        "extra": true
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "undeclared_param"
+    },
+    "derivation": "key closure (P2' Plan A): request key 'extra' is not declared by the bounded grant -> deny(\"undeclared_param\") (§9.3 layer 7, request side; §6.2); an unconstrained grant would accept it"
+  },
+  {
+    "id": "undeclared-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3 layer 7",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100,
+        "rows": 10
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "rows": 10,
+        "q": 1
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_missing"
+    },
+    "derivation": "layer-7 resolution order: granted key 'limit' is omitted (params_missing) and request key 'q' is undeclared; the missing-key check resolves before the undeclared-key check → params_missing wins"
+  },
+  {
+    "id": "params-020",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 input normalization",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "raw_params": "{\"s\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "serialized params length is exactly the 512-byte limit -> accepted (positive boundary; params-018 is the negative side)"
+  },
+  {
+    "id": "params-021",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 input normalization",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "raw_params": "{\"s\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "nesting depth is exactly the limit (31 nested arrays inside the top-level object = depth 32), counting the outermost object as one level -> accepted (params-019 is the negative side)"
+  },
+  {
+    "id": "decide-016",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3 pre-check",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {},
+    "request": {},
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "absent/empty effective grant short-circuits before any layer, even when the operation is also absent -> capability_not_authorized (§9.3 pre-check)"
+  },
+  {
+    "id": "decide-017",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3 layer 1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {},
+    "expect": {
+      "verdict": "deny",
+      "reason": "missing_capability_id"
+    },
+    "derivation": "operation has no id -> layer 1 (missing_capability_id); previously implemented and agreed by both runners but uncovered by the corpus"
+  },
+  {
+    "id": "intersect-007",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 5",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": null,
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "absent_source"
+    },
+    "derivation": "intersection over zero sources -> fail-closed absent_source (§7 rule 5); the runner now expresses the zero-source case"
+  },
+  {
+    "id": "intersect-008",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 6",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {}
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "limit": 50
+      }
+    },
+    "derivation": "a source with an empty params object declares no constraint and MUST NOT displace the accumulated bound (bounded then empty)"
+  },
+  {
+    "id": "intersect-009",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 6",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "limit": 50
+      }
+    },
+    "derivation": "same as intersect-008 with the sources reversed: the merged result MUST NOT depend on source order (empty then bounded)"
+  },
+  {
+    "id": "intersect-010",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:*",
+        "params": {}
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {}
+    },
+    "derivation": "two sources with a present-but-empty params object and different identifiers: the narrower identifier wins. The identifier comparison must be params-free — routing it through Entails makes a bounded grant meet a params-less operation and wrongly fail closed (§6.3 step 4). Both implementations reported no_overlap before 2026-09-11."
+  },
+  {
+    "id": "params-022",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": true
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": 1
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "boolean is exact and is NOT a number: 1 must not satisfy a granted true (§6.2 boolean note). Python's bool-is-int made this an allow (fail-open) until 2026-09-11."
+  },
+  {
+    "id": "params-023",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": true
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": true
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "positive side of params-022: true matches true by exact equality"
+  },
+  {
+    "id": "params-024",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §9.3 layer 6",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": null
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_null"
+    },
+    "derivation": "layer 6 (null) precedes layer 7 (presence): a grant carrying null reports invalid_params_null even when the operation omits params (§6.3 layer-6 note). Go reported params_missing until 2026-09-11."
+  },
+  {
+    "id": "decide-018",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "*:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "wildcard-shape detection precedes the base grammar, and layer 1 propagates the specific code (unsupported_wildcard, not invalid_capability_id). Go collapsed it until 2026-09-11."
+  },
+  {
+    "id": "params-025",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 item 5",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "raw_params": "{\"s\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"s\":\"dup\"}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_size"
+    },
+    "derivation": "multi-fault: serialized size over 512 B AND a duplicate key. Item 5 fixes the order — size/depth (4) precedes duplicate keys (2), so the resolved code is invalid_params_size. The TS single-pass parser reported the duplicate until it was made two-pass (2026-09-11)."
+  },
+  {
+    "id": "params-026",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 item 5",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "raw_params": "{\"n\":1e400,\"s\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_size"
+    },
+    "derivation": "multi-fault: serialized size over 512 B AND a non-finite number literal. Size (4) precedes number shape (3) → invalid_params_size."
+  },
+  {
+    "id": "params-027",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 item 5",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "a": 1
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "a": 1
+      }
+    },
+    "raw_params": "{\"a\":1,\"a\":2,\"n\":1e400}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_duplicate_key"
+    },
+    "derivation": "multi-fault, under the size limit: duplicate keys (2) precede number shape (3) → invalid_params_duplicate_key."
+  }
+]

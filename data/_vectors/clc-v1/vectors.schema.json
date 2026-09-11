@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://varwof.com/schemas/clc-v1/vectors.schema.json",
+  "title": "CLC-v1 test vectors",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "kind",
+      "spec_clause",
+      "clc_revision",
+      "conformance_class",
+      "expect",
+      "derivation"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*-[0-9]{3}$",
+        "description": "Unique vector identifier (e.g. syntax-001, entail-001)"
+      },
+      "kind": {
+        "type": "string",
+        "enum": [
+          "syntax",
+          "entail",
+          "intersect",
+          "decide"
+        ]
+      },
+      "spec_clause": {
+        "type": "string",
+        "description": "CLC-v1 section reference (e.g. 'CLC-v1 §2')"
+      },
+      "clc_revision": {
+        "type": "string",
+        "pattern": "^CLC-[0-9]+\\.[0-9]+$",
+        "description": "CLC language revision the vector declares (§12.1). A revision outside the implementation's compatible range MUST resolve to deny('unsupported_language_revision') — fail-closed, no silent downgrade."
+      },
+      "conformance_class": {
+        "type": "string",
+        "description": "Conformance class exercised by the vector (all vectors are 'CLC-A'; no structural-beware evidence vectors exist yet, so there is no CLC-B/C today)."
+      },
+      "raw_params": {
+        "type": "string",
+        "description": "Raw JSON object text of the request (operation) params, for inputs whose meaning cannot survive a decoded map: duplicate JSON keys, non-finite or over-precision numbers, and size/depth overruns. Runners MUST validate this at the input boundary (§6.2.1, §9.3 layer 2) and short-circuit to deny(<code>) when invalid.",
+        "minLength": 1
+      },
+      "grant": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "Grant under test. null = no grant available; {} = empty grant record. Both are legitimate fail-closed inputs and MUST resolve to deny(\"capability_not_authorized\") per CLC-v1 §9 (layer 10). For kind=intersect, `null` with no `others` is the zero-source case of §7 rule 5 and MUST resolve to deny(\"absent_source\").",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "params": {},
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "request": {
+        "type": "object",
+        "description": "Operation under test (for entail/decide vectors). An operation with no `id` ({} or an omitted field) is a legitimate fail-closed input and MUST resolve to deny(\"missing_capability_id\") per CLC-v1 §9.3 layer 1.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "params": {}
+        }
+      },
+      "others": {
+        "type": "array",
+        "description": "Additional grant sources (for intersect vectors)",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "params": {},
+            "constraints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "expect": {
+        "type": "object",
+        "required": [
+          "verdict"
+        ],
+        "properties": {
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "deny",
+              "valid",
+              "invalid"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result_params": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "For kind=intersect: the merged grant's params. Runners MUST compare this — a runner that only compares the verdict is not conforming."
+          },
+          "result_constraints": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "For kind=intersect: the merged grant's constraints (order-insensitive)."
+          }
+        }
+      },
+      "derivation": {
+        "type": "string",
+        "description": "One-line derivation for human review"
+      }
+    },
+    "additionalProperties": false
+  }
+}

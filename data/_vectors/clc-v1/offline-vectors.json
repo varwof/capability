@@ -1,0 +1,210 @@
+{
+  "_meta": {
+    "title": "OCMP offline fail-closed vectors",
+    "profile": "CLCV1/OCMP v0 (offline-capability-manifest-profile-v0.md)",
+    "status": "reference only",
+    "date": "2026-09-11",
+    "note": "Word-of-agreement class set for OCMP R2-R7 (all 11 §3 reason codes). These cases are NOT part of CLC-A/B authorization semantics (OCMP §8); they are fail-closed reference inputs for offline evaluation. Every entry is checked against the OCMP rules (NAM §3): missing/bad input -> deny, never raise."
+  },
+  "vectors": [
+    {
+      "id": "offline-001",
+      "ocmp_class": "trust_anchor_missing",
+      "ocmp_level": "OCMP-1",
+      "rule": "R2",
+      "scenario": "Principal/agent chain does not chain to a configured trust anchor",
+      "inputs": {
+        "trust_anchor": null,
+        "credential": "present, self-issued"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "trust_anchor_missing"
+      },
+      "derivation": "input marked MUST in OCMP §2 is unreadable -> deny (R2)"
+    },
+    {
+      "id": "offline-002",
+      "ocmp_class": "status_snapshot_missing",
+      "ocmp_level": "OCMP-1",
+      "rule": "R3",
+      "scenario": "No revocation/status snapshot available at eval time",
+      "inputs": {
+        "status_snapshot": null,
+        "grant_lifetime": "still valid"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "status_snapshot_missing"
+      },
+      "derivation": "a stale/missing snapshot MUST NOT be treated as 'no revocations' (R3)"
+    },
+    {
+      "id": "offline-003",
+      "ocmp_class": "status_snapshot_expired",
+      "ocmp_level": "OCMP-1",
+      "rule": "R3",
+      "scenario": "Trusted local time t > valid_until (snapshot out of freshness window)",
+      "inputs": {
+        "status_snapshot": {
+          "as_of": 1000,
+          "valid_until": 2000
+        },
+        "trusted_time": 2100
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "status_snapshot_expired"
+      },
+      "derivation": "t > valid_until -> deny; expiry is not an availability fallback (R3)"
+    },
+    {
+      "id": "offline-004",
+      "ocmp_class": "status_snapshot_rollback",
+      "ocmp_level": "OCMP-1",
+      "rule": "R3",
+      "scenario": "Snapshot version lower than the last accepted one",
+      "inputs": {
+        "last_accepted_version": 5,
+        "incoming_version": 4
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "status_snapshot_rollback"
+      },
+      "derivation": "version MUST be monotonic; a lower version MUST be rejected (R3)"
+    },
+    {
+      "id": "offline-005",
+      "ocmp_class": "status_snapshot_expired",
+      "ocmp_level": "OCMP-1",
+      "rule": "R3",
+      "scenario": "Trusted local time t < as_of (not-yet-valid snapshot)",
+      "inputs": {
+        "status_snapshot": {
+          "as_of": 3000,
+          "valid_until": 4000
+        },
+        "trusted_time": 2000
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "status_snapshot_expired"
+      },
+      "derivation": "t < as_of -> deny (OCMP §8 'not-yet-valid'); same code as expired (R3)"
+    },
+    {
+      "id": "offline-006",
+      "ocmp_class": "revoked",
+      "ocmp_level": "OCMP-1",
+      "rule": "R4",
+      "scenario": "Grant within its lifetime but listed in the snapshot as revoked",
+      "inputs": {
+        "credential_lifetime": "still valid",
+        "snapshot_entry": "revoked"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "revoked"
+      },
+      "derivation": "snapshot revocation overrides remaining lifetime (R4)"
+    },
+    {
+      "id": "offline-007",
+      "ocmp_class": "replay_detected",
+      "ocmp_level": "OCMP-2",
+      "rule": "R5",
+      "scenario": "Operation reuses an already-consumed counter value / nonce",
+      "inputs": {
+        "counter_value": 7,
+        "last_consumed": 7
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "replay_detected"
+      },
+      "derivation": "each accepted operation consumes exactly one counter value; reuse MUST be denied (R5)"
+    },
+    {
+      "id": "offline-008",
+      "ocmp_class": "replay_state_invalid",
+      "ocmp_level": "OCMP-2",
+      "rule": "R5",
+      "scenario": "Counter goes backwards, or the replay state is unwritable/corrupt",
+      "inputs": {
+        "counter_value": 3,
+        "last_consumed": 9
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "replay_state_invalid"
+      },
+      "derivation": "a backwards counter MUST be denied (R5)"
+    },
+    {
+      "id": "offline-009",
+      "ocmp_class": "fact_unavailable",
+      "ocmp_level": "OCMP-3",
+      "rule": "R6",
+      "scenario": "Scheme-declared required local fact (e.g. cell occupancy) unreadable",
+      "inputs": {
+        "required_fact": "safety_plc/cell_unoccupied",
+        "fact_source": "unreachable"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "fact_unavailable"
+      },
+      "derivation": "facts MUST NOT be invented, defaulted, or cached past scheme freshness (R6)"
+    },
+    {
+      "id": "offline-010",
+      "ocmp_class": "clock_unsynchronized",
+      "ocmp_level": "OCMP-3",
+      "rule": "R7",
+      "scenario": "Wall-clock offset from last trusted sync exceeds scheme tolerance",
+      "inputs": {
+        "offset": "3h",
+        "tolerance": "5min"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "clock_unsynchronized"
+      },
+      "derivation": "untrusted time source MUST deny rather than guess (R7)"
+    },
+    {
+      "id": "offline-011",
+      "ocmp_class": "local_policy_missing",
+      "ocmp_level": "OCMP-3",
+      "rule": "R2",
+      "scenario": "Scheme-declared local policy (e.g. cell gate) absent at eval time",
+      "inputs": {
+        "local_policy": null,
+        "grant": "otherwise valid"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "local_policy_missing"
+      },
+      "derivation": "required local policy is a MUST input; unreadable -> deny (R2)"
+    },
+    {
+      "id": "offline-012",
+      "ocmp_class": "capability_not_authorized",
+      "ocmp_level": "OCMP-1",
+      "rule": "R2",
+      "scenario": "No grant in the manifest covers the request (or the grant set is absent/empty)",
+      "inputs": {
+        "grant": "absent or empty",
+        "credential": "present, verified",
+        "status_snapshot": "present, within window"
+      },
+      "expect": {
+        "verdict": "deny",
+        "reason": "capability_not_authorized"
+      },
+      "derivation": "OCMP §3 R2 first row: no grant covers the request -> deny with the CLC-v1 §9.3 layer 10 code"
+    }
+  ]
+}
