@@ -1,0 +1,160 @@
+{
+  "scheme_id": "std/data-v1",
+  "name": "Standard Data & Privacy Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent access to datasets with privacy-relevant classification: which read/export/join/train/delete capabilities are authorized, scoped by dataset/column allowlists, row upper bounds (scalar number UPPER BOUNDS per CLC-v1 §6.2 (v1.1)) and purpose/region classification (allowed-set ARRAYS). Scheme-scoped constraint types declared by this scheme: data:purpose:<v> (purpose limitation), data:region:<v> (data residency/cross-border). Per CLC-v1 §8, unknown constraint types fail closed with deny(\"unknown_constraint\").",
+  "vendor": "std",
+  "product": "data-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/data-v1",
+  "note": "IMPORTANT: This authorization layer defines the OPERATION BOUNDARY for an AI agent accessing data. It is NOT a privacy compliance certification: purpose limitation, retention, consent and cross-border transfer obligations remain with the data controller. Classification parameters (purpose/region) reduce but do not remove compliance duties.",
+  "capabilities": [
+    {
+      "id": "read:dataset",
+      "description": "Read rows from an allowlisted dataset",
+      "summary": "Query a dataset within column allowlist, row bound, and purpose/region scope",
+      "usage": "Analytical reads with declared purpose and allowed regions",
+      "when_not": "Must not grant without a bounded scope; dataset/columns/purpose/region should be constrained",
+      "examples": ["dataset=[public-health], columns=[id,year,value], rows=10000, purpose=[research], region=[cn]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["public-health", "sales-aggregate", "transport-ops"] },
+            "minItems": 1
+          },
+          "columns": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "rows": { "type": "number", "minimum": 1, "maximum": 100000 },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["research", "operational", "erasure", "training"] },
+            "minItems": 1
+          },
+          "region": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["cn", "eu", "us", "global"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "export",
+      "description": "Export an allowlisted dataset slice",
+      "summary": "Materialize a bounded, scoped export of a dataset",
+      "usage": "Deliverables; data sharing with declared purpose",
+      "when_not": "Never grant without purpose and region declaration; row bound required",
+      "examples": ["dataset=[sales-aggregate], rows=1000, purpose=[research], region=[eu]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["public-health", "sales-aggregate", "transport-ops"] },
+            "minItems": 1
+          },
+          "columns": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "rows": { "type": "number", "minimum": 1, "maximum": 50000 },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["research", "operational", "erasure", "training"] },
+            "minItems": 1
+          },
+          "region": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["cn", "eu", "us", "global"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "join",
+      "description": "Join allowlisted datasets",
+      "summary": "Combine datasets whose allowlists overlap the join scope",
+      "usage": "Cross-dataset analytics for a declared purpose",
+      "when_not": "Joins multiply exposure: only grant when the join column set is explicit",
+      "examples": ["dataset=[public-health,sales-aggregate], purpose=[research], region=[cn]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["public-health", "sales-aggregate", "transport-ops"] },
+            "minItems": 1
+          },
+          "columns": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["research", "operational", "erasure", "training"] },
+            "minItems": 1
+          },
+          "region": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["cn", "eu", "us", "global"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "train:on",
+      "description": "Train a model on an allowlisted dataset",
+      "summary": "Use allowed datasets for model training runs with declared purpose",
+      "usage": "ML training; purpose must be training/research",
+      "when_not": "Never grant on production personal data without explicit erasure/purpose controls",
+      "examples": ["dataset=[transport-ops], rows=50000, purpose=[training], region=[cn]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["public-health", "sales-aggregate", "transport-ops"] },
+            "minItems": 1
+          },
+          "rows": { "type": "number", "minimum": 1, "maximum": 100000 },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["research", "operational", "erasure", "training"] },
+            "minItems": 1
+          },
+          "region": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["cn", "eu", "us", "global"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "delete:subject",
+      "description": "Delete a data subject's records from an allowlisted dataset",
+      "summary": "Erasure request execution scoped to a dataset and declared purpose",
+      "usage": "Right-to-erasure fulfillment",
+      "when_not": "Irreversible: must require audit and normally a separate erasure approval",
+      "examples": ["dataset=[public-health], purpose=[erasure]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["public-health", "sales-aggregate", "transport-ops"] },
+            "minItems": 1
+          },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["research", "operational", "erasure", "training"] },
+            "minItems": 1
+          },
+          "region": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["cn", "eu", "us", "global"] },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "scheme_id": "std/payments-v1",
+  "name": "Standard Payments Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent money movement and account operations: which transfer/payout/account/kyc/refund/limit capabilities are authorized, their amount ceilings (scalar number UPPER BOUNDS per CLC-v1 §6.2 (v1.1)) and allowlists (currency, counterparty, account = allowed-set ARRAYS). Scheme-scoped constraint types declared by this scheme: payments:quota:daily:<n> (cumulative daily quota). NOTE per CLC-v1 §8, unknown constraint types fail closed with deny(\"unknown_constraint\"); CLC v1 decides single operations only and does not accumulate spend across requests.",
+  "vendor": "std",
+  "product": "payments-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/payments-v1",
+  "note": "IMPORTANT: This authorization layer defines the OPERATION BOUNDARY for an AI agent moving money. It is NOT an anti-fraud, risk, or clearing/settlement mechanism and does not replace the financial institution's own compliance controls (AML/CFT, sanctions, fraud detection, reconciliation). Allows authorize *whether* an operation may run today's system; risks and compliance remain with the financial institution.",
+  "capabilities": [
+    {
+      "id": "transfer",
+      "description": "Transfer funds to an allowlisted counterparty",
+      "summary": "Move money within amount ceiling, currency and counterparty allowlist",
+      "usage": "Invoice payment, commission, refund execution by agents",
+      "when_not": "Must not grant without amount ceiling, currency set, and counterparty allowlist",
+      "examples": ["amount=100000, currency=[USD], counterparty=[acme-eu]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0, "maximum": 1000000 },
+          "currency": { "type": "array", "items": { "type": "string", "enum": ["USD", "EUR", "CNY"] }, "minItems": 1 },
+          "counterparty": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "account": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "payout",
+      "description": "Initiate a payout to an external allowlisted counterparty",
+      "summary": "Disbursement with amount ceiling and counterparty allowlist",
+      "usage": "Vendor/creator payouts",
+      "when_not": "High-value: must always carry a counterparty allowlist and bounded amount",
+      "examples": ["amount=50000, currency=[EUR], counterparty=[globex-asia]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0, "maximum": 500000 },
+          "currency": { "type": "array", "items": { "type": "string", "enum": ["USD", "EUR", "CNY"] }, "minItems": 1 },
+          "counterparty": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "account": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "account:open",
+      "description": "Open an account on an allowlisted account product",
+      "summary": "Create an account of an allowed type",
+      "usage": "Agent-assisted onboarding for approved product lines",
+      "when_not": "Must not grant unapproved account classes or bypass KYC gates",
+      "examples": ["account=[checking]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "account": { "type": "array", "items": { "type": "string", "enum": ["checking", "savings"] }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "kyc:read",
+      "description": "Read KYC status for allowlisted accounts",
+      "summary": "Check KYC verification state before money movement",
+      "usage": "Pre-transfer verification step",
+      "when_not": "Compliance gate: must only be granted after the counterparty KYC is verified",
+      "examples": ["account=[acme-eu]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "account": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "refund",
+      "description": "Refund an allowlisted counterparty",
+      "summary": "Reverse a payment within amount ceiling and counterparty allowlist",
+      "usage": "Agent-led refunds on approved transactions",
+      "when_not": "Must not grant refunds beyond the original transaction amount",
+      "examples": ["amount=800, currency=[USD], counterparty=[acme-eu]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number", "minimum": 0, "maximum": 10000 },
+          "currency": { "type": "array", "items": { "type": "string", "enum": ["USD", "EUR", "CNY"] }, "minItems": 1 },
+          "counterparty": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "limit:set",
+      "description": "Adjust a spending limit on an allowlisted account",
+      "summary": "Lower (or raise within cap) limits for an account",
+      "usage": "Treasury agents tuning account daily/spend limits",
+      "when_not": "Break-glass: raising limits should require human approval and audit",
+      "examples": ["account=[acme-eu], amount=100000"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "account": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 64 }, "minItems": 1 },
+          "amount": { "type": "number", "minimum": 0, "maximum": 1000000 }
+        }
+      }
+    }
+  ]
+}

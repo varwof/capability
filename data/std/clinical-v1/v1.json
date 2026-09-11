@@ -1,0 +1,162 @@
+{
+  "scheme_id": "std/clinical-v1",
+  "name": "Standard Clinical Information-System Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent operations against a clinical information system: which record/ordering/prescribing/administering capabilities are authorized, and their parameter bounds (dose ceiling) and allowed sets (department, ward, drug class, patient pseudonym). Categorical identifiers are encoded per CLC-v1 §6.2 (v1.1) as allowed-set ARRAYS in grants: {\"drug-class\":[\"narcotic\"]} grants ONLY narcotic-class medication. Ordered quantities are encoded as scalar number UPPER BOUNDS: {\"dose\":10}. Scheme-scoped constraint types declared by this scheme: clinical:quorum:2 (high-risk dual-person confirmation). Unknown constraint types fail closed with deny(\"unknown_constraint\") per CLC-v1 §8.",
+  "vendor": "std",
+  "product": "clinical-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/clinical-v1",
+  "note": "IMPORTANT: This authorization layer defines the OPERATION BOUNDARY for an AI agent inside a clinical information system. It is NOT a clinical decision mechanism, does not replace prescription review, medication administration management, or medical-safety regulation, and does not constitute a medical device or a clinical functional-safety measure. It carries NO patient identity data; patient references are grant-scoped pseudonyms only, kept to the minimum necessary.",
+  "capabilities": [
+    {
+      "id": "read:record",
+      "description": "Read a patient clinical record",
+      "summary": "List/read records under a grant-scoped patient pseudonym and department",
+      "usage": "Clinical summary, medication reconciliation",
+      "when_not": "Must not be granted with broad department sets or real patient identifiers",
+      "examples": ["patient=P-1001, department=[icu]"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient"],
+        "properties": {
+          "patient": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 64,
+            "description": "grant-scoped pseudonym/internal ID only; never real identity data"
+          },
+          "department": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["icu", "oncology", "emergency", "cardiology", "administrative"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "order:lab",
+      "description": "Order a laboratory test",
+      "summary": "Create a lab order for a grant-scoped patient in a department/ward",
+      "usage": "Standard lab panels ordered by agents on behalf of clinical staff",
+      "when_not": "Must not be granted without an explicit department and ward allowlist",
+      "examples": ["patient=P-1001, department=[icu], ward=[ward-a]"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient"],
+        "properties": {
+          "patient": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "department": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["icu", "oncology", "emergency", "cardiology", "administrative"] },
+            "minItems": 1
+          },
+          "ward": { "type": "array", "items": { "type": "string", "enum": ["ward-a", "ward-b", "ward-c"] }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "order:imaging",
+      "description": "Order an imaging study",
+      "summary": "Create an imaging order within department/ward bounds",
+      "usage": "Radiology orders by agents under supervision",
+      "when_not": "Must not grant broad ward coverage; imaging is high-cost and high-attention",
+      "examples": ["patient=P-1001, department=[emergency], ward=[ward-a]"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient"],
+        "properties": {
+          "patient": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "department": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["icu", "oncology", "emergency", "cardiology", "administrative"] },
+            "minItems": 1
+          },
+          "ward": { "type": "array", "items": { "type": "string", "enum": ["ward-a", "ward-b", "ward-c"] }, "minItems": 1 }
+        }
+      }
+    },
+    {
+      "id": "prescribe:medication",
+      "description": "Prescribe a medication (HIGH-RISK)",
+      "summary": "Create a prescription within drug-class allowlist and dose ceiling",
+      "usage": "Medication orders; every grant MUST constrain drug-class and dose",
+      "when_not": "HIGH-RISK: narcotic/psychotropic classes must be single-class grants; dose must always be bounded; grants must normally carry clinical:quorum:2",
+      "examples": ["patient=P-1001, drug-class=[narcotic], dose=10"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient", "drug-class", "dose"],
+        "properties": {
+          "patient": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "drug-class": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["general", "narcotic", "psychotropic"] },
+            "minItems": 1
+          },
+          "dose": { "type": "number", "minimum": 0, "maximum": 1000 }
+        }
+      }
+    },
+    {
+      "id": "administer:infusion",
+      "description": "Administer an infusion (HIGH-RISK)",
+      "summary": "Authorize infusion administration with dose ceiling and ward/class bounds",
+      "usage": "Infusion start for an in-patient under agent guidance",
+      "when_not": "HIGH-RISK: always requires bounded dose, single ward, and normally clinical:quorum:2",
+      "examples": ["patient=P-1001, ward=[ward-a], drug-class=[general], dose=500"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient", "ward", "drug-class", "dose"],
+        "properties": {
+          "patient": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "ward": { "type": "array", "items": { "type": "string", "enum": ["ward-a", "ward-b", "ward-c"] }, "minItems": 1 },
+          "drug-class": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["general", "narcotic", "psychotropic"] },
+            "minItems": 1
+          },
+          "dose": { "type": "number", "minimum": 0, "maximum": 2000 }
+        }
+      }
+    },
+    {
+      "id": "write:note",
+      "description": "Write a clinical note",
+      "summary": "Append a structured note to a grant-scoped patient record",
+      "usage": "Agent-drafted progress/op notes for review",
+      "when_not": "Must not be granted for unsigned or unaudited note streams",
+      "examples": ["patient=P-1001, department=[cardiology]"],
+      "params_schema": {
+        "type": "object",
+        "required": ["patient"],
+        "properties": {
+          "patient": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "department": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["icu", "oncology", "emergency", "cardiology", "administrative"] },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "query:epidemiology",
+      "description": "Query de-identified epidemiology data",
+      "summary": "Aggregate queries over de-identified records within department bounds",
+      "usage": "Outbreak trends, quality dashboards",
+      "when_not": "Must never be granted with patient-scoped parameters; only aggregate de-identified scopes",
+      "examples": ["department=[icu,emergency]"],
+      "params_schema": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["icu", "oncology", "emergency", "cardiology", "administrative"] },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}

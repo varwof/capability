@@ -1,0 +1,178 @@
+{
+  "scheme_id": "std/robot-line-v1",
+  "name": "Standard Industrial Robot Line Capabilities (v1)",
+  "version": "1.0.0",
+  "description": "Standard semantics for AI-agent control of industrial robot stations on a production line: which station may be actuated, which motion/parameter operations are allowed, and the parameter bounds (speed, angle, batch) that the principal authorized. Stations are categorical identifiers, encoded per CLC-v1 §6.2 (v1.1) as an allowed-set ARRAY in grants: {\"station\":[3]} grants ONLY station 3 (NOT 1 or 2). Operations may send a scalar station, resolved as set membership.",
+  "vendor": "std",
+  "product": "robot-line-v1",
+  "author": "varwof (open ecosystem)",
+  "license": "Apache-2.0",
+  "homepage": "https://varwof.com/register/docs/robot-line-v1",
+  "note": "IMPORTANT: AIC/CLC authorize *who may command what*, they are not a functional-safety mechanism. E-stop, safety PLC, light curtains and interlocks (IEC 61508 / ISO 13849 / GB 11291) MUST remain independent of this authorization layer.",
+  "capabilities": [
+    {
+      "id": "start",
+      "description": "Start a station cycle",
+      "summary": "Begin normal production on the named station",
+      "usage": "Operator-initiated cycle start",
+      "when_not": "Must not be granted when the station is in maintenance or a human is inside the cell",
+      "examples": ["station=3, cycle_start"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "batch": { "type": "integer", "minimum": 1, "maximum": 10000 }
+        }
+      }
+    },
+    {
+      "id": "stop",
+      "description": "Stop a station cycle",
+      "summary": "Orderly stop of the named station",
+      "usage": "Operator or supervisor stop",
+      "when_not": "Emergency stop is a safety function and MUST NOT be modeled here",
+      "examples": ["station=3, cycle_stop"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station"],
+        "properties": { "station": { "type": "integer", "minimum": 1, "maximum": 64 } }
+      }
+    },
+    {
+      "id": "move:joint",
+      "description": "Joint-space motion",
+      "summary": "Move a single joint on the named station within angle/speed bounds",
+      "usage": "Jogging, teaching, recovery moves",
+      "when_not": "Must not be granted with unbounded speed in a cell with human access",
+      "examples": ["station=3, joint=2, angle=45.0, speed=0.2"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "joint", "angle", "speed"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "joint": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "angle": { "type": "number", "minimum": -360, "maximum": 360 },
+          "speed": { "type": "number", "minimum": 0, "maximum": 2.0 }
+        }
+      }
+    },
+    {
+      "id": "move:linear",
+      "description": "Cartesian linear motion",
+      "summary": "Move the tool center point linearly within the cell envelope",
+      "usage": "Pick/place, welding approach",
+      "when_not": "Must not be granted without a cell-envelope bound (x/y/z)",
+      "examples": ["station=3, x=120.0, y=-40.0, z=300.0, speed=0.15"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "x", "y", "z", "speed"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" },
+          "speed": { "type": "number", "minimum": 0, "maximum": 2.0 }
+        }
+      }
+    },
+    {
+      "id": "set:speed",
+      "description": "Set station speed ceiling",
+      "summary": "Change the maximum motion speed allowed for the station",
+      "usage": "Supervisor reduces speed for a shift or a sensitive batch",
+      "when_not": "Must not be granted to raise speed above the safety-rated limit",
+      "examples": ["station=3, max_speed=0.5"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "max_speed"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "max_speed": { "type": "number", "minimum": 0, "maximum": 2.0 }
+        }
+      }
+    },
+    {
+      "id": "set:recipe",
+      "description": "Select a production recipe",
+      "summary": "Bind the station to an approved process recipe identifier",
+      "usage": "Changeover between products",
+      "when_not": "Must not be granted for unapproved recipe ids",
+      "examples": ["station=3, recipe_id=WELD-A17"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "recipe_id"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "recipe_id": { "type": "string", "maxLength": 64 }
+        }
+      }
+    },
+    {
+      "id": "set:trajectory",
+      "description": "Upload a motion trajectory",
+      "summary": "Replace the station trajectory with an approved point list",
+      "usage": "Process engineer tuning during a changeover",
+      "when_not": "Must not be granted while the cell is running with humans present",
+      "examples": ["station=3, points=[...], speed=0.1"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "points", "speed"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "points": { "type": "array", "items": { "type": "object" }, "maxItems": 512 },
+          "speed": { "type": "number", "minimum": 0, "maximum": 2.0 }
+        }
+      }
+    },
+    {
+      "id": "tune:params",
+      "description": "Tune controller parameters",
+      "summary": "Adjust controller gains/offsets within engineering bounds",
+      "usage": "Process engineer commissioning",
+      "when_not": "Must not be granted while the station is in production",
+      "examples": ["station=3, param=Kp, value=0.35"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "param", "value"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "param": { "type": "string", "maxLength": 32 },
+          "value": { "type": "number" }
+        }
+      }
+    },
+    {
+      "id": "maintenance:enter",
+      "description": "Put a station into maintenance mode",
+      "summary": "Enter maintenance state; production capabilities are suspended",
+      "usage": "Maintenance staff, normally with step-up approval",
+      "when_not": "Must not be granted without an audit trail",
+      "examples": ["station=3, maintenance_enter"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "reason_code": { "type": "string", "maxLength": 64 }
+        }
+      }
+    },
+    {
+      "id": "override:guard",
+      "description": "Break-glass override of a guard interlock",
+      "summary": "Exceptional override; requires strong audit and post-hoc review",
+      "usage": "Only for maintenance with two-person confirmation",
+      "when_not": "Must never be granted silently; MUST be break-glass with supervisor approval",
+      "examples": ["station=3, override=guard, approval=supervisor"],
+      "params_schema": {
+        "type": "object",
+        "required": ["station", "approval"],
+        "properties": {
+          "station": { "type": "array", "items": { "type": "integer", "minimum": 1, "maximum": 64 }, "minItems": 1 },
+          "approval": { "type": "string", "enum": ["supervisor", "safety-officer"] }
+        }
+      }
+    }
+  ]
+}
