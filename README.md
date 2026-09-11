@@ -1,5 +1,8 @@
 # varwof-capability
 
+> ⭐ Like this repo? Give a star to the flagship one:
+> [![GitHub stars](https://img.shields.io/github/stars/varwof/core?style=social&label=varwof/core)](https://github.com/varwof/core)
+
 > JSON capability declaration dataset for varwof zero-trust gateways.
 
 > ⚠️ **Preview** — Not for production use. APIs and features may change before official release.
