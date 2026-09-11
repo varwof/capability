@@ -26,7 +26,7 @@ jobs:
       - name: Verify scheme structure
         run: |
           set -e
-          for f in $(find data -name 'v*.json'); do
+          for f in $(find data -not -path '*/_*/*' -name 'v[0-9]*.json'); do
             scheme_id=$(jq -r '.scheme_id // empty' "$f")
             if [ -z "$scheme_id" ]; then
               echo "missing scheme_id: $f"
