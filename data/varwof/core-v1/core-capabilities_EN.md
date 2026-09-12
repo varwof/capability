@@ -4,7 +4,7 @@
 
 Varwof PKI core engine operation capabilities
 
-Full capability identifier format: `varwof/core:capability_id` (e.g., `varwof/core:cert:issue`).
+Full capability identifier format: `varwof/core-v1:capability_id` (e.g., `varwof/core-v1:cert:issue`).
 
 ## Capability Catalog
 

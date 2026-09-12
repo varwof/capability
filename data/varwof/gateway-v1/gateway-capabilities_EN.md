@@ -4,7 +4,7 @@
 
 Varwof gateway operation capabilities (Management API + data plane)
 
-Full capability identifier format: `varwof/gateway:capability_id` (e.g., `varwof/gateway:cert:issue`).
+Full capability identifier format: `varwof/gateway-v1:capability_id` (e.g., `varwof/gateway-v1:cert:issue`).
 
 ## Capability Catalog
 

@@ -1,10 +1,10 @@
 {
-  "scheme_id": "varwof/gateway",
+  "scheme_id": "varwof/gateway-v1",
   "name": "Varwof Gateway",
   "version": "1.1.0",
   "description": "Varwof gateway operation permissions (management API + data plane)",
   "vendor": "varwof",
-  "product": "gateway",
+  "product": "gateway-v1",
   "author": "varwof",
   "license": "Apache-2.0",
   "homepage": "https://github.com/varwof/gateway",

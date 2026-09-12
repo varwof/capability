@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "System-level execution constraints (session/network/time/operation mode)",
   "vendor": "varwof",
-  "product": "constraint",
+  "product": "constraint-v1",
   "author": "varwof",
   "license": "Apache-2.0",
   "capabilities": [
@@ -12,43 +12,73 @@
       "id": "session:max-concurrent",
       "description": "Maximum concurrent sessions",
       "parameters": {
-        "value": { "type": "int", "min": 1, "max": 1000, "required": true }
+        "value": {
+          "type": "int",
+          "min": 1,
+          "max": 1000,
+          "required": true
+        }
       }
     },
     {
       "id": "session:hard-timeout",
       "description": "Session hard timeout (seconds)",
       "parameters": {
-        "value": { "type": "int", "min": 60, "max": 86400, "required": true }
+        "value": {
+          "type": "int",
+          "min": 60,
+          "max": 86400,
+          "required": true
+        }
       }
     },
     {
       "id": "session:idle-timeout",
       "description": "Session idle timeout (seconds)",
       "parameters": {
-        "value": { "type": "int", "min": 30, "max": 3600, "required": true }
+        "value": {
+          "type": "int",
+          "min": 30,
+          "max": 3600,
+          "required": true
+        }
       }
     },
     {
       "id": "network:cidr",
       "description": "Allowed network CIDR",
       "parameters": {
-        "value": { "type": "string", "description": "CIDR notation", "required": true }
+        "value": {
+          "type": "string",
+          "description": "CIDR notation",
+          "required": true
+        }
       }
     },
     {
       "id": "time:window",
       "description": "Allowed operation time window",
       "parameters": {
-        "start": { "type": "string", "description": "HH:MM", "required": true },
-        "end":   { "type": "string", "description": "HH:MM", "required": true }
+        "start": {
+          "type": "string",
+          "description": "HH:MM",
+          "required": true
+        },
+        "end": {
+          "type": "string",
+          "description": "HH:MM",
+          "required": true
+        }
       }
     },
     {
       "id": "op:readonly",
       "description": "Restrict to read-only operations",
       "parameters": {
-        "value": { "type": "bool", "required": true }
+        "value": {
+          "type": "bool",
+          "required": true
+        }
       }
     },
     {

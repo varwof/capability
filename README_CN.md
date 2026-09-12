@@ -22,7 +22,7 @@ ls data/
 # varwof/gateway/v1.json
 # varwof/constraint/v1.json
 # std/database-v1/v1.json
-# x-vendor/acme/v1.json
+# x-vendor/acme-v1/v1.json
 ```
 
 ## 数据结构
@@ -34,7 +34,7 @@ data/
 ├── varwof/gateway/v1.json          — 网关权限（21 能力 + 5 角色）
 ├── varwof/constraint/v1.json       — 执行约束能力
 ├── std/database-v1/v1.json         — 数据库操作权限（含 params_schema）
-└── x-vendor/acme/v1.json           — 私有扩展示例
+└── x-vendor/acme-v1/v1.json           — 私有扩展示例
 ```
 
 capability 是 varwof 生态的**能力数据层**。本项目是 [Open Invention Network](https://openinventionnetwork.com/) 成员。

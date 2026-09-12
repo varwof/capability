@@ -10,10 +10,10 @@ data/
 │   ├── database-v1/  robot-line-v1/  deploy-v1/
 │   ├── mcp-v1/       wallet-v1/
 ├── varwof/       # varwof 自营 scheme（前缀 varwof/）
-│   ├── core/  gateway/  llm/  constraint/  demo-mysql/v1/
-│   └── mysql/
+│   ├── core-v1/  gateway-v1/  llm-v1/  constraint-v1/
+│   └── demo-mysql-v1/
 ├── x-vendor/     # 示例/演示 vendor 目录
-│   └── acme/
+│   └── acme-v1/
 └── _vectors/clc-v1/   # CLC-v1 一致性向量 + 离线向量（见其 README）
 ```
 
@@ -26,12 +26,12 @@ data/
 | `std/deploy-v1` | std/deploy-v1 | 部署动作 |
 | `std/mcp-v1` | std/mcp-v1 | MCP tool 能力桥 |
 | `std/wallet-v1` | std/wallet-v1 | 钱包/密钥能力 |
-| `varwof/core` | varwof/core | varwof 核心能力 |
-| `varwof/gateway` | varwof/gateway | 网关决策 |
-| `varwof/llm` | varwof/llm | LLM 能力 |
-| `varwof/constraint` | varwof/constraint-v1 | 约束命名空间 |
-| `varwof/demo-mysql/v1` | varwof/demo-mysql | 演示 MySQL 场景 |
-| `x-vendor/acme` | x-vendor/acme | 示例 vendor |
+| `varwof/core-v1` | varwof/core-v1 | varwof 核心能力 |
+| `varwof/gateway-v1` | varwof/gateway-v1 | 网关决策 |
+| `varwof/llm-v1` | varwof/llm-v1 | LLM 能力 |
+| `varwof/constraint-v1` | varwof/constraint-v1 | 约束命名空间 |
+| `varwof/demo-mysql-v1` | varwof/demo-mysql-v1 | 演示 MySQL 场景 |
+| `x-vendor/acme-v1` | x-vendor/acme-v1 | 示例 vendor |
 
 ## 审计结论（2026-09-11，P8）
 

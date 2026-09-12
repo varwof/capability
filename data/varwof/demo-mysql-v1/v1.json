@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "MySQL API gateway operation permissions (HTTP data plane: SELECT/INSERT/UPDATE/DELETE/DDL)",
   "vendor": "varwof",
-  "product": "demo-mysql",
+  "product": "demo-mysql-v1",
   "author": "varwof",
   "license": "Apache-2.0",
   "homepage": "https://github.com/varwof/mysql-api",
@@ -13,31 +13,42 @@
       "id": "SELECT:*",
       "description": "SELECT query on any table",
       "summary": "Allow SELECT queries on any table",
-      "examples": ["GET /api/tables/employees/rows"]
+      "examples": [
+        "GET /api/tables/employees/rows"
+      ]
     },
     {
       "id": "INSERT:*",
       "description": "INSERT into any table",
       "summary": "Allow INSERT into any table",
-      "examples": ["POST /api/tables/employees/rows"]
+      "examples": [
+        "POST /api/tables/employees/rows"
+      ]
     },
     {
       "id": "UPDATE:*",
       "description": "UPDATE any table",
       "summary": "Allow UPDATE on any table",
-      "examples": ["PUT /api/tables/employees/rows/1"]
+      "examples": [
+        "PUT /api/tables/employees/rows/1"
+      ]
     },
     {
       "id": "DELETE:*",
       "description": "DELETE from any table",
       "summary": "Allow DELETE on any table",
-      "examples": ["DELETE /api/tables/employees/rows/1"]
+      "examples": [
+        "DELETE /api/tables/employees/rows/1"
+      ]
     },
     {
       "id": "DDL:*",
       "description": "DDL create/drop on any table",
       "summary": "Allow CREATE/DROP TABLE and other DDL",
-      "examples": ["POST /api/tables", "DELETE /api/tables/ops_test"]
+      "examples": [
+        "POST /api/tables",
+        "DELETE /api/tables/ops_test"
+      ]
     }
   ]
 }

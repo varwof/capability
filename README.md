@@ -28,7 +28,7 @@ ls data/
 # varwof/gateway/v1.json
 # varwof/constraint/v1.json
 # std/database-v1/v1.json
-# x-vendor/acme/v1.json
+# x-vendor/acme-v1/v1.json
 ```
 
 ## Data Structure
@@ -43,7 +43,7 @@ data/
 ├── varwof/gateway/v1.json          — Gateway permissions (21 capabilities + 5 roles)
 ├── varwof/constraint/v1.json       — Execution constraint capabilities
 ├── std/database-v1/v1.json         — database operation permissions (params_schema)
-└── x-vendor/acme/v1.json           — Private extension example
+└── x-vendor/acme-v1/v1.json           — Private extension example
 ```
 
 ## CLC-v1 conformance vectors and schemes
