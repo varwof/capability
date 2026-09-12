@@ -136,8 +136,8 @@ clause; both runners exit non-zero on any mismatch.
 ## 4. Why minimality matters (engineering consequences)
 
 1. **Two independent implementations can be checked against one vector file.**
-   Current state: 83 vectors (`syntax` (6) / `entail` (37) / `intersect` (14)
-   / `decide` (26)),
+   Current state: 98 vectors (`syntax` (9) / `entail` (37) / `intersect` (14)
+   / `decide` (38)),
    Go, Python and TypeScript, asserted on verdict *and* normative reason code,
    non-zero exit on mismatch, run in CI in both repositories.
 2. **Reason assignment is normative**, not implementation-specific: a fixed
@@ -171,25 +171,26 @@ that tests it, and its state.  States are `ok`, `gap` (something is missing) or
 
 | Principle | Normative clause | Executable evidence | State |
 |---|---|---|---|
-| P1 Minimal core | this document §2 | 83 vectors; the previously orphan rule has a clause and a vector | ok |
+| P1 Minimal core | this document §2 | 98 vectors; the previously orphan rule has a clause and a vector | ok |
 | P2 No control flow | §3 grammar, §6.3 | no such construct exists | ok |
-| P3 Immutable values | §6.3, §9 | both runners, 524 property cases | ok |
-| P4 Domains | §6.2 | `params-001..021` | ok |
-| P5 Determinism incl. reason | §9.3 (pre-check + 11 layers), §9.4 (21 codes), §12.1 | 83 vectors assert the canonical reason | ok — the 6 undocumented codes and the revision rule were added; the layer table now matches the numbering the corpus cites |
+| P3 Immutable values | §6.3, §9 | both runners, 1184 property cases | ok |
+| P4 Domains | §6.2 | `params-001..027` | ok |
+| P5 Determinism incl. reason | §9.3 (pre-check + 11 layers), §9.4 (21 codes), §12.1 | 98 vectors assert the canonical reason (incl. §9.3 multi-grant aggregation, rev CLC-1.3) | ok — the 6 undocumented codes and the revision rule were added; the layer table now matches the numbering the corpus cites |
 | P6 Fail-closed | §6.2.1, §6.3 step 4, §9.3 layers 5–7 | `params-*`, `undeclared-001/002`, closure probes in the property test | ok — closure applies to the effective grant (§7 rule 2), so an undeclared parameter is still denied |
 | P7 Define once | §11, Appendix A | `ruleexec` consumes `semantics.Entails` | **gap** — no carrier document cites CLC yet, and `aic-jwt/wit-wpt-interop` ships a second subset implementation whose wildcard surface (`**`, `{a,b}`, `[a-z]`) is v1-forbidden |
-| P8 Separation | Appendix A | Go, Python and TypeScript agree on 83 vectors **and** 524 property cases | **gap** — all three implementations share one author; third-party parity is the unproven half |
+| P8 Separation | Appendix A | Go, Python and TypeScript agree on 98 vectors **and** 1184 property cases | **gap** — all three implementations share one author; third-party parity is the unproven half |
 | P9 Local decidability | §6.3; OCMP §3 | `offline-vectors.json` (12 cases, 11/11 codes) with a coverage+vocabulary gate in CI | ok — the profile has no evaluator by design, so the gate checks coverage and vocabulary, not evaluation |
 | P10 Bounded work | §6.2.1 (512 bytes, depth 32, counting rule) | `params-018/019` (negative) + `params-020/021` (positive) | ok |
-| P11 Narrows only | §7 rules 2, 5, 6 (⊑ defined) | property test over 524 cases in both implementations (they report identical numbers); `intersect-007/008/009/010` | ok — the closure/union conflict is resolved in §8 |
-| P12 Agreement is the bar | §12, §12.1, vectors README | 83 vectors with `result_*` assertions + property cases, CI in three repositories | **gap** — the corpus cannot see the same-author limitation |
+| P11 Narrows only | §7 rules 2, 5, 6 (⊑ defined) | property test over 1184 cases in all three implementations (they report identical numbers); `intersect-007/008/009/010`; dict intersection requires identical key sets, else `no_overlap` (P11 catch, rev CLC-1.2) | ok — the closure/union conflict is resolved in §8; the 2026-09-12 key-set catch is fixed in all three |
+| P12 Agreement is the bar | §12, §12.1, vectors README | 98 vectors with `result_*` assertions + property cases, CI in three repositories | **gap** — the corpus cannot see the same-author limitation |
 
 ## 8. What the property test found (2026-09-11)
 
-The P11 property test (`property-cases.json`, 524 deterministic cases, run by
-both implementations) replaced "the vectors are green" with an invariant, and
+The P11 property test (`property-cases.json`, 1184 deterministic cases, run by
+all three implementations) replaced "the vectors are green" with an invariant, and
 immediately produced three findings.  Two were real defects and are fixed; one
-is a language decision that is still open.
+is a language decision that is still open.  A fourth finding (2026-09-12) — dict
+intersection could *widen* the composition — fixed the same day in all three.
 
 **Fixed 1 — Python widened on an empty `params` object.**  The merge tested
 `params` for *truthiness*, so a source with a present-but-empty `params` object
@@ -274,10 +275,13 @@ normative text.
   P9 **本地可判**、P10 **有界工作量**（参数 ≤512 字节、嵌套 ≤32 层，超限即拒）、
   P11 **组合只收窄**、P12 **一致即门槛**。
 - **纪律**：每条原则必须绑定 ≥1 条规范条文 + ≥1 条向量/测试（本文 §7 台账），没有条文或没有向量的原则只是装饰。
-- **本轮结果**：规范补齐了输入归一化上限、11 层顺序表、6 个缺失规范码、§12.1 语言版本与附录计数；
-  向量 68 → **83**，新增 **524** 条属性用例与 **12** 条 OCMP 离线用例；
-  属性测试抓出并修好了**三处**真实缺陷（① Python 在空 `params` 上放宽并覆盖已收的边界；
-  ② 两实现在交集里取了更宽的 id；③ id 比较走了 `Entails`，被 §6.3 step 4 打成"无交集"）。
+- **本轮结果**：规范补齐了输入归一化上限、11 层顺序表、6 个缺失规范码、§12.1 语言版本与附录计数、
+  §3 scheme 文法、§8.1 值文法与 §8.4 `unresolved` 残余通道；
+  向量 68 → **95**，属性用例 524 → **1184**，另 **12** 条 OCMP 离线用例；
+  属性测试与语料抓出并修好**多处**真实缺陷（① Python 在空 `params` 上放宽并覆盖已收的边界；
+  ② 两实现在交集里取了更宽的 id；③ id 比较走了 `Entails`，被 §6.3 step 4 打成"无交集"；
+  ④ Python 把 bool 当数字（`True==1`）放行；⑤ 对象值交集键集不一致时意外**加宽**（P11，prop-0956）；
+  ⑥ Go 已知约束集越过 `parts[1]` 文法漂移；⑦ `max_rows` op 缺席时静默跳过）。
 - **P11 的裁决（2026-09-11）**：合并后的**有效 grant 是唯一权威**——验证侧的入口只有
   `Authorize(有效grant, op)`（网关）与 `Entails(签名者的grant, 规则声明)`（规则加载），**没有任何地方逐源再判一次**。
   因此：**源覆盖 ⊑ 只比较"该源自己声明的键"**（组合时"某个源声明过"即视为授权），

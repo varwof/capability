@@ -110,15 +110,47 @@ checked inline (it belongs to item 4).  Three combination vectors pin the order:
 `params-025` (over-limit + duplicate → size), `params-026` (over-limit + `1e400` →
 size), `params-027` (duplicate + `1e400`, under the limit → duplicate).
 
+## D10 — CLC-1.3 closeout: verdict channel, constraint identity, multi-grant (2026-09-12).
+
+Two review observations closed the CLC-1.2 sweep:
+
+**Observation 1: "allow + unresolved" is a pseudo-allow.**  A decision that
+says `allow` while carrying constraints the core cannot evaluate invites
+consumers to act first and ask later.  Rev CLC-1.3 gives the residual
+channel its own verdict value, `allow_unresolved` (§8.4): it is a distinct,
+single surface (the informational `verbatim` field was removed from all three
+implementations), and the consumer's obligation is unchanged — evaluate each
+listed constraint or deny.  **Decision:** the verdict enum gains
+`allow_unresolved`; `decide-020/024` pin time/network cases and `decide-019`
+pins the cross-midnight single-window segment as `invalid_constraint`
+(rewritten from the CLC-1.2 corpus where it generated `unresolved`).
+
+**Observation 2: multi-grant authorization was undefined.**  A verifier that
+holds several authorities for the same operation needs a rule.  §9.3 now
+defines aggregation: any covering-and-allowing grant authorizes (union, so a
+narrow grant cannot veto a broad one); residual obligations union across the
+covering-and-allowing grants; when none allows, the first covering grant's
+params/constraint reason in canonical (input) order is returned.  Implemented
+as `AuthorizeSet(grants, op)` (single-grant `Authorize` is the degenerate
+case).  The corpus pins it with `decide-028` (`{}` ≡ absent → any params
+allowed), `decide-029` (any-allow) and `decide-030` (all-deny, first reason).
+
+Two smaller closures rode along because they changed the same lines:
+constraint identity is now the full `scheme:type` pair (only
+`varwof/constraint-v1` is core-recognized — a same-name constraint under any
+other scheme is `unknown_constraint`), and the time-window value grammar
+forbids single segments crossing midnight (the reserved `end:"00:00"`
+denotes next-day midnight, so a crossing is *split* into plain same-day
+segments like `22:00→00:00` + `00:00→06:00`).
+
 ## Corpus and tooling state
 
 | Item | State |
 |---|---|
-| Conformance corpus | `vectors.json` — **83 vectors** (syntax 6 / entail 37 / intersect 14 / decide 26) |
-| Property corpus | `property-cases.json` — 524 deterministic P11 cases, reproducible byte-for-byte |
-| Offline profile | `offline-vectors.json` — 12 OCMP cases covering 11/11 normative codes |
-| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 83/83 and 524/524 |
-| Schema | `vectors.schema.json`, enforced in CI together with the documented counts |
+| Conformance corpus | `vectors.json` — **98 vectors** (syntax 9 / entail 37 / intersect 14 / decide 38) |
+| Property corpus | `property-cases.json` — 1184 deterministic P11 cases, reproducible byte-for-byte |
+| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 98/98 and 1184/1184 (0 failures; counters 869/841) |
+| Schema | `vectors.schema.json` (verdict enum incl. `allow_unresolved`, `multi` switch), enforced in CI together with the documented counts |
 
 Engineering discipline carried from the principles: one contract with several
 consumers; fail-closed by default; all-or-nothing generation; a gate must cover every

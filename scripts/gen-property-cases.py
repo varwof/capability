@@ -29,6 +29,10 @@ IDS = [
 ]
 
 # None = params absent; {} = params present but empty (identity, §6.2.1)
+# The nested forms (profile/filters/flags) exercise §7 rule 6 object-path
+# intersection: partial multi-key overlap must narrow only on shared keys
+# (rev CLC-1.2), and boolean vs numeric on the same key must not merge
+# (True == 1 guard parity).
 PARAMS = [
     None,
     {},
@@ -38,6 +42,12 @@ PARAMS = [
     {"tables": ["a", "b"]},
     {"tables": []},
     {"tables": ["a"], "limit": 100},
+    {"profile": {"role": "admin"}},
+    {"profile": {"role": "viewer"}},
+    {"filters": {"status": ["active"], "region": "eu"}},
+    {"filters": {"status": ["active"]}},
+    {"flags": {"admin": True}},
+    {"flags": {"admin": 1}},
 ]
 
 

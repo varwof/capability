@@ -185,7 +185,79 @@ published copy，drift 0）**：
     parse 结束后（`compact > MAX` 在 line 362）才判 → 对“既超限又含 dup /
     既超限又含 bad number”的输入，dup/number 先于 size，与 §6.2 item 5 相反
     （TS 自身 docstring 声称遵循 §6.2 order，实为对多故障输入不符）。
-  - corpus 的 params-016..021 全部为单故障，不覆盖此组合 → 三 runner 仍绿，
-    非一致性缺口。
+- corpus 的 params-016..021 全部为单故障，不覆盖此组合 → 三 runner 仍绿，
+     非一致性缺口。
+  - **已解决（同日）**：补 `params-025`（超限+dup → `invalid_params_size`）、
+     `params-026`（超限+bad-number → `invalid_params_size`）、`params-027`
+     （dup+bad-number、未超限 → `invalid_params_duplicate_key`）；TS
+     `validateRawParams` 改为两趟（先 size/depth，再 dup/number）。§6.2
+     item 5 顺序与实现和向量一致。
   - 建议后续：补 combined-fault 向量（超限+dup、超限+bad-number）并把 TS
-    改为先判 size（预扫描或延迟 dup/number raise）。规范 item 5 保持为目标。
+     改为先判 size（预扫描或延迟 dup/number raise）。规范 item 5 保持为目标。
+
+## 7. CLC-1.2 落地清扫收口（2026-09-12）
+
+**Status**: Resolved（2026-09-12；上表 A–D 全部由新增 spec 文本 + corpus
+95 向量 + 1184 property cases 钉死，三实现 95/95、1184/1184）。
+
+- **A（bool-grant bound）**：`params-022/023` + property 墙新增
+  `flags: admin true vs 1` 形态 → Python 布尔分支前置已修，三实现一致；§6.2
+  boolean-exact 段有向量背书。
+- **B（op id 具体 layer-1 码）**：`decide-018`（通配符形状 op id →
+  `unsupported_wildcard`）已入语料；corpus 现覆盖具体码传播。另钉两条新侧面：
+  `decide-025`（op scheme `bad` → `invalid_capability_id`）与 `decide-026`
+  （**grant 侧** malformed id → Entails 报具体码、Authorize 折叠为
+  `capability_not_authorized`——grant 侧折叠是规范行为，不加向量则无歧义）。
+- **C（已知约束集 + §8.1/§8.3 分段歧义）**：Go `knownConstraintTypes` 收紧为
+  `{max_rows, time, network}`（按 `parts[1]`），与 Python/TS 同一集合（TS 那条
+  指 Go 分歧的 NOTE 已删）；spec rev CLC-1.2 明示 type = 第二段、值 = `parts[2:]`
+  join 还原；`intersect-005` 修正为数组形态。`decide-021`（标量 3600 →
+  `invalid_constraint`）、`decide-022`（无掩码 CIDR → `invalid_constraint`）、
+  `decide-023`（max_rows op 缺席 → `max_rows:violated`）、`decide-027`（at-bound
+  allow）把值文法与 op 缺席路径逐条钉死。
+- **D（null 先于 presence）**：`params-024` 入语料（layer 6 先 → 
+  `invalid_params_null`）；Go `Authorize` 已传播具体码。
+- **新增通道 §8.4 `unresolved`**：认识但 core 不判的约束（time/network）→
+  `allow` + `unresolved:[...]`。`decide-019/020/024`（单窗口、cidr 数组、
+  双窗口含跨午夜）钉死；消费方须自行求值否则 deny。
+- **§3 scheme 文法**：`syntax-007/008`（`database:query`、`bad:op` →
+  `invalid_capability_id`）、`syntax-009`（`std/data-v1:fetch:item:42` 正例）注入。
+- **P11 dict 键集规则**：property 墙 prop-0956 抓出对象值交集**加了宽**（键集
+  差异下共享键结果既不 ⊆ A 也不 ⊆ B）→ §7 补“dict 交集要求两源键集完全一致，
+  否则 `no_overlap`”；三实现同日修（Go property_test 白名单羁押的
+  `invalid_constraint` 后同步加入）。property 墙 524 → **1184** 例（PARAMS 扩至
+  14 形状含嵌套 profile/filters/flags）。
+- **计数收口**：语料 83 → **95**（syntax 9 / entail 37 / intersect 14 /
+  decide 35）；附录 B、design-notes、principles 全部对齐；py/ts runner 输出
+  逐字节一致。
+
+## 8. CLC-1.3 落地收口：verdict 独立通道 / 约束身份 / §9.3 多 grant（2026-09-12）
+
+**Status**: Resolved（2026-09-12；spec rev CLC-1.3 + corpus 98 向量 + 1184
+property cases，三实现 98/98、1184/1184、py/ts runner 逐字节一致）。
+
+- **A（`verbatim` 废弃）**：早先保留在结果的 `verbatim` 字段从三实现移除；
+  §8.4 唯一残差通道是 `verdict=allow_unresolved` + `unresolved:[约束]`，
+  不再有“伪 allow”叙事。spec rev CLC-1.3 新增独立 verdict 值。
+- **B（约束身份按 (scheme,type) 识别）**：core 认识集从“type 名”收紧为
+  全量 `scheme:type` 对，仅 `varwof/constraint-v1` 声明 core 认识类型；
+  `foo/db-v1:max_rows` 这类异 scheme 同名约束 → `unknown_constraint` 而非
+  按 type 放行。三实现同步收紧；`decide-017`（异 scheme）不变，
+  go/py/ts 各加防御性身份门并共享「unrecognized identity first」顺序。
+- **C（时间窗口值文法）**：单段不得跨午夜（`22:00→06:00` 单个 window 段 →
+  `invalid_constraint`，必须拆段）；保留 end `"00:00"` = 次日零点（`22:00→00:00`
+  视作同日 `[22:00,24:00)`），全长段 `00:00→00:00` 非法；段列按 (start,end)
+  升序且两两不重叠（相接允许）。`decide-019` 改为非法段，`decide-024` 改为
+  split-form 双段（`00:00→06:00` + `22:00→00:00`）。
+- **D（grant params `{}` ≡ absent ≡ 无约束）**：空 params 对象不再触发 key
+  closure，op 可带任意 params → allow；附独立向量 `decide-028`。property
+  墙 closure 探针在空 params 合并结果上跳过（841 探针，此前 860）。
+- **E（§9.3 多 grant 聚合）**：新增 `AuthorizeSet(grants, op)`——任一
+  覆盖且放行的 grant 即放行（并集）；`unresolved` 跨全部覆盖且放行的
+  grant 取并集；全部拒绝时取**首个覆盖 grant**（参数/约束层）的 reason 于
+  规范（输入）序。corpus 增 `decide-029`（G1:10/G2:100, op:50 → allow）与
+  `decide-030`（G1:10/G2:6, op:50 → `params_exceed_grant`）；schema 增
+  `"multi": true` 开关。
+- **计数收口**：decide 35 → **38**、语料 95 → **98**；schema verdict enum
+  增 `allow_unresolved`，附 `multi` 布尔位；附录 D/D17/D22、parity report
+  同步 CLC-1.3。

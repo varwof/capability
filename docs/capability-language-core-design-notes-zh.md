@@ -626,3 +626,67 @@ parity report rev 9 记录本批。
 第二趟才执行 dup/number 检查，与 §6.2 item 5（size/depth → dup → number）一致；depth 仍在解析中判（属检查 4）。
 新增三条组合向量把这个顺序钉死：`params-025`（超限+重复键 → size）、`params-026`（超限+坏数字 → size）、
 `params-027`（重复键+坏数字、未超限 → dup）。语料 80 → **83**，三方 83/83。
+
+---
+
+### 2026-09-12 CLC-1.2 落地清扫
+
+**范围**：新加的规范文本（§3 scheme 文法、§8.1 值文法、§8.4 `unresolved`、未完配 §10、
+§12.1 修订矩阵）落到三实现 + 语料 + property 墙，并统一全部文档计数。
+
+**规范增量**（全部 rev 标注）：
+- §3：capability id 强制 `vendor/product-vN` scheme（`^[a-zA-Z0-9-]+/[a-zA-Z0-9-]+-v[0-9]+$`），wildcard 检测在文法前。
+- constraint：类型 `parts[1]`，值 = `parts[2:]` join 还原；`max_rows` 必须恰一个严格 JSON 非负整数；
+  `time:window` 非空数组 ≤32 个 `{start,end}`（HH:MM[:SS]，UTC 按天重复、可跨午夜）；`network:cidr` 数组，IPv4/IPv6 掩码约束，TS 手写解析与 Go/Py 同一接受集。
+- `Authorize`：认识但核心不判的约束 → `allow` + **`unresolved:[...]`** 残余通道；非法值 → `invalid_constraint`；
+  `max_rows` op 缺席 → 严格 `max_rows:violated`。
+- §7：对象值交集 P11 修正——**两源键集必须完全一致**，否则 `no_overlap` deny（防 composition 意外加宽；property 墙 prop-0956 抓出）。
+
+**语料 83 → 95**：`intersect-005` time 窗口改数组形态；新增 `syntax-007/008/009`、`decide-019..027`
+（§8.4 unresolved、`invalid_constraint`、op 缺席 violated、at-bound 正例、两段 id 与 `bad:op`）。
+网络向量此前仅 `payments-002` 一张 `network:cidr` 证书。
+
+**实现修复**：
+- Go：`knownConstraintTypes` 收紧为 {max_rows,time,network}（旧 TS NOTE 指出的历史分歧已由三家同一集合消弭）；
+  decide-026 曾因 op `id` 文法先于 Entails 使 grant 路径不可达，改为合法 op 钉 `capability_not_authorized`。
+- Python：`intersect_value` 加 **bool 守卫**（bool≠bool → no_overlap，防 `True==1`；read-only 时无碍）。
+- TS：删两条过时 NOTE（op-ID 折叠论、Go layer-6 顺序论）；误删的 `validateParams`→`entails` 调用已恢复；重复 `canonicalStringify` 导出已去。
+
+**property 墙**：PARAMS 扩到 14 形状（嵌套 profile/filters/flags，含 bool-vs-1）→ 重生成 **1184 例**；三方 0 failures。
+Go 初读曾报 879 顺序 / 870 闭包 vs Py/TS 869 / 860，实为 `go test` 缓存回放旧语料
+（Addendum 2 同一陷阱）；`-count=1` 后 Go 也是 **869 / 860**，与 Py/TS 完全一致。
+
+**计数收口**：语料 95（syntax 9 / entail 37 / intersect 14 / decide 35）；属性 1184；三 runner 95/95，
+py/ts 输出逐字节一致；附录 B / design-notes / principles 全对齐；两份规范副本 drift 0（仅 canonical 注释）。
+
+### 2026-09-12 CLC-1.3 落地收口
+
+**范围**：把残留的"伪 allow"叙事清掉，并钉死 §9.3 多 grant 聚合。相对 CLC-1.2 为加性修订
+（旧输入仍可读）。
+
+**新增规范面（rev CLC-1.3）**：
+- **§8.4 独立 `allow_unresolved` verdict**：认识但 core 不判的约束（time/network）不再挂在
+  `allow` 上——三实现移除历史遗留的 `verbatim` 字段，`unresolved:[...]` 成为唯一残差通道，
+  消费方未确认前必须 deny（AAC §6.6）。
+- **约束身份 = `scheme:type` 全对**：core 认识集按 `:type` 段前加 scheme 限定，仅
+  `varwof/constraint-v1` 声明认识类型；异 scheme 同名（如 `foo/db-v1:max_rows`）→
+  `unknown_constraint`，杜绝"只看 type 名放行"的过宽。
+- **时间窗口值文法**：单段不得跨午夜（`22:00→06:00` → `invalid_constraint`，须拆段）；
+  `end:"00:00"` 保留为次日零点（`22:00→00:00` = 同日 `[22:00,24:00)`）；整日段 `00:00→00:00`
+  非法；段列按 (start,end) 升序、两两不重叠（相接允许）。
+- **grant params `{}` ≡ absent ≡ 无约束**：空对象不再触发 key closure，op 可带任意 params。
+- **§9.3 多 grant 聚合**：新增 `AuthorizeSet(grants, op)`——任一覆盖且放行的 grant 放行
+  （并集）；`unresolved` 跨全部覆盖且放行 grant 取并；全部拒绝时取**首个覆盖 grant** 的
+  参数/约束层 reason（输入序）。
+
+**语料 95 → 98**：`decide-019` 改为跨午夜单段 → `invalid_constraint`；`decide-020/024` → 
+`allow_unresolved`（split-form 双段 `00:00→06:00` + `22:00→00:00`）；新增 `decide-028`（{}=无约束 → allow）、
+`decide-029`（多 grant 任一放行 → allow）、`decide-030`（全拒 → 首 grant reason `params_exceed_grant`）。
+schema verdict enum 加 `allow_unresolved`，顶层加 `"multi": true`。
+
+**三实现同步**：Go/Python/TS 均实现身份门（`check_constraint`/`CheckConstraint` 防御段）、
+`authorize_set`/`AuthorizeSet`、新窗口文法与 `{}`≡absent；`CLCRevision`/`CLC_REVISION` 升 1.3。
+property 墙 closure 探针在空 params 合并结果跳过（860 → 841）。
+
+**计数收口**：语料 98（decide 38）；三 runner 98/98 + reason/unresolved 断言强制，py/ts 输出逐字节一致；
+属性 1184 / 0 failures，Go/Py/TS 计数 869/841 全同。parity report rev 12、ambiguities §8 同步。

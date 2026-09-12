@@ -2,19 +2,36 @@
 
 # Capability Language Core v1 (CLC-v1)
 
-> ⚠️ **Preview** — Not for production use. APIs and features may change before official release.
+> **Preview** — Not for production use. APIs and features may change before official release.
 
-**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10
-
----
+**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-09-12
 
 ## Abstract
 
-Minimal capability language for AI agent gateways, covering both
-authorization and evidence evaluation.  Nine core concepts organized
-as a shared foundation with two side-specific operation sets:
-authorization (grant, entailment, intersection, decision) and evidence
-(match, satisfaction).  Deterministic decision function, fail-closed.
+This document defines the Capability Language Core (CLC), a minimal, executable
+language for describing what an agent is authorized to do.  It defines the
+capability identifier grammar, the entailment relation between a grant and an
+operation, intersection of grants from multiple sources, the constraint model,
+and a deterministic decision function with stable reason codes and a
+three-valued verdict (`allow`, `deny`, `allow_unresolved`).
+
+The language is carrier-neutral: it defines what is evaluated, not how it is
+carried or trusted.  Trust models, native verification, execution lifecycle,
+and receipt or token formats are out of scope (Section 11).  Conformance is
+exercised by a published corpus of 98 vectors and 1184 property cases; three
+implementations (Go, Python, TypeScript) that share an author pass both.  The
+authorization-side conformance class CLC-A is claimed by this revision; the
+evidence-side class CLC-E is defined but not claimed.
+
+### Revision History
+
+(See the language-revision rule in §12.1 — this revision is incremental and readable compatibly.)
+
+| Rev | Date | Scope | Change |
+|-----|------|-------|--------|
+| CLC-1.1 | 2026-09-10 | — | Baseline working draft |
+| CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(new), §9, §9.4, §11, §12, Appendix B, Security | Residual-obligation channel `unresolved` (recognized-but-not-evaluated constraints carried explicitly, never silently dropped); `time:window` value grammar defined as a multi-segment UTC window array; recognition upgraded to a "type-name × value-grammar" double check with a new `invalid_constraint` reason code; the "time → intersection" merge rule demoted to v2; constraint merge normalized with deterministic ordering |
+| CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, Appendix B | Authorization loop tightened + constraint identity namespaced: `Decision.verdict` is three-valued (`allow`/`deny`/`allow_unresolved`), residual obligations no longer mixed into `allow` (kills the fail-closed break where a consumer judges only `verdict == allow`, §8.4); constraint identity becomes the `(scheme,type)` pair, the core recognizes only `max_rows`/`time`/`network` under `varwof/constraint-v1`, everything else → `unknown_constraint` (removes cross-scheme semantic pollution, §8.1); `time:window` value grammar tightened: a single segment must stay within one day (`start < end`), **no single segment may cross midnight** (a crossing must be split into two segments, `end:"00:00"` stays reserved as "next-day midnight"), segment list ascending, non-overlapping, ≤32; `params:{}` ≡ absent = no param constraint (entailment and intersection semantics agree); multi-grant aggregation made explicit (any-one-covers authorizes + residual union + deterministic deny reason, §9.3) |
 
 ---
 
@@ -45,7 +62,9 @@ policy language) — are stated in `capability-language-core-principles-v1.md`:
 > P1 minimal core · P2 no control flow · P3 immutable values ·
 > P4 domains, not types · P5 deterministic and terminating ·
 > P6 fail-closed · P7 define once, consume everywhere ·
-> P8 carriers separate from semantics
+> P8 carriers separate from semantics · P9 local decidability ·
+> P10 bounded work · P11 composition narrows only ·
+> P12 ≥2 independent implementations
 
 ---
 
@@ -62,8 +81,8 @@ policy language) — are stated in `capability-language-core-principles-v1.md`:
 | **Match** | Evidence-side binding: "Evidence E is bound to exact action A". |
 | **Constraint** | Bound on how an action may be used (auth) or what evidence is required (evidence). |
 | **Intersection** | Combining multiple grant sources into an effective set (∩). |
-| **Verdict** | Outcome of evaluation: `allow`/`deny` (auth) or `SATISFIED`/`UNSATISFIED` (evidence). |
-| **Decision** | Authorization-side verdict: `allow` or `deny` + reason. |
+| **Verdict** | Outcome of evaluation: `allow`/`deny`/`allow_unresolved` (auth) or `SATISFIED`/`UNSATISFIED` (evidence). |
+| **Decision** | Authorization-side verdict: `allow`, `allow_unresolved`, or `deny` + reason (+ additive `unresolved`). |
 | **Satisfaction** | Evidence-side verdict: `SATISFIED` or `UNSATISFIED`. |
 
 Note: **Binding** in CLC-v1 denotes the identity↔action relation
@@ -108,8 +127,8 @@ wildcard shape is reported as `unsupported_wildcard` even when the same
 string also violates the base grammar (§3 `segment`): the wildcard-shape
 checks run before the generic `invalid_capability_id` test.
 
-**Examples**: `std/database-v1:query:SELECT` ✓ | `database:query` ✗ |
-`std/database-v1:query:*` ✓ | `std/database-v1:query:SEL*` ✗
+**Examples**: `std/database-v1:query:SELECT` valid | `database:query` invalid |
+`std/database-v1:query:*` valid | `std/database-v1:query:SEL*` invalid
 
 ---
 
@@ -135,9 +154,24 @@ executor-controlled facts.  CLC-v1 defines the interface, not the
 construction algorithm.
 
 An ObservedAction carries:
-- `action_type`: the CAID action type (or equivalent canonical form)
-- `material_fields`: every field the type definition declares required
-- `digest`: computed over canonical bytes of the action object
+- `action_type`: the CAID action type (or equivalent canonical form) [CAID]
+- `material_fields`: every field the type definition declares **material**
+- `digest`: computed over the canonical **material projection** (below)
+
+The material projection is deterministic and normative:
+- The action type declares a **material field set** (required and
+  optional-but-included).  Only that set enters the digest.
+- Canonical serialization is the JSON Canonicalization Scheme (JCS) [RFC8785].  The `ActionId` suite identifies the hash algorithm
+  (SHA-256 by default), as in `caid:1:payment.release.1:jcs-sha256:...`
+  (§4.3).
+- A field the type does not declare as material MUST be excluded from the
+  digest and MUST NOT affect Match: an ObservedAction carrying undeclared
+  fields is not invalidated, but those fields carry no action identity.
+- A type-declared material field that is **missing** makes the
+  ObservedAction non-matchable: coverage MUST NOT be inferred, defaulted,
+  or repaired (`UNSATISFIED`, §10).  This is the evidence-side mirror of
+  key closure (§6.2): the absence of a governing field is fail-closed,
+  never fail-open.
 
 The effect boundary MUST construct the ObservedAction from facts it
 controls.  It MUST NOT copy a requester-supplied action digest without
@@ -187,20 +221,20 @@ Grant G covers operation O if:
 
 | Grant | Operation | Result |
 |-------|-----------|--------|
-| `std/database-v1:query:*` | `std/database-v1:query:SELECT` | ✓ wildcard matches |
-| `std/database-v1:query:*` | `std/database-v1:query:SELECT:deep` | ✓ matches multi-segment |
-| `std/database-v1:query:*` | `std/database-v1:admin:DDL` | ✗ different namespace |
-| `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | ✗ literal mismatch |
+| `std/database-v1:query:*` | `std/database-v1:query:SELECT` | yes: wildcard matches |
+| `std/database-v1:query:*` | `std/database-v1:query:SELECT:deep` | yes: matches multi-segment |
+| `std/database-v1:query:*` | `std/database-v1:admin:DDL` | no: different namespace |
+| `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | no: literal mismatch |
 
 ### 6.2 Parameters
 
 | Type | Rule | Example |
 |------|------|---------|
-| number | op ≤ grant | 50 ≤ 100 ✓ |
-| string | exact | "a" = "a" ✓ |
-| boolean | exact | true = true ✓ |
-| array | set of allowed values (enum): request scalar must equal a member; request array — every element must equal a member | `{"station":[1,2,3]}` ⊇ `2` ✓; ⊇ `9` ✗ |
-| object | every grant key in op, values recurse | `{"t":["id"]}` ⊆ `{"t":["id","name"]}` ✓ |
+| number | op ≤ grant | 50 ≤ 100 (holds) |
+| string | exact | "a" = "a" (holds) |
+| boolean | exact | true = true (holds) |
+| array | set of allowed values (enum): request scalar must equal a member; request array — every element must equal a member | `{"station":[1,2,3]}` ⊇ `2` (holds); ⊇ `9` (does not hold) |
+| object | every grant key in op, values recurse | `{"t":["id"]}` ⊆ `{"t":["id","name"]}` (holds) |
 | other | exact equality | — |
 
 **Boolean parameters are exact only.** A boolean grant value is matched by
@@ -212,12 +246,12 @@ practice; the setting that matters — an operation-side boolean value under
 key closure — is pinned by `undeclared-001`.)
 
 Table rows map to vectors: number → `params-001`/`params-002`; array scalar
-member → `params-009` (✓) / `params-010` (✗); array element-wise →
-`params-011` (✓) / `params-012` (✗); object recursion allow → `params-015`,
+member → `params-009` (holds) / `params-010` (fails); array element-wise →
+`params-011` (holds) / `params-012` (fails); object recursion allow → `params-015`,
 deny-direction → `params-005`; categorical guard → `params-014`.
-Under the old (pre-v1.1) array-as-bound rule the object example read ✗; with the
+Under the old (pre-v1.1) array-as-bound rule the object example read (does not hold); with the
 v1.1 enum rule the request-side element `id` is a member of the granted set, so
-the row is ✓ (see `clc-v1-ambiguities.md` §2).
+the row is (holds) (see `clc-v1-ambiguities.md` §2).
 
 **Enum semantics of arrays (v1.1).** An array-valued grant parameter is the
 **set of allowed values**, not an order.  The request MAY supply a single
@@ -233,7 +267,10 @@ grant keeps upper-bound (bound) semantics for ordered quantities
 An explicitly empty grant array `[]` denies the class
 (`empty_bound_denies_class`).
 
-Grant with no params covers any operation params (unconstrained).
+Grant with no params — or with an **empty `{}` params object** — covers any
+operation params (unconstrained).  An absent `params` and `"params":{}` are
+semantically equivalent — consistent across entailment (§6.3) and
+intersection (§7 rule 6; §9.3).
 
 A `null` parameter value is invalid in v1 → reject (`invalid_params_null`).
 Absent ≠ explicitly empty (see §8).
@@ -241,8 +278,8 @@ Absent ≠ explicitly empty (see §8).
 **Key closure (Plan A).**  A bounded grant governs its declared keys: an
 operation carrying a parameter key the grant does not declare is rejected →
 `deny("undeclared_param")` (fail-closed, §9.3 layer 7 request side).  An
-unconstrained grant (no `params`) accepts any operation params, so no key
-closure applies there.  Within layer 7 the missing-key check
+unconstrained grant (no `params`, or `params:{}`) accepts any operation
+params, so no key closure applies there.  Within layer 7 the missing-key check
 (`params_missing`) resolves **before** the undeclared-key check
 (`undeclared_param`); both are key-level and run before the enum/bound value
 checks (layers 8–9).
@@ -260,7 +297,13 @@ layer runs, the `params` object is normalized at the input boundary:
 3. **Number shape.** A numeric param that is non-finite or over-precision
    (> 17 significant decimal digits, e.g. `1e400`) is rejected:
    `deny("invalid_params_number")`.  Malformed JSON that cannot be parsed as
-   an object falls into the same code.
+   an object falls into the same code.  The digit count operates on the
+   **JSON token as received** — the raw digit-character sequence at the input
+   boundary, before it enters any storage / float / decimal representation —
+   so float64 and decimal/bignum implementations MUST NOT diverge: the judged
+   input is always the raw token text (`params-*` number probes in the corpus;
+   near-limit forms such as `1.0000000000000001` extend the probes without
+   changing the rule).
 4. **Size and depth.** Params whose JCS-serialized form exceeds 512 bytes
    (octets of the canonical UTF-8 form), or whose nesting depth exceeds 32,
    are rejected:
@@ -270,6 +313,14 @@ layer runs, the `params` object is normalized at the input boundary:
 5. **Order of checks.** Size/depth (4) precede duplicate keys (2), which
    precedes number shape (3); the first failing check wins.  All five run
    before §9.3 layer 1, so normalized params are the only view the layers see.
+6. **Decoded-object path.** A caller that supplies params already decoded
+   (no `raw_params` text) cannot reproduce the original byte stream; in
+   that case the size check (4) applies to a **canonical serialization**
+   (the JCS form of the decoded object: sorted keys, compact), and the
+   depth check (4) applies to the decoded structure directly.
+   Byte-exactness against a specific original text is guaranteed only for
+   the raw path; but **both** entry points MUST reject the caps — an
+   oversized/deep params object is denied whichever way it arrives.
 
 ### 6.3 Algorithm
 
@@ -277,7 +328,7 @@ layer runs, the `params` object is normalized at the input boundary:
 Entails(G, O) → bool:
   1. G.namespace ≠ O.namespace → false      (namespace = scheme + action Class, §9.3 layer 3)
   2. G.id doesn't cover O.id → false        (path coverage, §9.3 layer 4)
-  3. G.params absent → true                 (grant unconstrained)
+  3. G.params absent (or `{}`) → true       (grant unconstrained — absent ≡ empty object)
   4. O.params absent → false                (bounded grant, request omits it → fail-closed)
   5. params_subset(O.params, G.params)      (both present → compare, §9.3 layers 5–9)
 ```
@@ -308,7 +359,7 @@ before the null checks.
 ### 6.4 Match (evidence binding)
 
 Evidence E is bound to exact action A if:
-1. E carries a valid ActionId (CAID or equivalent).
+1. E carries a valid ActionId (CAID or equivalent) [CAID].
 2. E's ActionId equals the recomputed ActionId of the ObservedAction.
 3. The ActionId was computed under the relying-party-pinned suite and
    definition source.
@@ -339,7 +390,8 @@ Rules:
 6. **Empty params declares no constraint.** A source whose grant has a
    present-but-empty `params` object contributes no restriction.  The
    accumulated bound is preserved: bounded-then-empty and empty-then-bounded
-   must give the same result — source order MUST NOT change the outcome.
+must give the same result — source order MUST NOT change the outcome
+   (consistent with direct-grant `params:{} ≡ absent`, §6.3 step 3).
 
 **Identifier comparison is params-free (rule 2).**  The effective identifier
 is the **narrowest** one covered by every source, chosen by the §6.1
@@ -352,12 +404,12 @@ open; the identifier is compared, params merge separately (rule 3).
 result MUST be covered by every source and MUST NOT depend on the order
 of the sources; otherwise it MUST deny with a normative reason code and
 MUST never raise.  This meet-law is what the §6.2 param-subset algebra
-preserves across sources; it is pinned by `property-cases.json` (524
+preserves across sources; it is pinned by `property-cases.json` (1184
 cases, §12).
 
 **Notation in this section**: params are JSON objects (e.g.
-`{"tables":["a"]}`); constraints use colon-notation triples (e.g.
-`varwof/constraint-v1:time:window:3600`).  The example tables below use
+ `{"tables":["a"]}`); constraints use colon-notation triples (e.g.
+ `varwof/constraint-v1:time:window:[{"start":"00:00","end":"01:00"}]`).  The example tables below use
 compact shorthand for readability; each row shows the relevant params or
 constraints only.
 
@@ -368,12 +420,20 @@ comparison, not lexical prefix).
 
 | Source A | Source B | Result |
 |----------|----------|--------|
-| `{"tables":["a","b"]}` | `{"tables":["a"]}` | `{"tables":["a"]}` ✓ |
-| `{"tables":["a"]}` | `{"tables":[]}` | deny ✗ |
-| (unconstrained) | (no grant) | deny ✗ |
-| `{"limit":100}` | `{"limit":50}` | `{"limit":50}` ✓ |
-| (unconstrained) | constraint `time:window:3600` | constraint applied ✓ |
-| `{"tables":["a"]}` | `{"tables":["b"]}` | deny ✗ |
+| `{"tables":["a","b"]}` | `{"tables":["a"]}` | `{"tables":["a"]}` (holds) |
+| `{"tables":["a"]}` | `{"tables":[]}` | deny |
+| (unconstrained) | (no grant) | deny |
+| `{"limit":100}` | `{"limit":50}` | `{"limit":50}` (holds) |
+| (unconstrained) | constraint `time:window:[{"start":"00:00","end":"01:00"}]` | recognized, not evaluated by core (→ `allow_unresolved` + `unresolved`) |
+| `{"tables":["a"]}` | `{"tables":["b"]}` | deny |
+
+**Object-value intersection requires identical key sets.**  Two object
+values intersect key-by-key only when their key sets are the same; object
+values with different key sets → `no_overlap` deny.  Merging "shared keys"
+would drop the keys the other source constrains, so the result would not be
+covered by that source (P11 composition narrows only): `{"a":1}` ∩ `{"b":1}`
+→ deny(`no_overlap`); `{"a":1}` ∩ `{"a":2}` → deny; `{"a":1}` ∩ `{"a":1}` →
+`{"a":1}`.
 
 ---
 
@@ -388,22 +448,70 @@ triples: `scheme:type[:params]`, where **`type` is the second
 `:`-delimited segment** (`scheme` `:` `type` [ `:` params... ]):
 
 - `varwof/constraint-v1:max_rows:100` — type `max_rows`, param `100`
-- `varwof/constraint-v1:time:window:3600` — type `time`, param
-  `window:3600`
-- `varwof/constraint-v1:network:cidr:10.0.0.0/8` — type `network`, param
-  `cidr:10.0.0.0/8`
+- `varwof/constraint-v1:time:window:[{"start":"00:00","end":"01:00"}]`
+  — type `time`, param `window:` array of UTC window segments (a single
+  window = a one-element array).  A scalar form (`time:window:3600`, the
+  sliding-duration/freshness concept) is not a legal `time:window` value in
+  v1 → `invalid_constraint`.
+- `varwof/constraint-v1:network:cidr:["10.0.0.0/8"]` — type `network`, param
+  `cidr:` JSON array (≤ 32 elements, each a legal IPv4/IPv6 CIDR string)
 
-v1 **recognizes** the constraint types `max_rows`, `time`, `network`; a
-constraint of a recognized type is never `unknown_constraint`.  The core
-defines an evaluator for `max_rows` only; evaluation of `time`/`network`
-bounds is the declaring capability scheme's responsibility (§11).  Unknown
-constraint → reject (fail-closed).
+v1 core **recognizes constraints by `(scheme, type)` pair**, not by type
+name alone: the identity of a constraint is **two** things — the declaring
+scheme and the type.  The core recognizes exactly these pairs:
 
-Merge rules: numeric → minimum wins; allowlist → intersection; denylist
-→ union; time → intersection; unknown → deny.  The allowlist is the
+```
+varwof/constraint-v1 : max_rows
+varwof/constraint-v1 : time
+varwof/constraint-v1 : network
+```
+
+Any other `(scheme, type)` — including `foo/database-v1:max_rows` — is
+**not** core-recognized: it is rejected as `unknown_constraint` (fail-closed),
+never handed to a core evaluator.  This kills cross-scheme semantic
+pollution: the type name alone never selects an evaluator, so a scheme
+that defines its own `max_rows` cannot have its semantics hijacked by
+Core's `max_rows` evaluator (§P7 define once, consume everywhere — scoped
+per declaring scheme).  Scheme-defined constraint types belong to the
+v2 / profile layer (evaluated by the declaring scheme); core's
+non-recognition of them is fail-closed (`unknown_constraint`).
+
+A recognized constraint MUST also conform to that type's **value grammar**
+(table below); a recognized type with a non-conforming value is rejected
+as `invalid_constraint` — never silently skipped, never passed through.
+Intersection itself neither evaluates nor validates constraint values (it
+only merges constraint strings; the §8.1 value grammar is enforced at the
+decision boundary, §9, and in the constraint merge rules below).
+
+The core defines an evaluator for `max_rows` only; evaluation of
+`time`/`network` bounds is the declaring capability scheme's
+responsibility (the scheme evaluates, the core owns only what the §8.1
+value grammar *is*, not whether a moment/address currently hits it; §11).
+A recognized-but-unevaluated constraint is carried
+on the decision's additive `unresolved` field — never silently dropped
+(§8.4).  A non-recognized `(scheme,type)` → `deny("unknown_constraint")`
+(fail-closed).
+
+| type | value grammar (v1) | core behavior |
+|------|--------------------|---------------|
+| `max_rows` | strict non-negative integer (JSON number grammar: no leading `+`, no `0x`, no trailing characters) | evaluated against op params; op missing the param or above the bound → `max_rows:violated` (cannot be shown conforming = fail-closed); value out of grammar → `invalid_constraint` |
+| `time` (`window`) | non-empty JSON array (≤ 32 elements), elements `{"start":"HH:MM[:SS]","end":"HH:MM[:SS]"}`, UTC, repeated daily, single window = one-element array; **a single segment must have `start < end` within one day (lexical time order)**, a single segment **must not cross midnight**; a crossing window must be split into two segments (`22:00→00:00` + `00:00→06:00`), where `end:"00:00"` is reserved as **next-day midnight** (i.e. segment end 24:00, requiring `start != end`); segment list ascending by (start,end), **segments non-overlapping** | recognized only → `allow_unresolved` + `unresolved` (§8.4) |
+| `network` (`cidr`) | legal IPv4/IPv6 CIDR strings (`addr/mask`), syntax-level check only; JSON array ≤ 32 elements | recognized only → `allow_unresolved` + `unresolved` (§8.4) |
+
+The expressible window set has no empty window and no full-day window; a
+declaring scheme that needs such windows extends the grammar (§11).
+
+Merge rules in v1: numeric → minimum wins; allowlist → intersection;
+unknown → deny.  The allowlist is the
 array-enum set (§6.2); intersecting it takes the shared members.  v1 core
-defines **no denylist constraint** — the denylist merge rule applies only
-to scheme-defined denylist types (§11).
+defines **no denylist constraint** — merging applies only to the
+`varwof/constraint-v1` types the core itself evaluates; it does not
+define or merge scheme-defined types (§11).  Constraint-set merging is
+always **normalized and deterministically ordered** (duplicate strings
+collapsed, result ordered) — the same input yields the same constraint
+sequence in any implementation.  v1 does not tighten `time`/`network`
+bounds at intersection: intersection keeps only the constraint strings it
+encounters (no evaluation, no tightening, §8.4).
 
 ### 8.2 Evidence-side constraints
 
@@ -423,13 +531,59 @@ constraint = scheme ":" type [ ":" params ]
 Both sides use the same grammar.  The validator (authorization) or
 evidence evaluator (evidence) interprets the type-specific params.
 
+### 8.4 Recognized but not evaluated (residual-obligation channel)
+
+A recognized constraint whose value conforms to its §8.1 value grammar but
+for which the v1 core defines **no evaluator** — v1: `time`, `network`;
+evaluation belongs to the declaring scheme (§11) — MUST NOT be silently
+dropped: it must appear
+in the decision's additive `unresolved` list (§9), and the verdict must be
+**`allow_unresolved`** (not `allow`):
+
+```
+Decision = { verdict: "allow"|"deny"|"allow_unresolved",
+             reason, unresolved: string[] }
+```
+
+**Fail-closed boundary**: `allow_unresolved` is an **independent enum value**,
+never equal to `allow`.  A consumer (PEP / profile / declaring scheme) MUST
+evaluate or confirm every `unresolved` constraint before allowing;
+**if it cannot execute or confirm, it MUST deny** (AAC §6.6: "when it cannot
+perform or confirm, it should be treated as deny").  A consumer that only
+writes `if decision.verdict == "allow"` cannot, on the literal enum, release
+a residual obligation as an already-satisfied allow — a path that leaves
+obligations unconfirmed must explicitly handle `allow_unresolved` to pass.
+**"the caller is supposed to check unresolved" is not sufficient defense**:
+the verdict itself must refuse the two-value short-circuit.
+
+`unresolved` semantics and ordering: `[]` for `deny` and for fully evaluated
+`allow`; for `allow_unresolved` the normalized + sorted constraint strings
+(duplicates folded, result ordered) — the order is deterministic: the same
+input yields the same sequence in any implementation.
+
+**Combined obligations (consumer side)**: multiple `unresolved` constraints
+of the same `(scheme,type)` form a conjunction (AND) — satisfying A and B
+satisfies all; OR, any-one, first-wins, and ignoring some entries are all
+**forbidden**.  Constraints of different `(scheme,type)` do not interact;
+each evaluates under its own declaring scheme (P11 composition narrows only:
+conjunction only narrows).
+
+The core owns only the **value grammar** ("what it is"); "whether this
+window/CIDR currently forms a boundary" ("how to evaluate") belongs to the
+declaring scheme (§11) — but the **boundary-moment semantics are part of the
+grammar** (§8.1: half-open `[start, end)`, single segment within one day,
+crossing split into segments), and a scheme MUST NOT change that
+interpretation, only evaluate on top of it.
+
 ---
 
 ## 9. Decision Function (Authorization Side)
 
 ```
-Authorize(effective_grants, operation) → Decision
-Decision = { verdict: "allow"|"deny", reason: string|null }
+Authorize(grants, operation) → Decision
+Decision = { verdict: "allow"|"deny"|"allow_unresolved",
+             reason: string|null,
+             unresolved: string[] }   // additive, §8.4
 ```
 
 Algorithm:
@@ -438,16 +592,31 @@ Algorithm:
    (no id), `unsupported_wildcard` (v1-forbidden wildcard shape) or
    `invalid_capability_id` (other grammar violation) — and is **not**
    collapsed to a generic code.
-2. Find matching grants via Entailment (§6.1).
-3. No match → `deny("capability_not_authorized")`.
-4. Evaluate constraints: unknown → `deny("unknown_constraint")`;
-   violation → `deny("{type}:violated")`.
-5. All pass → `allow`.
+2. Find covering grants via Entailment (§6.1).  Zero/empty `grants` → directly
+   `deny("capability_not_authorized")` (§9.3 layer 10).
+3. For each covering grant: evaluate constraints (§8.1): non-recognized
+   `(scheme,type)` → `unknown_constraint`; recognized but non-conforming
+   value → `invalid_constraint`; recognized with a core evaluator
+   (`varwof/constraint-v1:max_rows`) and violated →
+   `{type}:violated`; recognized without a core evaluator (`time`,
+   `network`) → residual obligation (§8.4).
+4. **Aggregate** (multi-grant set, §9.3):
+   - Any covering grant that "allows" (no params/constraint rejection) →
+     overall allow;
+   - Residual obligations = the `unresolved` **union across all covering and
+     allowing grants** (normalized + sorted, obligations of any covering grant
+     are never dropped);
+   - When no covering grant allows: if at least one covering grant rejects at
+     the params/constraint layer → use the rejection reason of the **first
+     covering grant in canonical order** (deterministic, §9.3); if no grant
+     covers at all → `capability_not_authorized`.
+5. Allow with non-empty residual obligations → `verdict = allow_unresolved`;
+   allow with empty obligations → `verdict = allow`.
 
-The effective grant set may be **absent or empty** — e.g. an integrator
+The grant set may be **absent or empty** — e.g. an integrator
 calls `Authorize` with no grant value or with an empty capability record.
 A safe evaluator MUST NOT raise; it MUST resolve such input to
-`deny("capability_not_authorized")` (falling out of layer 10/step 3).
+`deny("capability_not_authorized")` (falling out of layer 10/step 2).
 An absent operation resolves to `deny("missing_capability_id")`
 (layer 1); the evaluator MUST NOT raise there either.
 
@@ -473,7 +642,7 @@ layer in this fixed order.  It applies to `Entails` (§6.3),
 | 8 | Enum membership | Request value not a member of a granted array set (§6.2) | `not_in_enum` |
 | 9 | Bound comparison | Numeric/bound exceeded | `params_exceed_grant` |
 | 10 | Coverage emptiness | Intersection result empty; zero sources; no grant covers the operation | `no_overlap`, `absent_source`, `capability_not_authorized` |
-| 11 | Constraint evaluation | Unknown constraint type; known type violated | `unknown_constraint`, `{type}:violated` |
+| 11 | Constraint evaluation | Non-recognized `(scheme,type)`; recognized type value out of §8.1 grammar; recognized type violated | `unknown_constraint`, `invalid_constraint`, `{type}:violated` |
 
 Notes:
 
@@ -488,15 +657,46 @@ Notes:
 - **Deny-when-declared**: layer 5 is evaluated on the grant/intersection
   side — an explicitly empty `[]` or `{}` param value denies the class
   regardless of the request, before any member or bound check.
+- **`params:{}` ≡ absent**: the params constraint looks only at the
+   **set of declared param names**, independent of carrier form — an absent
+   `params` and `"params":{}` both mean "no param names declared" =
+   **no param constraint** (consistent across entailment and intersection;
+   the same representation cannot have different semantics in different
+   functions).  Therefore:
+  - Direct grant: a grant with `params:{}` **allows** an op carrying any
+    params (`.{x:1}` does not trigger `undeclared_param`);
+  - Intersection: a `params:{}` source **contributes no param constraint**
+    (`{limit:50}` ∩ `{}` = `{limit:50}`);
+  - Key closure (next bullet) applies only when the grant declares a
+    **non-empty** set of param names.
 - **Layer 7 key closure runs both directions**: granted keys must be present
   in the operation (`params_missing`) and operation keys must be declared by
   the grant (`undeclared_param`); the missing-key check resolves first, and
-  both precede the layer 8–9 value checks.
+  both precede the layer 8–9 value checks.  (Applies only to a non-empty set
+of declared names, see the bullet above.)
 - **Layer 11 runs last by construction**: constraints are evaluated only
   after coverage and parameters pass.
-- In `Authorize` with a single effective string of grants, layers 3–4 and
-  10 surface as `capability_not_authorized` when **no** grant covers;
-  a matching grant's params layer (5–9) propagates its own reason.
+- **Multi-grant aggregation (normative)**: `Authorize` operates on a
+  **set of grants**, not a single grant.  Rules:
+  1. **Any one covering-and-allowing grant allows** (∃ `g`: Entails(g,op) ∧
+     no params-layer rejection ∧ no constraint-layer rejection);
+  2. Residual obligations = `unresolved` **union across all covering and
+     allowing grants** (normalized + sorted); the obligations of any covering
+     grant are never dropped;
+  3. No grant covers → `capability_not_authorized`; op layer-1 errors always
+     precede any coverage/aggregation decision;
+  4. Some grant covers but all covering grants reject at the params/constraint
+     layer → deny, reason = the layer 5–11 rejection reason of the **first
+     covering grant in canonical order** (deterministic).
+  **Canonical order** = the appearance order in the input grant list (the
+  capability-record body order); an implementation MUST NOT choose the reason
+  by internal hash/iteration order.
+  Counter-examples pinned (forbidden): NOT any-one-allows — otherwise, with
+  multiple grants held, a narrow grant would wrongly deny the legal operation
+  of a broad grant; NOT first-match-wins — otherwise grant order would
+  change the authorization outcome; NOT all-must-pass — synonymous with
+  "any-one-covers authorizes", letting a narrow grant's existence invalidate a
+  broad grant.
 - **Op-ID validation errors propagate their specific layer-1 code**
   (`missing_capability_id` / `unsupported_wildcard` / `invalid_capability_id`),
   never `capability_not_authorized` and never an invented catch-all: step 1
@@ -547,6 +747,7 @@ compatibility checks MUST compare the canonical prefix only.
 | `invalid_params_null` | `null` parameter value (rejected in v1) |
 | `unsupported_language_revision` | Declared CLC revision is incompatible with the implementation (§12.1; fails closed, no silent downgrade) |
 | `unknown_constraint` | Unknown constraint type (fail-closed) |
+| `invalid_constraint` | Recognized type whose value fails its §8.1 value grammar |
 | `{type}:violated` | A known constraint is violated (e.g. `max_rows:violated`) |
 
 Other schemes MAY define additional codes, but MUST NOT redefine these.
@@ -579,19 +780,25 @@ algorithms** for both authorization and evidence.
 
 CLC-v1 does NOT define:
 - **Trust models**: who signs what, issuer trust, delegation chains
-  (belongs to AIC-JWT, OAuth, SPIFFE, etc.)
+  (belongs to AIC-JWT [AIC-JWT], OAuth, SPIFFE, etc.)
 - **Native verification**: signature checking, schema validation,
   freshness enforcement (belongs to each native artifact's spec)
 - **Execution lifecycle**: consumption, invocation, reconciliation,
-  outcome classification (belongs to EMILIA AEB or equivalent)
+  outcome classification (belongs to EMILIA AEB [EMILIA-AEB] or equivalent)
 - **Receipt or token formats**: the wire formats for carrying grants,
   evidence, or bindings (belongs to protocol-specific specs)
 
 The boundary is:
 - CLC-v1 defines **what** to evaluate (grant ⊆ operation, evidence ↔ action)
 - Consumers define **how** to evaluate (native verification, trust anchors)
-- CLC-v1 defines **what** the output means (allow/deny, SATISFIED/UNSATISFIED)
+- CLC-v1 defines **what** the output means (allow/deny/allow_unresolved,
+  SATISFIED/UNSATISFIED) — **`allow` and `allow_unresolved` are distinct
+  enum values**; a consumer MUST NOT treat `allow_unresolved` as `allow`
+  (§8.4)
 - Consumers define **what to do** with the output (invoke, record, reconcile)
+- CLC-v1 defines each known type's **value grammar** (what counts as a legal
+  constraint value); the declaring scheme defines **how** that value is
+  evaluated (whether this window/CIDR currently forms a boundary)
 
 ---
 
@@ -601,8 +808,13 @@ CLC-v1 defines **two conformance classes**:
 
 **CLC-A (authorization side)** — the v1 baseline. A conforming
 implementation MUST implement: grammar (§3), entailment (§6.1),
-intersection (§7), decision function (§9), rejection of unknown
-constraints, and stable reason codes (§9.4).
+intersection (§7), decision function (§9), rejection of non-recognized
+`(scheme,type)` constraints (`unknown_constraint`, §8.1), rejection of
+non-conforming recognized-type values (`invalid_constraint`, §8.1),
+exposure of recognized-but-unevaluated constraints via the decision's
+`unresolved` field on an independent `allow_unresolved` verdict (never
+silently dropped, §8.4), multi-grant aggregation (§9.3), and stable
+reason codes (§9.4).
 
 **CLC-E (evidence side)** — optional profile, **not claimed by this
 version**.  §6.4 (match) and §10 (satisfaction) define the evidence-side
@@ -615,8 +827,8 @@ implementation and vectors is what would make CLC-E a claimable class.
 
 **Conformance corpora.**  CLC-A conformance is exercised by two
 machine-readable reference suites shipped at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 83 vectors mapped
-to Appendix B — and `property-cases.json` — 524 cases pinning the §7
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 98 vectors mapped
+to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
 timestamped snapshot mirror.  A conforming implementation MUST pass both
@@ -644,14 +856,28 @@ provisioning and carries its own EXPERIMENTAL banner.
 ### 12.1 Language Revision
 
 Every implementation declares a language revision `CLC-<major>.<minor>` —
-this document declares **`CLC-1.1`**.  A capability input (grant,
+this document declares **`CLC-1.3`**.  A capability input (grant,
 operation, or OCM) SHOULD carry the revision it was authored against; an
 input without a declared revision is treated as `CLC-1.0`.
 
 - **Compatible reading**: an implementation MAY evaluate an input whose
   declared major equals its own AND whose declared minor is ≤ its own
-  (so an implementation of CLC-1.1 reads a CLC-1.0 or CLC-1.1 input, but
-  not CLC-1.2 or CLC-2.0).
+  (so an implementation of CLC-1.3 reads a CLC-1.0/1.1/1.2/1.3
+  input, but not CLC-1.4 or CLC-2.0).
+- **CLC-1.2 is additive**: it adds the `unresolved` field to the Decision
+  shape and the `invalid_constraint` reason code without changing v1
+  verdicts on existing inputs; a CLC-1.1 implementation MAY claim CLC-1.1
+  against this document but is not CLC-A conformant (§12) until it exposes
+  `unresolved` and rejects non-conforming recognized-type values.
+- **CLC-1.3 is additive, with one verdict value re-scoped**: it adds the
+  `allow_unresolved` verdict value, closes the decision loop for residual
+  obligations, and re-scopes `allow` to mean "fully enforced" only;
+  `allow`/`deny` outputs on inputs with **no** residual obligations do not
+  change.  A CLC-1.2 implementation MAY claim CLC-1.2 against this document
+  but is not CLC-A conformant (§12) until it emits the `allow_unresolved`
+  value and applies the §8.1 `(scheme,type)` identity and cross-midnight
+  window grammar.
+
 - **Incompatible reading MUST fail closed** with
   `deny("unsupported_language_revision")`.  An implementation MUST NOT
   silently evaluate under a different revision — no downgrade, no
@@ -660,17 +886,20 @@ input without a declared revision is treated as `CLC-1.0`.
   single resolved reason code `unsupported_language_revision`.
 
 Vectors: `revision-001` (input CLC-1.0 against an implementation declaring
-CLC-1.1 → eval normally, allow); `revision-002` (input CLC-2.0 → deny
+CLC-1.3 → eval normally, allow); `revision-002` (input CLC-2.0 → deny
 `unsupported_language_revision`).
 
 ---
 
 ## Appendix A: Consumption Mapping
 
+The rows below are examples of consumers of this shared vocabulary, not
+required profiles: conformance to CLC-A does not depend on any of them.
+
 | Consumer | Grammar | Binding | Verdict | Notes |
 |----------|---------|---------|---------|-------|
 | AIC-JWT DA | capability[].id | Entailment (§6.1) | Decision (§9) | AIC-JWT §5 binding |
-| EMILIA AEB | AEG capability_class | Match (§6.4) + Entailment (§6.1) | SATISFIED (§10) + Decision (§9) | AEB §3 判定层级（VERIFIED/MATCH/SATISFIED）+ §5.1 ObservedAction + §7 AEC slots；被 VERIFIED 的授权工件承载 Grant |
+| EMILIA AEB | AEG capability_class | Match (§6.4) + Entailment (§6.1) | SATISFIED (§10) + Decision (§9) | AEB §3 decision levels (VERIFIED/MATCH/SATISFIED) + §5.1 ObservedAction + §7 AEC slots; a VERIFIED authorization artifact carries the Grant |
 | RAR authorization_details | type="capability" | Entailment (§6.1) | Decision (§9) | RFC 9396 format |
 | Delegation chain | each DA narrows | Intersection (§7) | Decision (§9) | monotonic narrowing |
 
@@ -680,14 +909,19 @@ CLC-1.1 → eval normally, allow); `revision-002` (input CLC-2.0 → deny
 
 **Grouping vs `kind` mapping**: The appendix groups vectors by semantic
 category (B.1–B.6).  The machine-readable `vectors.json` uses a `kind`
-field that collates these groups differently: `kind=entail (31)` covers
-B.2 (6) + B.3 (21) plus the four scheme stress-test entail vectors;
-`kind=decide (25)` covers B.5 (16, including the two revision vectors)
-plus the seven combined vectors that call the decision function and the
-two scheme stress-test decision vectors; `kind=intersect (14)` covers
-B.4 (10) plus the four combined vectors that call the intersect function.
+field that collates these groups differently:
+`kind=entail (37)` covers B.2 (6) + B.3 (27) plus the four scheme
+stress-test entail vectors (`clinical-001/-002`, `payments-001`,
+`data-002`); `kind=decide (38)` covers the B.5 rows below (29: the 25
+`decide-*` ids, the two `revision-*` vectors and the two `undeclared-*`
+layer-7 vectors, including the nine residual/value-grammar decision
+vectors, the re-pinned `decide-019/-020/-024` and the added
+`decide-028/-029/-030`) plus the seven combined decision vectors,
+`payments-002` and `data-001`;
+`kind=intersect (14)` covers B.4 (10) plus the four combined vectors that
+call the intersect function (`combined-004/-005/-008/-011`).
 
-### B.1 Syntax (6 vectors)
+### B.1 Syntax (9 vectors)
 
 | # | Input | Expected | Derivation |
 |---|-------|----------|------------|
@@ -697,6 +931,9 @@ B.4 (10) plus the four combined vectors that call the intersect function.
 | S4 | `std/database-v1:query:SEL*` | deny | partial segment wildcard |
 | S5 | `std/database-v1:query:{read,write}` | deny | alternation not v1 |
 | S6 | `std/database-v1:query:[a-z]` | deny | character class not v1 |
+| S7 | `database:query` | deny(`invalid_capability_id`) | §3 scheme grammar: no vendor `"/"` product `"-v"` major (the spec's own counter-example) |
+| S8 | `bad:op` | deny(`invalid_capability_id`) | §3 scheme grammar: scheme `bad` does not match vendor/product-vN (snips the lax-intake hole) |
+| S9 | `std/data-v1:fetch:item:42` | valid | multi-segment action + conforming scheme (positive boundary) |
 
 ### B.2 Entailment (6 vectors)
 
@@ -709,7 +946,7 @@ B.4 (10) plus the four combined vectors that call the intersect function.
 | E5 | `std/database-v1:query:*` | `std/database-v1:query` | deny | no trailing segment |
 | E6 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | deny | literal mismatch |
 
-### B.3 Params (21 vectors)
+### B.3 Params (27 vectors)
 
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
@@ -718,7 +955,7 @@ B.4 (10) plus the four combined vectors that call the intersect function.
 | P3 | `{"tables":["a","b"]}` | `{"tables":["a"]}` | allow | subset |
 | P4 | `{"tables":["a"]}` | `{"tables":["a","b"]}` | deny | "b" absent (`not_in_enum`) |
 | P5 | `{"columns":{"t":["id"]}}` | `{"columns":{"t":["id","name"]}}` | deny | "name" absent (`not_in_enum`) |
-| P6 | `{}` | `{"limit":50}` | allow | unconstrained |
+| P6 | `{}` | `{"limit":50}` | allow | unconstrained (`{}` ≡ absent; the literal `{}` is pinned by `decide-028`, `params-006` pins the absent form) |
 | P7 | `{"tables":[]}` | `{"tables":["a"]}` | deny | explicit empty bound denies the class |
 | P8 | `{"limit":100}` | `{"limit":null}` | deny | null invalid in v1 (`invalid_params_null`) |
 | P9 | `{"station":[1,2,3]}` | `{"station":2}` | allow | scalar member of array set |
@@ -734,6 +971,12 @@ B.4 (10) plus the four combined vectors that call the intersect function.
 | P19 | `{"d":0}` | raw depth-33 object | deny(`invalid_params_size`) | nesting beyond depth 32 (§6.2 step 4) |
 | P20 | `{"s":"x"}` | raw `{"s":"<512 B>"}` | allow | serialized = exactly the 512 B limit (`≤`); positive boundary of P18 (§6.2 step 4) |
 | P21 | `{"d":0}` | raw depth-32 object | allow | depth exactly the 32 limit (`≤`); positive boundary of P19 (§6.2 step 4) |
+| P22 | `{"flag":true}` | `{"flag":1}` | deny(`params_exceed_grant`) | boolean is exact and is NOT a number: `1` must not satisfy a granted `true` (`params-022`) |
+| P23 | `{"flag":true}` | `{"flag":true}` | allow | positive side of P22 (`params-023`) |
+| P24 | `{"x":null}` | (no params) | deny(`invalid_params_null`) | layer 6 (null) precedes layer 7 (presence) (`params-024`) |
+| P25 | `{"s":"x"}` | raw `{"s":"<512 B>","s":"dup"}` | deny(`invalid_params_size`) | multi-fault: size (4) precedes duplicate keys (2) (`params-025`) |
+| P26 | `{"s":"x"}` | raw `{"n":1e400,"s":"<512 B>"}` | deny(`invalid_params_size`) | multi-fault: size (4) precedes number shape (3) (`params-026`) |
+| P27 | `{"a":1}` | raw `{"a":1,"a":2,"n":1e400}` | deny(`invalid_params_duplicate_key`) | multi-fault under the size limit: duplicate keys (2) precede number shape (3) (`params-027`) |
 
 ### B.4 Intersection (10 vectors)
 
@@ -745,14 +988,14 @@ Shorthand: params shown compact; constraints use colon notation.
 | I2 | `{"tables":["a"]}` | `{"tables":[]}` | deny | deny-when-declared |
 | I3 | (unconstrained) | (no grant) | deny | absent source |
 | I4 | `{"limit":100}` | `{"limit":50}` | `{"limit":50}` | tighter bound |
-| I5 | (unconstrained) | constraint `time:window:3600` | constraint applied | constraint added |
+| I5 | (unconstrained) | constraint `time:window:[{"start":"00:00","end":"01:00"}]` | recognized, not evaluated → `unresolved` carried on `allow_unresolved` verdict | constraint added |
 | I6 | `{"tables":["a"]}` | `{"tables":["b"]}` | deny | no overlap |
 | I7 | (no source / `null`) | — | deny(`absent_source`) | zero sources: fail-closed (§7 rule 5) |
 | I8 | `{"limit":50}` | `{}` | `{"limit":50}` | empty params declares no constraint → bound preserved (bounded then empty, §7 rule 6) |
 | I9 | `{}` | `{"limit":50}` | `{"limit":50}` | source order must not matter (empty then bounded, §7 rule 6) |
 | I10 | `{}`, id `query:SELECT` | `{}`, id `query:*` | `{}` | narrower identifier wins; identifier comparison is params-free (§7 rule 2) |
 
-### B.5 Decision (16 vectors)
+### B.5 Decision (29 vectors)
 
 | # | Scenario | Expected | Derivation |
 |---|---------|----------|------------|
@@ -766,12 +1009,24 @@ Shorthand: params shown compact; constraints use colon notation.
 | D8 | operation param value is `null` | deny("invalid_params_null") | §6.2 null rule; may carry `: <param>` detail (§9.4) |
 | D9 | bounded grant, operation has **no `params` field at all** | deny("params_missing") | §6.3 step 4 fail-closed |
 | D10 | `Authorize` called with an **absent/empty grant** | deny("capability_not_authorized") | §9 fail-closed, no exception |
-| D11 | input declares CLC-1.0 against a CLC-1.1 implementation | allow | same major, 1.0 ≤ 1.1 → compatible (§12.1) |
-| D12 | input declares CLC-2.0 against a CLC-1.1 implementation | deny("unsupported_language_revision") | different major → fail-closed (§12.1) |
+| D11 | input declares CLC-1.0 against a CLC-1.3 implementation | allow | same major, 1.0 ≤ 1.3 → compatible (§12.1) |
+| D12 | input declares CLC-2.0 against a CLC-1.3 implementation | deny("unsupported_language_revision") | different major → fail-closed (§12.1) |
 | D13 | operation carries a param key the grant does not declare (key closure) | deny("undeclared_param") | §6.2 key closure, §9.3 layer 7 request side |
 | D14 | both a missing grant key and an undeclared request key | deny("params_missing") | layer-7 order: missing before undeclared |
 | D15 | absent/empty grant **and** absent operation | deny("capability_not_authorized") | §9.3 pre-check resolves before any layer, incl. the absent-operation case |
 | D16 | grant valid, operation has **no `id`** | deny("missing_capability_id") | layer 1 |
+| D17 | grant carries `time:window` with a **cross-midnight single segment** (`22:00→06:00`) | deny("invalid_constraint") | a single segment crossing midnight is out of grammar (`decide-019`) — a crossing must be split into two segments |
+| D18 | grant carries `network:cidr` (array form, IPv4/IPv6) | `allow_unresolved`, `unresolved:[<constraint>]` | recognized, no core evaluator → residual obligation (§8.4; `decide-020`) |
+| D19 | `time:window` scalar second form (`window:3600`) | deny("invalid_constraint") | out of §8.1 value grammar (`decide-021`) |
+| D20 | `network:cidr` without prefix length | deny("invalid_constraint") | out of §8.1 value grammar (`decide-022`) |
+| D21 | `max_rows` constraint, op carries **no** `max_rows` value | deny("max_rows:violated") | fail-closed op-absent (`decide-023`) |
+| D22 | `time:window` split-form multi-segment window (`22:00→00:00` + `00:00→06:00`) | `allow_unresolved`, `unresolved:[<constraint>]` | cross-midnight split-segment grammar (`decide-024`) |
+| D23 | op scheme `bad` passes no vendor/product-vN | deny("invalid_capability_id") | §3 scheme grammar (`decide-025`) |
+| D24 | grant id `bad:op` against a valid operation | deny("capability_not_authorized") | §3 fails in Entails; ID-level reason collapses (`decide-026`) |
+| D25 | `max_rows` exactly at the bound | allow | violation is strict `>`; core-evaluated so no unresolved (`decide-027`) |
+| D26 | grant `params:{}`, op any params → unconstrained | allow | `{}` ≡ absent (`decide-028`, §9.3) |
+| D27 | multi-grant: G1 `{limit:10}` denies, G2 `{limit:100}` allows | allow | any-one-covers authorizes (`decide-029`, §9.3) |
+| D28 | multi-grant: G1 `{limit:10}` + G2 `{limit:6}`, op `{limit:50}` | deny("params_exceed_grant") | all covering grants reject → first reason in canonical order (`decide-030`, §9.3) |
 
 ### B.6 Combined (11 vectors)
 
@@ -789,7 +1044,16 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 83 vectors**
+**Total: 98 vectors**
+
+> Decisions D17–D28 are the corpus pin for the
+> residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1
+> `(scheme,type)` identity, the `invalid_constraint` value grammar and the
+> §9.3 multi-grant aggregation.  `decide-025/-026` and `syntax-007/-008`
+> pin the §3 scheme grammar; `decide-021/-022`, `decide-019/-024` pin §8.1
+> time/network value shapes; `decide-019` pins the no-cross-midnight rule;
+> `decide-028/-029/-030` pin §9.3 (`{}`≡absent, any-allow union, deterministic
+> deny reason).
 
 > The corpus additionally carries 6 scheme stress-test vectors
 > (`clinical-001/-002`, `payments-001/-002`, `data-001/-002`) exercised
@@ -824,6 +1088,12 @@ Shorthand: params shown compact; constraints use colon notation.
   and cannot represent non-finite numbers; two such consumers would reach
   different verdicts on the same raw input.  Decisions are made on the
   boundary-validated form, not on a lossy re-serialization.
+- **Recognized-but-unevaluated is not silent acceptance**: a constraint
+  the core recognizes but cannot evaluate MUST appear in the decision's
+  `unresolved` field — never dropped (§8.4).  The consumer must evaluate
+  or confirm each such constraint before acting, otherwise it MUST deny
+  (AAC §6.6).
+
 - **Reason-code detail suffix is diagnostic-only**: everything after the
   first `:` (e.g. the offending param name) MUST NOT change the verdict and
   MUST NOT be relied upon for decisions.  Consumers match on the code
@@ -838,10 +1108,59 @@ Shorthand: params shown compact; constraints use colon notation.
 
 ---
 
+## IANA Considerations
+
+This document requests no IANA actions.
+
+Constraint types (`max_rows`, `time`, `network`) and reason codes are defined
+by this document as fixed sets.  Should this work be adopted by a working
+group, that group may wish to consider whether either set warrants a registry;
+this revision does not propose one.
+
+## Privacy Considerations
+
+The language itself transports and stores nothing.  Privacy exposure comes from
+what carriers put into it and from what evaluators report:
+
+- Capability identifiers and parameter values describe policy.  They can reveal
+  organizational structure, service topology, network ranges (`network`
+  constraints), working hours (`time` windows), tenant names, or purposes.
+  Deployments should treat grants as policy-confidential material.
+- Distinct reason codes reveal the shape of a grant: the difference between
+  `params_missing`, `undeclared_param` and `not_in_enum` tells an observer what
+  the grant constrains.  Where the requester is untrusted, a consumer should
+  consider collapsing reason codes at the boundary, as this specification
+  already does for identifier-level failures (Section 9.3).
+- Parameter values may carry personal data if a scheme defines them that way.
+  Scheme authors should avoid personal identifiers as parameter names or values.
+- Residual obligations (`unresolved`, Section 8.4) and any audit record built
+  from decisions can persist policy and usage information; retention is the
+  carrier's responsibility (Section 11).
+- The reference corpus published with this document is synthetic and contains
+  no personal data.
+
+## Acknowledgements
+
+Iman Schrock (EMILIA Protocol) reviewed the intersection and constraint
+semantics against the revision 1.1 corpus and supplied the adversarial cases
+that revisions 1.2 and 1.3 fix: nested partial overlap in intersection,
+constraint value handling for `max_rows`, and the public entry-point contract.
+
 ## References
 
-- [ACA] draft-wei-agent-capability-authorization-00
-- [AIC-JWT] draft-wei-aic-jwt-01
-- [CAID] draft-schrock-canonical-action-identifier-02
-- [EMILIA-AEB] draft-schrock-action-evidence-boundary-05
-- [RFC8785] JCS: JSON Canonicalization Scheme
+### Normative References
+
+- [RFC8785] "JSON Canonicalization Scheme (JCS)", RFC 8785,
+  DOI 10.17487/RFC8785, June 2020,
+  <https://www.rfc-editor.org/info/rfc8785>.
+
+### Informative References
+
+- [ACA] Agent Capability Authorization and Delegation Binding,
+  draft-wei-agent-capability-authorization-00, Work in Progress.
+- [AIC-JWT] J. Wei, "AI Agent Identity Certificate (AIC) JSON Web Token
+  Profile", draft-wei-aic-jwt-01, Work in Progress, September 2026.
+- [CAID] "Canonical Action Identifier",
+  draft-schrock-canonical-action-identifier-02, Work in Progress.
+- [EMILIA-AEB] "Action Evidence Boundary",
+  draft-schrock-action-evidence-boundary-05, Work in Progress.

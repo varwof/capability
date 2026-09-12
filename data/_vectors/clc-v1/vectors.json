@@ -514,7 +514,7 @@
     "id": "intersect-005",
     "kind": "intersect",
     "spec_clause": "CLC-v1 §7",
-    "clc_revision": "CLC-1.1",
+    "clc_revision": "CLC-1.3",
     "conformance_class": "CLC-A",
     "grant": {
       "id": "std/database-v1:query:SELECT"
@@ -523,17 +523,17 @@
       {
         "id": "std/database-v1:query:SELECT",
         "constraints": [
-          "varwof/constraint-v1:time:window:3600"
+          "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"},{\"start\":\"22:00\",\"end\":\"00:00\"}]"
         ]
       }
     ],
     "expect": {
       "verdict": "allow",
       "result_constraints": [
-        "varwof/constraint-v1:time:window:3600"
+        "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"},{\"start\":\"22:00\",\"end\":\"00:00\"}]"
       ]
     },
-    "derivation": "constraint added"
+    "derivation": "constraint added; value is the CLC-1.3 canonical two-segment form of a cross-midnight window (§8.1 value grammar). Intersection merges constraints as strings without evaluating or validating their values; the value grammar is enforced at the decision boundary (§9)."
   },
   {
     "id": "intersect-006",
@@ -1949,5 +1949,324 @@
       "reason": "invalid_params_duplicate_key"
     },
     "derivation": "multi-fault, under the size limit: duplicate keys (2) precede number shape (3) → invalid_params_duplicate_key."
+  },
+  {
+    "id": "syntax-007",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "database:query"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "invalid_capability_id"
+    },
+    "derivation": "§3 scheme grammar: `database` has no vendor/product-vN form (the spec's own counter-example) → invalid_capability_id"
+  },
+  {
+    "id": "syntax-008",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "bad:op"
+    },
+    "expect": {
+      "verdict": "invalid",
+      "reason": "invalid_capability_id"
+    },
+    "derivation": "§3 scheme grammar: scheme `bad` does not match vendor \"/\" product \"-v\" major → invalid_capability_id (pins the CLC-1.2 fix that closed the lax ValidateCapabilityID intake letting author('bad:op') through)"
+  },
+  {
+    "id": "syntax-009",
+    "kind": "syntax",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "request": {
+      "id": "std/data-v1:fetch:item:42"
+    },
+    "expect": {
+      "verdict": "valid"
+    },
+    "derivation": "multi-segment action + conforming scheme → valid"
+  },
+  {
+    "id": "decide-019",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"06:00\"}]"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_constraint"
+    },
+    "derivation": "cross-midnight time window as a SINGLE segment (22:00->06:00) violates the §8.1 same-day start<end grammar (rev CLC-1.3): crossing midnight must be split into two segments; recognized (scheme,type) pair with a value out of grammar -> invalid_constraint"
+  },
+  {
+    "id": "decide-020",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.4",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\",\"2001:db8::/32\"]"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow_unresolved",
+      "unresolved": [
+        "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\",\"2001:db8::/32\"]"
+      ]
+    },
+    "derivation": "network cidr recognized (array-form value grammar §8.1) but not core-evaluable (IPv4/IPv6 shape-valid) -> residual obligation on the independent allow_unresolved verdict (§8.4, rev CLC-1.3)"
+  },
+  {
+    "id": "decide-021",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:time:window:3600"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_constraint"
+    },
+    "derivation": "the CLC-1.1 scalar-second form (window:3600) is out of the CLC-1.2 §8.1 value grammar → recognized type, invalid value → invalid_constraint (not silently accepted)"
+  },
+  {
+    "id": "decide-022",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:network:cidr:[\"192.168.0.1\"]"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_constraint"
+    },
+    "derivation": "CIDR without a prefix length is out of the §8.1 value grammar → invalid_constraint"
+  },
+  {
+    "id": "decide-023",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "max_rows constraint with the operation carrying no max_rows value → fail-closed max_rows:violated (§8.1 value-grammar table; the CLC-1.1 core silently skipped the missing op param)"
+  },
+  {
+    "id": "decide-024",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.4",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"},{\"start\":\"22:00\",\"end\":\"00:00\"}]"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow_unresolved",
+      "unresolved": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"},{\"start\":\"22:00\",\"end\":\"00:00\"}]"
+      ]
+    },
+    "derivation": "cross-midnight window expressed in the §8.1 split form (00:00->06:00, 22:00->00:00 where end 00:00 = next-day midnight): two same-day segments, sorted, non-overlapping -> recognized but not core-evaluable -> allow_unresolved + unresolved (§8.4, rev CLC-1.3)"
+  },
+  {
+    "id": "decide-025",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "bad:op"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_capability_id"
+    },
+    "derivation": "operation scheme `bad` fails §3 scheme grammar → layer 1 invalid_capability_id (the CLC-1.2 fix; previously accepted)"
+  },
+  {
+    "id": "decide-026",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §3",
+    "clc_revision": "CLC-1.2",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "bad:op"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "grant id `bad:op` fails §3 in Entails; the reason is ID-level (not params-level), so §9 collapses it to capability_not_authorized — with a valid operation id, this isolates the grant-id path"
+  },
+  {
+    "id": "decide-027",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.1",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 10
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "at-bound max_rows is allowed (violation is strictly rows > max); max_rows is core-evaluated so no unresolved"
+  },
+  {
+    "id": "decide-028",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "grant carries an explicit empty params object: {\"params\":{}} == params absent == unconstrained (rev CLC-1.3 §9.3) -> any operation params allowed, no key closure (empty declared name set)"
+  },
+  {
+    "id": "decide-029",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 10
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "multi": true,
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "multi-grant Authorize (grant set = grant + others): G1 {limit:10} denies limit=50, G2 {limit:100} allows it -> any-allowing grant authorizes (rev CLC-1.3 §9.3); no residual obligations -> allow"
+  },
+  {
+    "id": "decide-030",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.3",
+    "clc_revision": "CLC-1.3",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 10
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 6
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "multi": true,
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "multi-grant Authorize: G1 {limit:10} and G2 {limit:6} both deny limit=50; no covering grant allows -> deny with the FIRST covering grant reason in canonical (input) order (rev CLC-1.3 §9.3)"
   }
 ]

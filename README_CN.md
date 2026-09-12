@@ -10,7 +10,7 @@
 
 ## 什么是 varwof-capability？
 
-为 varwof 零信任网关提供 JSON 格式的能力定义数据：`std` 与 `varwof` 命名空间，以及 `x-vendor`（私有扩展）。第三方厂商命名空间（`oracle/...`、`acme/...`）由各所有者自行贡献，本仓不代为发布。被 `register` 模块加载用于 PKCS#7 签名验证和权限校验。
+为 varwof 零信任网关提供 JSON 格式的能力定义数据：`std` 与 `varwof` 命名空间，以及 `x-vendor`（私有扩展）。第三方厂商命名空间由各所有者自行贡献，本仓不代为发布。被 `register` 模块加载用于 PKCS#7 签名验证和权限校验。
 
 ## 快速开始
 
@@ -43,12 +43,13 @@ capability 是 varwof 生态的**能力数据层**。本项目是 [Open Inventio
 
 本仓同时承载 **CLC-v1**（极小能力判定语言）的机器可读部分：
 
-- `data/_vectors/clc-v1/` —— **83 条一致性向量**（syntax 6 / entail 37 / intersect 14 / decide 26）、
-  `vectors.schema.json`、`clc-v1-ambiguities.md`（裁决记录）、**524 条 P11 属性用例**
+- `data/_vectors/clc-v1/` —— **98 条一致性向量**（syntax 9 / entail 37 / intersect 14 / decide 38）、
+  `vectors.schema.json`、`clc-v1-ambiguities.md`（裁决记录）、**1184 条 P11 属性用例**
   （`property-cases.json`，由 `scripts/gen-property-cases.py` 确定性生成）与
   **12 条 OCMP 离线用例**（`offline-vectors.json`）。消费方实现：
   `varwof/register`（Go）、`varwof/aic-capability-demo`（Python）与其 `ts/`（TypeScript，仅 Node、零依赖），
-  三方断言 **verdict、规范码 reason 与交集结果（`result_params` / `result_constraints`）**；
+  三方断言 **verdict、规范码 reason 与交集结果（`result_params` / `result_constraints`）**，
+  并覆盖 CLC-1.3 的 `allow_unresolved` 独立 verdict 与 §9.3 多 grant 聚合；
   属性测试（收窄性 + 顺序无关）与 offline 用例的覆盖/词表门禁均由 `scripts/` 校验并进 CI。
 - `data/std/robot-line-v1/v1.json` —— 工业机器人产线能力（10 项）；工位等分类值按
   CLC-v1 的枚举规则用数组表示（`"station": [1,2,3]`）。
