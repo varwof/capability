@@ -8,6 +8,13 @@
 
 [English](README.md)
 
+## 出处与许可
+
+本仓的**全部产物** —— 能力数据、`docs/` 下的 CLC 规范文本、`data/_vectors/` 下的一致性语料
+—— 均为本项目原创，采用 Apache-2.0，不含任何照搬的第三方material。实现按公开规范编写；
+规范文本中引用的 Internet-Draft 一律以 work in progress 形式列出，不作为规范性来源；
+本仓未复制任何第三方代码。
+
 ## 什么是 varwof-capability？
 
 为 varwof 零信任网关提供 JSON 格式的能力定义数据：`std` 与 `varwof` 命名空间，以及 `x-vendor`（私有扩展）。第三方厂商命名空间由各所有者自行贡献，本仓不代为发布。被 `register` 模块加载用于 PKCS#7 签名验证和权限校验。
@@ -38,6 +45,29 @@ data/
 ```
 
 capability 是 varwof 生态的**能力数据层**。本项目是 [Open Invention Network](https://openinventionnetwork.com/) 成员。
+
+## 中立性
+
+CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
+
+- **核心不做按厂商的扩展**。新行为通过 `(scheme,type)` 命名空间或 profile 进入，
+  绝不为了某一家去改核心语言；载体不被优待 —— CLC 不要求 AIC、EMILIA 或任何特定的
+  凭证/证据格式。
+- **一份语料，人人可用**。一致性只对 `data/_vectors/clc-v1/` 下的公开语料度量；
+  没有私有、付费或提前访问的向量集，也没有哪个实现者能拿到别人拿不到的向量。
+- **完整且免费**。语料完整公开，与规范文本同为 Apache-2.0，并将一直如此。
+- **无排他**。本仓不要求任何传输、厂商、模型提供方或托管平台，也不给这些主体预留特权扩展点。
+- **主张跟着证据走**。没有公开语料与可运行校验支撑的一致性类，我们不会声称。
+
+以上是本项目对自己产物的声明（不是对任何其他项目 covenant 的重述），适用于 CLC 规范、
+语料，以及 [`varwof/register`](https://github.com/varwof/register) 中的参考实现。
+
+## CLC-v1 规范
+
+- [`docs/capability-language-core-v1.md`](docs/capability-language-core-v1.md) —— **英文正本**（规范权威）。
+- [`docs/capability-language-core-v1-zh.md`](docs/capability-language-core-v1-zh.md) —— **中文对照版**
+  （供评审；两版有歧义时以英文正本为准）。完整覆盖 §1–§12.1 与附录 A；附录 B 的逐条向量表不重复，
+  以免两份数据漂移。
 
 ## CLC-v1 一致性向量与 scheme
 

@@ -1,0 +1,350 @@
+[
+  {
+    "id": "xw-001",
+    "kind": "crosswalk",
+    "spec_clause": "Appendix A (RAR authorization_details)",
+    "profile": "oauth-rar->clc-v1",
+    "source": {
+      "type": "std/database-v1",
+      "actions": [
+        "query:SELECT"
+      ],
+      "params": {
+        "limit": 100
+      }
+    },
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "RAR authorization_details maps to one grant per action; the request is inside the bound"
+  },
+  {
+    "id": "xw-002",
+    "kind": "crosswalk",
+    "spec_clause": "§9.3 layer 9",
+    "profile": "oauth-rar->clc-v1",
+    "source": {
+      "type": "std/database-v1",
+      "actions": [
+        "query:SELECT"
+      ],
+      "params": {
+        "limit": 100
+      }
+    },
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 150
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "same mapping, request above the bound — the CLC core decides, the profile does not"
+  },
+  {
+    "id": "xw-003",
+    "kind": "crosswalk",
+    "spec_clause": "Appendix A (AIC-JWT DA)",
+    "profile": "aic-jwt-da->clc-v1",
+    "source": {
+      "capabilities": [
+        {
+          "id": "varwof/demo-mysql-v1:SELECT:*",
+          "constraints": [
+            "varwof/constraint-v1:time:window:[{\"start\":\"09:00\",\"end\":\"18:00\"}]"
+          ]
+        }
+      ]
+    },
+    "operation": {
+      "id": "varwof/demo-mysql-v1:SELECT:*"
+    },
+    "expect": {
+      "verdict": "allow_unresolved",
+      "unresolved": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"09:00\",\"end\":\"18:00\"}]"
+      ]
+    },
+    "derivation": "a carrier-supplied constraint the core recognizes but does not evaluate surfaces as a residual obligation"
+  },
+  {
+    "id": "xw-004",
+    "kind": "crosswalk",
+    "spec_clause": "Appendix A (EMILIA AEG capability_class)",
+    "profile": "emilia-aeg->clc-v1",
+    "source": {
+      "capability_class": "varwof/demo-mysql-v1:SELECT:*"
+    },
+    "operation": {
+      "id": "varwof/demo-mysql-v1:SELECT:*"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "the evidence side names a capability class; CLC decides the class-level coverage"
+  },
+  {
+    "id": "xw-005",
+    "kind": "crosswalk",
+    "spec_clause": "Appendix A (third-party carrier)",
+    "profile": "ucan->clc-v1",
+    "source": {
+      "with": "varwof/demo-mysql-v1",
+      "can": "SELECT:*"
+    },
+    "operation": {
+      "id": "varwof/demo-mysql-v1:SELECT:*"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "{with, can} maps to <scheme>:<action> under the pinned profile; no core change is needed"
+  },
+  {
+    "id": "xw-006",
+    "kind": "crosswalk",
+    "spec_clause": "§9.3 layers 3-4 collapsed by Authorize",
+    "profile": "ucan->clc-v1",
+    "source": {
+      "with": "varwof/demo-mysql-v1",
+      "can": "SELECT:*"
+    },
+    "operation": {
+      "id": "varwof/demo-mysql-v1:DELETE:*"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "capability_not_authorized"
+    },
+    "derivation": "the same mapping denies an action outside the granted path; Authorize folds the layer 3–4 coverage failure into capability_not_authorized (Entails alone would report literal_mismatch) — the vector pins the decision function, not entailment"
+  },
+  {
+    "id": "xw-007",
+    "kind": "crosswalk",
+    "spec_clause": "§7 intersection (delegation narrows)",
+    "profile": "delegation-chain->clc-v1",
+    "source": {
+      "links": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ]
+    },
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "principal 100 ∩ agent 50 = 50; a request at 50 is inside the narrowed authority"
+  },
+  {
+    "id": "xw-008",
+    "kind": "crosswalk",
+    "spec_clause": "§7 intersection (delegation narrows)",
+    "profile": "delegation-chain->clc-v1",
+    "source": {
+      "links": [
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 100
+          }
+        },
+        {
+          "id": "std/database-v1:query:SELECT",
+          "params": {
+            "limit": 50
+          }
+        }
+      ]
+    },
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 80
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "80 fits the parent's grant but not the child's: composition only narrows"
+  },
+  {
+    "id": "cx-001",
+    "kind": "crossing",
+    "spec_clause": "EP-AIC-AEB-CROSSING-MAPPING-v0.2 (action_projection / rules)",
+    "grants": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "operation": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow",
+      "crossing": {
+        "authorization_decision": false,
+        "authority_semantics_preserved": true,
+        "unsupplied_count": 6,
+        "unsupplied_must_include": [
+          "native_result",
+          "caid",
+          "action_digest",
+          "status.checked_at"
+        ]
+      }
+    },
+    "derivation": "plain allow: CLC establishes the scope decision; every material-action member stays unsupplied"
+  },
+  {
+    "id": "cx-002",
+    "kind": "crossing",
+    "spec_clause": "EP-AIC-AEB-CROSSING-MAPPING-v0.2 (action_projection / rules)",
+    "grants": [
+      {
+        "id": "varwof/demo-mysql-v1:SELECT:*",
+        "constraints": [
+          "varwof/constraint-v1:time:window:[{\"start\":\"09:00\",\"end\":\"18:00\"}]"
+        ]
+      }
+    ],
+    "operation": {
+      "id": "varwof/demo-mysql-v1:SELECT:*"
+    },
+    "expect": {
+      "verdict": "allow_unresolved",
+      "crossing": {
+        "authorization_decision": false,
+        "authority_semantics_preserved": true,
+        "unsupplied_count": 6,
+        "unsupplied_must_include": [
+          "native_result",
+          "caid",
+          "action_digest",
+          "status.checked_at"
+        ]
+      }
+    },
+    "derivation": "residual obligation travels with the projection as evidence-still-required, not as an authorization"
+  },
+  {
+    "id": "cx-003",
+    "kind": "crossing",
+    "spec_clause": "EP-AIC-AEB-CROSSING-MAPPING-v0.2 (action_projection / rules)",
+    "grants": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      }
+    ],
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 150
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "crossing": {
+        "authorization_decision": false,
+        "authority_semantics_preserved": true,
+        "unsupplied_count": 6,
+        "unsupplied_must_include": [
+          "native_result",
+          "caid",
+          "action_digest",
+          "status.checked_at"
+        ]
+      }
+    },
+    "derivation": "a denied scope decision is reported as deny; the crossing decision still belongs to the Gate"
+  },
+  {
+    "id": "cx-004",
+    "kind": "crossing",
+    "spec_clause": "EP-AIC-AEB-CROSSING-MAPPING-v0.2 (action_projection / rules)",
+    "grants": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "operation": {
+      "id": "std/database-v1:DELETE:*"
+    },
+    "expect": {
+      "verdict": "deny",
+      "crossing": {
+        "authorization_decision": false,
+        "authority_semantics_preserved": true,
+        "unsupplied_count": 6,
+        "unsupplied_must_include": [
+          "native_result",
+          "caid",
+          "action_digest",
+          "status.checked_at"
+        ]
+      }
+    },
+    "derivation": "coverage failure: no member of the crossing is fabricated to cover it"
+  },
+  {
+    "id": "cx-005",
+    "kind": "crossing",
+    "spec_clause": "EP-AIC-AEB-CROSSING-MAPPING-v0.2 (action_projection / rules)",
+    "grants": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:max_rows:100"
+        ]
+      }
+    ],
+    "operation": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 150
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "crossing": {
+        "authorization_decision": false,
+        "authority_semantics_preserved": true,
+        "unsupplied_count": 6,
+        "unsupplied_must_include": [
+          "native_result",
+          "caid",
+          "action_digest",
+          "status.checked_at"
+        ]
+      }
+    },
+    "derivation": "a core-evaluated constraint that fails is a deny, not an unresolved obligation"
+  }
+]

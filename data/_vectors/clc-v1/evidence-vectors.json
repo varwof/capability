@@ -1,0 +1,712 @@
+[
+  {
+    "id": "evc-001",
+    "kind": "constraint",
+    "spec_clause": "§10 step 4 / AEC §9.4.d",
+    "constraint": "varwof/evidence-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "satisfied"
+    },
+    "derivation": "issued 30s before appraisal, bound is 60s"
+  },
+  {
+    "id": "evc-002",
+    "kind": "constraint",
+    "spec_clause": "§10 step 4 / AEC §9.4.d",
+    "constraint": "varwof/evidence-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:58:00Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "freshness:stale"
+    },
+    "derivation": "age 120s exceeds the 60s bound"
+  },
+  {
+    "id": "evc-003",
+    "kind": "constraint",
+    "spec_clause": "AEC §9.4.d",
+    "constraint": "varwof/evidence-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T12:01:00Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "freshness:future_issued"
+    },
+    "derivation": "future-issued artifacts are ineligible, never 'very fresh'"
+  },
+  {
+    "id": "evc-004",
+    "kind": "constraint",
+    "spec_clause": "AEC §9.4.d",
+    "constraint": "varwof/evidence-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "freshness:no_issuance_time"
+    },
+    "derivation": "a missing protected issuance time fails the bound instead of passing it"
+  },
+  {
+    "id": "evc-005",
+    "kind": "constraint",
+    "spec_clause": "AEC §9.4.a/f",
+    "constraint": "varwof/evidence-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": false,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "freshness:no_eligible_fact"
+    },
+    "derivation": "an unverified fact is ineligible and contributes nothing"
+  },
+  {
+    "id": "evc-006",
+    "kind": "constraint",
+    "spec_clause": "AEC §4 role_constraints",
+    "constraint": "varwof/evidence-v1:quorum:distinct:2",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "satisfied"
+    },
+    "derivation": "two distinct verified subjects meet a distinct:2 quorum"
+  },
+  {
+    "id": "evc-007",
+    "kind": "constraint",
+    "spec_clause": "AEC §4 role_constraints",
+    "constraint": "varwof/evidence-v1:quorum:distinct:2",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:00Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated"
+    },
+    "derivation": "the same approver twice is one approver (distinct subjects)"
+  },
+  {
+    "id": "evc-008",
+    "kind": "constraint",
+    "spec_clause": "AEC §4 role_constraints",
+    "constraint": "varwof/evidence-v1:quorum:distinct:2",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": false,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated"
+    },
+    "derivation": "a fact that did not reach VERIFIED fills no seat"
+  },
+  {
+    "id": "evc-009",
+    "kind": "constraint",
+    "spec_clause": "AEC §4 role_constraints",
+    "constraint": "varwof/evidence-v1:quorum:distinct:2",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated"
+    },
+    "derivation": "an empty protected subject identifier cannot be counted"
+  },
+  {
+    "id": "evc-010",
+    "kind": "constraint",
+    "spec_clause": "AEB §5.6 terms",
+    "constraint": "varwof/evidence-v1:exclusion:initiator",
+    "context": {
+      "now": "2026-09-13T12:00:00Z",
+      "initiator": "carol",
+      "executor": "dave"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "satisfied"
+    },
+    "derivation": "no approver is the initiator"
+  },
+  {
+    "id": "evc-011",
+    "kind": "constraint",
+    "spec_clause": "AEB §5.6 terms",
+    "constraint": "varwof/evidence-v1:exclusion:initiator",
+    "context": {
+      "now": "2026-09-13T12:00:00Z",
+      "initiator": "alice",
+      "executor": "dave"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "exclusion:initiator_is_approver"
+    },
+    "derivation": "initiator-exclusion: the initiator may not be an approver"
+  },
+  {
+    "id": "evc-012",
+    "kind": "constraint",
+    "spec_clause": "AEB §5.6 terms",
+    "constraint": "varwof/evidence-v1:exclusion:executor",
+    "context": {
+      "now": "2026-09-13T12:00:00Z",
+      "executor": "bob"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "reason": "exclusion:executor_is_approver"
+    },
+    "derivation": "executor-exclusion: the executor may not be an approver"
+  },
+  {
+    "id": "evc-013",
+    "kind": "constraint",
+    "spec_clause": "AEB §5.6 'a cached status does not authorize'",
+    "constraint": "varwof/evidence-v1:exclusion:initiator",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "unknown",
+      "reason": "exclusion:identity_not_supplied"
+    },
+    "derivation": "without the boundary-owned identity, exclusion is established by nobody"
+  },
+  {
+    "id": "evc-014",
+    "kind": "constraint",
+    "spec_clause": "§10 step 4 / AEB §5.8",
+    "constraint": "varwof/evidence-v1:consumption:once",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "unknown",
+      "reason": "evidence_not_core_evaluated"
+    },
+    "derivation": "durable consumption state belongs to the enforcement point, so the core reports a residual obligation"
+  },
+  {
+    "id": "evc-015",
+    "kind": "constraint",
+    "spec_clause": "§8.1 value grammar (evidence side)",
+    "constraint": "varwof/evidence-v1:quorum:distinct:1",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [],
+    "expect": {
+      "error": "invalid_evidence_constraint"
+    },
+    "derivation": "a quorum greater than one; distinct:1 is a grammar violation, not a weak quorum"
+  },
+  {
+    "id": "evc-016",
+    "kind": "constraint",
+    "spec_clause": "§8.1 identity is (scheme,type)",
+    "constraint": "other/scheme-v1:freshness:sec:60",
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [],
+    "expect": {
+      "error": "invalid_evidence_constraint"
+    },
+    "derivation": "an unrecognized declaring scheme never selects this core's evaluator"
+  },
+  {
+    "id": "evr-001",
+    "kind": "requirement",
+    "spec_clause": "AEC §4 requirement",
+    "requirement": {
+      "expression": "human-authorization AND policy-permit",
+      "constraints": [
+        {
+          "role": "human-authorization",
+          "constraint": "varwof/evidence-v1:quorum:distinct:2"
+        }
+      ],
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "wire@7"
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "policy-permit",
+        "subject": "policy-1",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:00Z"
+      }
+    ],
+    "expect": {
+      "verdict": "satisfied",
+      "expression": true
+    },
+    "derivation": "both roles present and the quorum holds"
+  },
+  {
+    "id": "evr-002",
+    "kind": "requirement",
+    "spec_clause": "AEC §8 expression / §4",
+    "requirement": {
+      "expression": "human-authorization AND policy-permit",
+      "constraints": [
+        {
+          "role": "human-authorization",
+          "constraint": "varwof/evidence-v1:quorum:distinct:2"
+        }
+      ],
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "wire@7"
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "human-authorization",
+        "subject": "bob",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "expression": false,
+      "missing_roles": [
+        "policy-permit"
+      ]
+    },
+    "derivation": "an identifier with no eligible component evaluates to false, and the role is named for the challenge"
+  },
+  {
+    "id": "evr-003",
+    "kind": "requirement",
+    "spec_clause": "AEC §4 role_constraints",
+    "requirement": {
+      "expression": "human-authorization AND policy-permit",
+      "constraints": [
+        {
+          "role": "human-authorization",
+          "constraint": "varwof/evidence-v1:quorum:distinct:2"
+        }
+      ],
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "wire@7"
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      },
+      {
+        "type": "policy-permit",
+        "subject": "policy-1",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:00Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "expression": true
+    },
+    "derivation": "the expression holds but the quorum constraint does not"
+  },
+  {
+    "id": "evr-004",
+    "kind": "requirement",
+    "spec_clause": "§10 step 4",
+    "requirement": {
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "single@1",
+      "expression": "human-authorization",
+      "constraints": [
+        {
+          "role": "human-authorization",
+          "constraint": "varwof/evidence-v1:consumption:once"
+        }
+      ]
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "unknown",
+      "expression": true
+    },
+    "derivation": "a constraint the core must not answer leaves the requirement unknown, never satisfied"
+  },
+  {
+    "id": "evr-005",
+    "kind": "requirement",
+    "spec_clause": "AEC §8 equal binding, left to right",
+    "requirement": {
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "ltr@1",
+      "expression": "human-authorization OR policy-permit AND quorum-role"
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "verdict": "violated",
+      "expression": false,
+      "missing_roles": [
+        "policy-permit",
+        "quorum-role"
+      ]
+    },
+    "derivation": "equal binding, left to right: (human-authorization OR policy-permit) AND quorum-role, so one present role is not enough"
+  },
+  {
+    "id": "evr-006",
+    "kind": "requirement_raw",
+    "spec_clause": "AEB §5.6 closed object",
+    "raw": "{\"@version\":\"CLC-REQUIREMENT-v1\",\"requirement_id\":\"r@1\",\"expression\":\"a\",\"advice\":\"please\"}",
+    "expect": {
+      "error": "requirement_shape"
+    },
+    "derivation": "an undefined member is rejected, not ignored"
+  },
+  {
+    "id": "eva-001",
+    "kind": "action_id",
+    "spec_clause": "§4.2 material projection / §4.3 ActionId",
+    "action_type": {
+      "type": "payment.release.1",
+      "material_fields": [
+        "amount",
+        "currency"
+      ]
+    },
+    "suite": "jcs-sha256",
+    "action": {
+      "amount": "100.00",
+      "currency": "USD"
+    },
+    "expect": {
+      "action_id": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
+    },
+    "derivation": "ActionId = caid:1:<type>:<suite>:<b64url(sha256(JCS(material projection)))> over the declared material set only"
+  },
+  {
+    "id": "eva-002",
+    "kind": "action_id",
+    "spec_clause": "§4.2 undeclared fields carry no action identity",
+    "action_type": {
+      "type": "payment.release.1",
+      "material_fields": [
+        "amount",
+        "currency"
+      ]
+    },
+    "suite": "jcs-sha256",
+    "action": {
+      "amount": "100.00",
+      "currency": "USD",
+      "memo": "lunch",
+      "trace_id": "abc-1"
+    },
+    "expect": {
+      "action_id": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
+    },
+    "derivation": "memo/trace_id are not declared material, so they are excluded from the digest and MUST NOT affect Match (same id as eva-001)"
+  },
+  {
+    "id": "eva-003",
+    "kind": "action_id",
+    "spec_clause": "§4.2 missing material field",
+    "action_type": {
+      "type": "payment.release.1",
+      "material_fields": [
+        "amount",
+        "currency"
+      ]
+    },
+    "suite": "jcs-sha256",
+    "action": {
+      "amount": "100.00"
+    },
+    "expect": {
+      "error": "action_not_matchable"
+    },
+    "derivation": "a declared material field that is absent makes the action non-matchable; coverage is never inferred or defaulted"
+  },
+  {
+    "id": "eva-004",
+    "kind": "action_id",
+    "spec_clause": "§4.2 material content",
+    "action_type": {
+      "type": "payment.release.1",
+      "material_fields": [
+        "amount",
+        "currency"
+      ]
+    },
+    "suite": "jcs-sha256",
+    "action": {
+      "amount": "100.01",
+      "currency": "USD"
+    },
+    "expect": {
+      "action_id": "caid:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84"
+    },
+    "derivation": "a different material value is a different action identity"
+  },
+  {
+    "id": "eva-005",
+    "kind": "action_id",
+    "spec_clause": "§4.3 suite identifies the algorithm",
+    "action_type": {
+      "type": "payment.release.1",
+      "material_fields": [
+        "amount",
+        "currency"
+      ]
+    },
+    "suite": "jcs-sha384",
+    "action": {
+      "amount": "100.00",
+      "currency": "USD"
+    },
+    "expect": {
+      "action_id": "caid:1:payment.release.1:jcs-sha384:A05KfH43GUMuPAQOz6cfs0LtvslfKqbymeoj3nR8qPXSfdGhnvbp-KszJACcKA1_"
+    },
+    "derivation": "the same projection under another suite is a different identifier string (and is not comparable by Match)"
+  },
+  {
+    "id": "evm-001",
+    "kind": "match",
+    "spec_clause": "§6.4 step 2",
+    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "expect": {
+      "verdict": "MATCH"
+    },
+    "derivation": "same type, same suite, same digest -> exact content match"
+  },
+  {
+    "id": "evm-002",
+    "kind": "match",
+    "spec_clause": "§6.4 step 2",
+    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "caid:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84",
+    "expect": {
+      "verdict": "NOT_EQUIVALENT"
+    },
+    "derivation": "comparable identities that differ: the evidence is about another action"
+  },
+  {
+    "id": "evm-003",
+    "kind": "match",
+    "spec_clause": "§6.4 step 3 (pinned suite)",
+    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "caid:1:payment.release.1:jcs-sha384:A05KfH43GUMuPAQOz6cfs0LtvslfKqbymeoj3nR8qPXSfdGhnvbp-KszJACcKA1_",
+    "expect": {
+      "verdict": "INDETERMINATE"
+    },
+    "derivation": "different suites are not comparable without a relying-party-pinned mapping profile; indeterminate is never a match"
+  }
+]
