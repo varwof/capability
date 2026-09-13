@@ -18,7 +18,7 @@ three-valued verdict (`allow`, `deny`, `allow_unresolved`).
 The language is carrier-neutral: it defines what is evaluated, not how it is
 carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
-exercised by a published corpus of 98 vectors and 1184 property cases; three
+exercised by a published corpus of 105 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.  The
 authorization-side conformance class CLC-A is claimed by this revision; the
 evidence-side class CLC-E is defined but not claimed.
@@ -32,6 +32,7 @@ evidence-side class CLC-E is defined but not claimed.
 | CLC-1.1 | 2026-09-10 | — | Baseline working draft |
 | CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(new), §9, §9.4, §11, §12, Appendix B, Security | Residual-obligation channel `unresolved` (recognized-but-not-evaluated constraints carried explicitly, never silently dropped); `time:window` value grammar defined as a multi-segment UTC window array; recognition upgraded to a "type-name × value-grammar" double check with a new `invalid_constraint` reason code; the "time → intersection" merge rule demoted to v2; constraint merge normalized with deterministic ordering |
 | CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, Appendix B | Authorization loop tightened + constraint identity namespaced: `Decision.verdict` is three-valued (`allow`/`deny`/`allow_unresolved`), residual obligations no longer mixed into `allow` (kills the fail-closed break where a consumer judges only `verdict == allow`, §8.4); constraint identity becomes the `(scheme,type)` pair, the core recognizes only `max_rows`/`time`/`network` under `varwof/constraint-v1`, everything else → `unknown_constraint` (removes cross-scheme semantic pollution, §8.1); `time:window` value grammar tightened: a single segment must stay within one day (`start < end`), **no single segment may cross midnight** (a crossing must be split into two segments, `end:"00:00"` stays reserved as "next-day midnight"), segment list ascending, non-overlapping, ≤32; `params:{}` ≡ absent = no param constraint (entailment and intersection semantics agree); multi-grant aggregation made explicit (any-one-covers authorizes + residual union + deterministic deny reason, §9.3) |
+| CLC-1.4 | 2026-09-13 | §6.2, §8.1, Appendix B | Operation-side value domain enforced: `max_rows` requests must carry a finite non-negative integer; anything else (string, boolean, negative, fractional, non-finite) → `max_rows:violated` instead of passing unchecked.  Size cap restated and implemented in **UTF-8 octets of the canonical serialization** in every path (decoded and raw); measuring code points or UTF-16 code units is non-conforming (the non-ASCII boundary vectors `params-028`/`params-029` pin it) |
 
 ---
 
@@ -304,7 +305,7 @@ layer runs, the `params` object is normalized at the input boundary:
    input is always the raw token text (`params-*` number probes in the corpus;
    near-limit forms such as `1.0000000000000001` extend the probes without
    changing the rule).
-4. **Size and depth.** Params whose JCS-serialized form exceeds 512 bytes
+4. **Size and depth.** Params whose JCS-serialized form exceeds 512 **UTF-8 octets** (the canonical serialization is measured in octets — never in code points or UTF-16 code units; rev CLC-1.4)
    (octets of the canonical UTF-8 form), or whose nesting depth exceeds 32,
    are rejected:
    `deny("invalid_params_size")`.  Nesting depth counts **both** objects and
@@ -494,7 +495,7 @@ on the decision's additive `unresolved` field — never silently dropped
 
 | type | value grammar (v1) | core behavior |
 |------|--------------------|---------------|
-| `max_rows` | strict non-negative integer (JSON number grammar: no leading `+`, no `0x`, no trailing characters) | evaluated against op params; op missing the param or above the bound → `max_rows:violated` (cannot be shown conforming = fail-closed); value out of grammar → `invalid_constraint` |
+| `max_rows` | strict non-negative integer (JSON number grammar: no leading `+`, no `0x`, no trailing characters) | evaluated against op params; the **operation-side value domain** is a finite non-negative integer — an absent param, a string, a boolean, a negative, a fractional or a non-finite value, or a value above the bound → `max_rows:violated` (cannot be shown conforming = fail-closed; rev CLC-1.4); constraint value out of grammar → `invalid_constraint` |
 | `time` (`window`) | non-empty JSON array (≤ 32 elements), elements `{"start":"HH:MM[:SS]","end":"HH:MM[:SS]"}`, UTC, repeated daily, single window = one-element array; **a single segment must have `start < end` within one day (lexical time order)**, a single segment **must not cross midnight**; a crossing window must be split into two segments (`22:00→00:00` + `00:00→06:00`), where `end:"00:00"` is reserved as **next-day midnight** (i.e. segment end 24:00, requiring `start != end`); segment list ascending by (start,end), **segments non-overlapping** | recognized only → `allow_unresolved` + `unresolved` (§8.4) |
 | `network` (`cidr`) | legal IPv4/IPv6 CIDR strings (`addr/mask`), syntax-level check only; JSON array ≤ 32 elements | recognized only → `allow_unresolved` + `unresolved` (§8.4) |
 
@@ -827,7 +828,7 @@ implementation and vectors is what would make CLC-E a claimable class.
 
 **Conformance corpora.**  CLC-A conformance is exercised by two
 machine-readable reference suites shipped at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 98 vectors mapped
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 105 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
@@ -856,7 +857,7 @@ provisioning and carries its own EXPERIMENTAL banner.
 ### 12.1 Language Revision
 
 Every implementation declares a language revision `CLC-<major>.<minor>` —
-this document declares **`CLC-1.3`**.  A capability input (grant,
+this document declares **`CLC-1.4`**.  A capability input (grant,
 operation, or OCM) SHOULD carry the revision it was authored against; an
 input without a declared revision is treated as `CLC-1.0`.
 
@@ -1044,7 +1045,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 98 vectors**
+**Total: 105 vectors**
 
 > Decisions D17–D28 are the corpus pin for the
 > residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1

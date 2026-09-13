@@ -2268,5 +2268,166 @@
       "reason": "params_exceed_grant"
     },
     "derivation": "multi-grant Authorize: G1 {limit:10} and G2 {limit:6} both deny limit=50; no covering grant allows -> deny with the FIRST covering grant reason in canonical (input) order (rev CLC-1.3 §9.3)"
+  },
+  {
+    "id": "decide-031",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": "garbage"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "op-side max_rows value is outside the defined domain (a finite non-negative integer) → fail closed rather than pass unchecked (rev CLC-1.4)"
+  },
+  {
+    "id": "decide-032",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": true
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "op-side max_rows value is outside the defined domain (a finite non-negative integer) → fail closed rather than pass unchecked (rev CLC-1.4)"
+  },
+  {
+    "id": "decide-033",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": -1
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "op-side max_rows value is outside the defined domain (a finite non-negative integer) → fail closed rather than pass unchecked (rev CLC-1.4)"
+  },
+  {
+    "id": "decide-034",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §8.1",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 1.5
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated"
+    },
+    "derivation": "op-side max_rows value is outside the defined domain (a finite non-negative integer) → fail closed rather than pass unchecked (rev CLC-1.4)"
+  },
+  {
+    "id": "params-028",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_size"
+    },
+    "derivation": "canonical serialization is 528 UTF-8 octets (> 512); the size cap is measured in octets, not code points or UTF-16 code units (rev CLC-1.4)"
+  },
+  {
+    "id": "params-029",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "canonical serialization is 510 UTF-8 octets (≤ 512) → allowed (rev CLC-1.4)"
+  },
+  {
+    "id": "params-030",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.4",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "x"
+      }
+    },
+    "raw_params": "{\"s\":\"\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\\u00e9\"}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "the same canonical value written with \\u00e9 escapes must get the same verdict as the literal spelling (510 UTF-8 octets ≤ 512; rev CLC-1.4)"
   }
 ]

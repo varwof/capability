@@ -625,7 +625,7 @@ parity report rev 9 记录本批。
 **已修（同日）**：TS 的 `validateRawParams` 改为**两趟**——第一趟只算 size/depth 并在越界时抛 `invalid_params_size`，
 第二趟才执行 dup/number 检查，与 §6.2 item 5（size/depth → dup → number）一致；depth 仍在解析中判（属检查 4）。
 新增三条组合向量把这个顺序钉死：`params-025`（超限+重复键 → size）、`params-026`（超限+坏数字 → size）、
-`params-027`（重复键+坏数字、未超限 → dup）。语料 80 → **83**，三方 83/83。
+`params-027`（重复键+坏数字、未超限 → dup）。语料 80 → **83**，三方 105/105。
 
 ---
 
@@ -688,5 +688,5 @@ schema verdict enum 加 `allow_unresolved`，顶层加 `"multi": true`。
 `authorize_set`/`AuthorizeSet`、新窗口文法与 `{}`≡absent；`CLCRevision`/`CLC_REVISION` 升 1.3。
 property 墙 closure 探针在空 params 合并结果跳过（860 → 841）。
 
-**计数收口**：语料 98（decide 38）；三 runner 98/98 + reason/unresolved 断言强制，py/ts 输出逐字节一致；
+**计数收口**：语料 98（decide 38）；三 runner 105/105 + reason/unresolved 断言强制，py/ts 输出逐字节一致；
 属性 1184 / 0 failures，Go/Py/TS 计数 869/841 全同。parity report rev 12、ambiguities §8 同步。
