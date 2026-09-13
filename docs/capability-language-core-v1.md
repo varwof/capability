@@ -817,6 +817,8 @@ exposure of recognized-but-unevaluated constraints via the decision's
 silently dropped, §8.4), multi-grant aggregation (§9.3), and stable
 reason codes (§9.4).
 
+**Delegation narrowing is not part of this revision.**  A delegation policy may require that the constraint set an agent requests lies inside the principal's boundary, and that the delegation record carry the effective subset.  That obligation belongs to the delegation/authorization binding profile, not to the language: this revision defines neither a conformance class nor a reason code for it, and implementations must not infer one.  A future revision may add a core relation for it — a deterministic constraint-subset check alongside entailment and intersection — once the profile that requires it is settled.
+
 **CLC-E (evidence side)** — optional profile, **not claimed by this
 version**.  §6.4 (match) and §10 (satisfaction) define the evidence-side
 relations, but **no CLC-E implementation and no CLC-E vectors are published
