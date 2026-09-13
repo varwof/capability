@@ -43,7 +43,7 @@ capability 是 varwof 生态的**能力数据层**。本项目是 [Open Inventio
 
 本仓同时承载 **CLC-v1**（极小能力判定语言）的机器可读部分：
 
-- `data/_vectors/clc-v1/` —— **98 条一致性向量**（syntax 9 / entail 37 / intersect 14 / decide 38）、
+- `data/_vectors/clc-v1/` —— **105 条一致性向量**（syntax 9 / entail 37 / intersect 14 / decide 38）、
   `vectors.schema.json`、`clc-v1-ambiguities.md`（裁决记录）、**1184 条 P11 属性用例**
   （`property-cases.json`，由 `scripts/gen-property-cases.py` 确定性生成）与
   **12 条 OCMP 离线用例**（`offline-vectors.json`）。消费方实现：
