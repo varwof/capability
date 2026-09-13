@@ -5,8 +5,9 @@
 
 > ⚠️ **Preview** — Not for production use. APIs and features may change before official release.
 
-Status: declaration, **rev 2** — 2026-09-11 (adds P9–P12, three clarifications,
-and the clause↔evidence ledger).  rev 1 = 2026-09-10, P1–P8.
+Status: declaration, **rev 3** — 2026-09-13 (adds the derived decision rules
+R1–R5 in §2.5, and resolves the CLC-E entry in §9).  rev 2 = 2026-09-11 (P9–P12,
+three clarifications, the clause↔evidence ledger).  rev 1 = 2026-09-10, P1–P8.
 Companion (normative): `capability-language-core-v1.md`
 
 ## 0. What this is
@@ -125,6 +126,43 @@ defect.  The bar is bidirectional: a rule with no vector is incomplete, and a
 vector with no normative clause is incomplete.
 *Falsifiable check:* every rule maps to ≥1 vector and every vector maps to a
 clause; both runners exit non-zero on any mismatch.
+
+### 2.5 Derived decision rules (R1–R5)
+
+R1–R5 are **not additional principles**: each one operationalizes the principle(s)
+named beside it, so an argument about a proposed feature can be settled by
+pointing at a rule instead of re-arguing the principle from scratch.  They are
+derived — the falsifiable checks above remain the source of truth.
+
+**R1 — State, time or network ⇒ carrier or profile, never the core.**
+*From:* P9 (local decidability) + §6 extension rules.
+*In practice:* freshness, status, revocation, wall-clock and epoch inputs live in
+a profile that declares them and denies when they are absent; the core corpus
+runs with no I/O.
+
+**R2 — A new value domain is a new type; a new operator is new syntax.**
+*From:* P4 (domains, not types) + §6.
+*In practice:* adding constraint types (`freshness`, `consumption`, `quorum`,
+`exclusion`) extends a value grammar and may enter the core; adding a wildcard
+shape rewrites §3 and MUST be given a position in the §9.3 ordering.
+
+**R3 — Changing the core for one vendor is a defect; that belongs to a profile.**
+*From:* P7 (define once) + P8① (carrier independence).
+*In practice:* a carrier's field names appear in its own profile document, never
+in the language text; the language may *cite* a consumer (Appendix A), not absorb
+it.
+
+**R4 — A rule without a clause, or without a vector, is decoration.**
+*From:* §7 ledger discipline.
+*In practice:* every addition lands with its normative sentence and its corpus
+entries in the same change; "vectors will follow" is not a completed rule.
+
+**R5 — A conformance class is claimed only when ≥2 independent implementations
+pass the corpus.**
+*From:* P12 (agreement is the bar) + P8② (language independence).
+*In practice:* "implemented and pinned by a corpus, not claimed" is a legitimate
+and honest state — it is the state of the evidence side in this revision — and
+parity between implementations that share an author does not satisfy this rule.
 
 ## 3. What CLC-v1 deliberately refuses
 
@@ -252,11 +290,26 @@ normative text.
 3. Carriers: cite CLC where they consume it, and either retire the second subset
    implementation in `aic-jwt/wit-wpt-interop` or declare it a different
    language.
-4. **CLC-E (evidence side)**: §4.2/§6.4/§10 have text and §12 declares the
-   conformance class, but there is no implementation and no vector.  Either
-   implement it or state explicitly that v1 makes no CLC-E conformance claim.
-5. Commit and publish: the specification, vectors, and both implementations are
-   still uncommitted, so none of this is reachable from the repositories yet.
+4. **CLC-E (evidence side)** — **resolved 2026-09-13, the other way**: the
+   evidence side now has a value grammar (§8.2, §10), a reference implementation
+   and a corpus (`evidence-vectors.json`, 30 vectors: constraints, requirement
+   binding, ActionId, Match), and §12 states explicitly that **this revision
+   makes no CLC-E conformance claim**.  The claim is withheld **on principle**,
+   not for lack of material: P12 sets the bar at ≥2 *independent*
+   implementations and P8② counts parity only between independent ones, so
+   "implemented, not claimed" is the honest state until a second implementation
+   of the evidence side exists — and the evidence-side semantics are EMILIA's to
+   gate (division of work), which is the second precondition.  Carrier-neutral
+   genericity is now exercised rather than asserted: `crosswalk-vectors.json`
+   carries 13 vectors in both directions (8 mapping foreign capability
+   representations into CLC, 5 projecting a CLC decision into an AEB crossing).
+5. Commit and publish: the specification, the vectors and both implementations
+   are still uncommitted, so none of this is reachable from the repositories yet.
+   As of 2026-09-13 that list also includes the evidence-side value grammar and
+   corpus (§8.2/§10, `evidence-vectors.json`), the two cross-walk directions and
+   the execution-side evidence face (decision/admission/outcome records with
+   profile and recorder subjects).  A language revision that nobody can fetch is
+   not yet a language revision.
 6. Execution layer (`ruleexec`) follow-ups recorded in
    `database-scheme-design.md`: rule schema promotion, flow state machine,
    budget-exceeded rollback semantics, more shared vectors.
@@ -270,6 +323,7 @@ normative text.
 - **三条纪律**：① **没有控制流**（条件性只能靠"更窄的能力 + 更紧的约束"表达）；② **值不可变**（无赋值、无状态，单次纯求值）；
   ③ **类型系统 = 值域**（bound / enum / exact，语义按值域分派）。
 - **六条不可让**：不做通用策略语言；不做信任与密钥绑定；不做发放/吊销传输；不做执行生命周期；不做线格式；**不靠"缺省即允许"**。
+- **R1–R5（§2.5，派生判定规则，不是新原则）**：R1 状态/时间/网络 → 归 carrier 或 profile，绝不进核心；R2 新值域 = 加类型、新算子 = 加语法（且必须进 §9.3 顺序）；R3 为某一家改核心 = 缺陷，那属于 profile；R4 没有条文或没有向量的规则是装饰；**R5 一致性类只在 ≥2 个独立实现通过语料后才声称**（因此证据侧现在是「已实现、有语料、不声称」）。
 - **P1–P12**：P1 最小核、P2 无控制流、P3 值不可变、P4 值域而非类型、P5 确定性（含 reason）、P6 缺省即拒绝、
   P7 定义一次处处消费、P8 载体与语义分离（分①载体无关②实现语言无关两层检验）、
   P9 **本地可判**、P10 **有界工作量**（参数 ≤512 字节、嵌套 ≤32 层，超限即拒）、

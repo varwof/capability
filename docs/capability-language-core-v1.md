@@ -4,7 +4,7 @@
 
 > **Preview** — Not for production use. APIs and features may change before official release.
 
-**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-09-12
+**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-09-13
 
 ## Abstract
 
@@ -20,8 +20,10 @@ carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
 exercised by a published corpus of 105 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.  The
-authorization-side conformance class CLC-A is claimed by this revision; the
-evidence-side class CLC-E is defined but not claimed.
+authorization-side conformance class CLC-A is claimed by this revision.  The
+evidence-side class CLC-E is **not** claimed: its relations, value grammar,
+reference implementation and corpus ship here, but the bar for claiming a
+conformance class (two independent implementations, §12) is not met yet.
 
 ### Revision History
 
@@ -32,7 +34,7 @@ evidence-side class CLC-E is defined but not claimed.
 | CLC-1.1 | 2026-09-10 | — | Baseline working draft |
 | CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(new), §9, §9.4, §11, §12, Appendix B, Security | Residual-obligation channel `unresolved` (recognized-but-not-evaluated constraints carried explicitly, never silently dropped); `time:window` value grammar defined as a multi-segment UTC window array; recognition upgraded to a "type-name × value-grammar" double check with a new `invalid_constraint` reason code; the "time → intersection" merge rule demoted to v2; constraint merge normalized with deterministic ordering |
 | CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, Appendix B | Authorization loop tightened + constraint identity namespaced: `Decision.verdict` is three-valued (`allow`/`deny`/`allow_unresolved`), residual obligations no longer mixed into `allow` (kills the fail-closed break where a consumer judges only `verdict == allow`, §8.4); constraint identity becomes the `(scheme,type)` pair, the core recognizes only `max_rows`/`time`/`network` under `varwof/constraint-v1`, everything else → `unknown_constraint` (removes cross-scheme semantic pollution, §8.1); `time:window` value grammar tightened: a single segment must stay within one day (`start < end`), **no single segment may cross midnight** (a crossing must be split into two segments, `end:"00:00"` stays reserved as "next-day midnight"), segment list ascending, non-overlapping, ≤32; `params:{}` ≡ absent = no param constraint (entailment and intersection semantics agree); multi-grant aggregation made explicit (any-one-covers authorizes + residual union + deterministic deny reason, §9.3) |
-| CLC-1.4 | 2026-09-13 | §6.2, §8.1, Appendix B | Operation-side value domain enforced: `max_rows` requests must carry a finite non-negative integer; anything else (string, boolean, negative, fractional, non-finite) → `max_rows:violated` instead of passing unchecked.  Size cap restated and implemented in **UTF-8 octets of the canonical serialization** in every path (decoded and raw); measuring code points or UTF-16 code units is non-conforming (the non-ASCII boundary vectors `params-028`/`params-029` pin it) |
+| CLC-1.4 | 2026-09-13 | §6.2, §8.1, Appendix B | Operation-side value domain enforced: `max_rows` requests must carry a finite non-negative integer; anything else (string, boolean, negative, fractional, non-finite) → `max_rows:violated` instead of passing unchecked.  Size cap restated and implemented in **UTF-8 octets of the canonical serialization** in every path (decoded and raw); measuring code points or UTF-16 code units is non-conforming (the non-ASCII boundary vectors `params-028`/`params-029` pin it).  Evidence-side scope completed in the same working revision: the evidence-side value grammar (`varwof/evidence-v1:*`) and `CLC-REQUIREMENT-v1` are defined (§8.2, §10) and the evidence-side corpus ships (§12, `evidence-vectors.json`, 30 vectors, including ActionId/Match) — CLC-E is **implemented and pinned by a corpus but not claimed**, because the claim needs two independent implementations (§12, P12 of the principles document); genericity is exercised by `crosswalk-vectors.json` (13 vectors, both directions) |
 
 ---
 
@@ -637,7 +639,7 @@ layer in this fixed order.  It applies to `Entails` (§6.3),
 | 2 | Params normalization | Duplicate JSON keys; non-finite/over-precision numbers; size/depth limits (§6.2) | `invalid_params_duplicate_key`, `invalid_params_number`, `invalid_params_size` |
 | 3 | Namespace = scheme + action Class | Grant vs operation scheme and Class | `different_namespace` |
 | 4 | Path coverage (same namespace) | Literal path segments, trailing-wildcard depth | `literal_mismatch`, `wildcard_requires_trailing_segment` |
-| 5 | Explicit empty bound | Any grant/intersection source declares `[]`/`{}` | `empty_bound_denies_class` |
+| 5 | Explicit empty bound | Any grant/intersection source declares a **parameter value** that is `[]`/`{}` (a present-but-empty `params` object is *no* constraint, §7 rule 6) | `empty_bound_denies_class` |
 | 6 | Null values | Any `null` parameter value | `invalid_params_null` |
 | 7 | Param presence | Grant bounds a param the operation omits (or operation has no `params`); operation carries a key the grant does not declare | `params_missing`, `undeclared_param` |
 | 8 | Enum membership | Request value not a member of a granted array set (§6.2) | `not_in_enum` |
@@ -678,7 +680,8 @@ of declared names, see the bullet above.)
 - **Layer 11 runs last by construction**: constraints are evaluated only
   after coverage and parameters pass.
 - **Multi-grant aggregation (normative)**: `Authorize` operates on a
-  **set of grants**, not a single grant.  Rules:
+  **ordered list of grants**, not a single grant.  Authorization semantics are
+  order-independent; only reason selection (rule 4) uses the input order.  Rules:
   1. **Any one covering-and-allowing grant allows** (∃ `g`: Entails(g,op) ∧
      no params-layer rejection ∧ no constraint-layer rejection);
   2. Residual obligations = `unresolved` **union across all covering and
@@ -743,7 +746,7 @@ compatibility checks MUST compare the canonical prefix only.
 | `params_exceed_grant` | Request parameters exceed the granted bound |
 | `params_missing` | Grant bounds a parameter but the request omits it, or the request has no `params` field at all (fail-closed, §6.3 step 4) |
 | `undeclared_param` | Operation parameter key not declared by the grant's params (key closure, §6.2; §9.3 layer 7 request side) |
-| `empty_bound_denies_class` | Explicitly empty bound (`[]`/`{}`) denies the class |
+| `empty_bound_denies_class` | An explicitly empty bound at a parameter value (`[]`/`{}`) denies the class.  `params:{}` is not an empty bound: it is equivalent to an absent `params` (§7 rule 6) |
 | `not_in_enum` | Request value is not a member of the allowed set granted as an array (§6.2 enum rule) |
 | `invalid_params_null` | `null` parameter value (rejected in v1) |
 | `unsupported_language_revision` | Declared CLC revision is incompatible with the implementation (§12.1; fails closed, no silent downgrade) |
@@ -766,7 +769,11 @@ Algorithm:
 1. Verify each evidence artifact under its native rules.
 2. For each required evidence role, check that an artifact fills it.
 3. Check that each artifact is bound to the exact action via Match (§6.4).
-4. Evaluate freshness, consumption, and role constraints.
+4. Evaluate freshness, consumption, and role constraints.  The evidence-side
+   value grammar is defined in this revision: `varwof/evidence-v1:freshness:sec:<n>`,
+   `:consumption:once`, `:quorum:distinct:<n>`, `:exclusion:initiator|executor`
+   (§8.2).  A recognized constraint whose evaluation belongs to the enforcement
+   point (consumption) yields an unresolved obligation, never `SATISFIED`.
 5. All required roles filled and bound → `SATISFIED`.
 6. Any role unfilled, unbound, or violated → `UNSATISFIED`.
 
@@ -819,14 +826,49 @@ reason codes (§9.4).
 
 **Delegation narrowing is not part of this revision.**  A delegation policy may require that the constraint set an agent requests lies inside the principal's boundary, and that the delegation record carry the effective subset.  That obligation belongs to the delegation/authorization binding profile, not to the language: this revision defines neither a conformance class nor a reason code for it, and implementations must not infer one.  A future revision may add a core relation for it — a deterministic constraint-subset check alongside entailment and intersection — once the profile that requires it is settled.
 
-**CLC-E (evidence side)** — optional profile, **not claimed by this
-version**.  §6.4 (match) and §10 (satisfaction) define the evidence-side
-relations, but **no CLC-E implementation and no CLC-E vectors are published
-with v1**: an implementation MUST NOT claim CLC-E conformance against this
-revision.  The evidence-side text is a semantic mapping — carriers that need
-it (e.g. an Action Evidence Envelope) define their own profile over §6.4/§10
-and supply their own corpora.  A future revision that ships both an
-implementation and vectors is what would make CLC-E a claimable class.
+**CLC-E (evidence side)** — optional conformance profile, **implemented and
+pinned by a corpus in this revision, but NOT claimed**.  §6.4 (match) and §10
+(satisfaction) define the evidence-side relations; this revision also defines the
+evidence-side constraint value grammar (`varwof/evidence-v1:freshness:sec:<n>`,
+`:consumption:once`, `:quorum:distinct:<n>`, `:exclusion:initiator|executor`) and
+ships a reference implementation and a corpus.
+
+The class is withheld **on principle, not for lack of material**: agreement is
+the bar, and the bar is two *independent* implementations (§12 of the principles
+document, P12; §12 here, "Independence of implementations").  Parity between
+implementations that share an author does not meet it.  A second precondition is
+stewardship: the evidence-side semantics are the subject of joint review with
+EMILIA, so no claim is made ahead of that review.
+
+A future revision that claims CLC-E would carry these obligations, and an
+implementation that claims it today MUST:
+
+* evaluate the four evidence-side types over eligible evidence facts, returning
+  a three-valued result (`satisfied` / `violated` / `unknown`) where `unknown` is
+  never read as satisfied, and report a recognized constraint whose evaluation
+  belongs to the enforcement point (`consumption`) as `unknown` rather than
+  satisfied;
+* take eligibility from integrity-protected native results only: a fact that did
+  not reach VERIFIED, or whose protected subject identifier is absent, MUST NOT
+  be counted for quorum or exclusion;
+* implement instance identity and binding (§4.2/§6.4): an ActionId is the digest
+  of the JCS canonical serialization of the **declared material projection**, an
+  undeclared field MUST NOT affect it, a missing declared material field makes the
+  action non-matchable (never inferred or defaulted), and a comparison across
+  suites or action types is INDETERMINATE — a mapping problem, never a match —
+  unless a relying-party-pinned Action-Mapping Profile projects it;
+* implement `CLC-REQUIREMENT-v1` as a **closed** object (an undefined member is
+  rejected) whose expression uses the bounded grammar — `AND`/`OR` with equal
+  binding strength, evaluated strictly left to right, parentheses as the only
+  precedence mechanism — and treat an identifier with no eligible component as
+  false;
+* take the requirement from relying-party configuration: a requirement supplied
+  by the presenter MUST NOT be accepted or weakened;
+* pass `evidence-vectors.json` (§12 conformance corpora).
+
+An implementation that implements only CLC-A MUST NOT claim CLC-E.  CLC-E does
+not add a wire format: carriers that need one (e.g. an Action Evidence Envelope)
+profile §6.4/§10 themselves.
 
 **Conformance corpora.**  CLC-A conformance is exercised by two
 machine-readable reference suites shipped at
@@ -836,6 +878,26 @@ meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
 timestamped snapshot mirror.  A conforming implementation MUST pass both
 suites.
+
+**Genericity is exercised, not asserted.**  `crosswalk-vectors.json` in the same
+directory carries 13 vectors in both directions: 5 that project a CLC decision
+into the members an AEB crossing record asks of a native source (the members CLC
+can establish, and the ones it explicitly does not), and 8 that map four foreign
+capability representations —
+OAuth RAR `authorization_details`, an AIC-JWT delegation authorization, an
+Action Evidence Graph capability class, a UCAN `{with, can}` capability, and a
+delegation chain — into CLC grants through pinned cross-walk profiles and assert
+the decision the unchanged core reaches.  A profile is a few lines of mapping
+written by whoever owns the foreign format; the core is not modified for any of
+them.
+
+The evidence side ships `evidence-vectors.json` in the same directory — 30 vectors covering the four evidence-side constraint types, their
+value-grammar rejections, requirement-expression binding, the closed requirement
+object, ActionId computation (§4.2: declared material projection, undeclared
+fields excluded, missing material field non-matchable, suite-tagged identifiers)
+and Match verdicts (§6.4: `MATCH` / `NOT_EQUIVALENT` / `INDETERMINATE`).  Its
+runner ships with the reference implementation (`register`), and its syntax
+mirrors `vectors.json`.
 
 Implementations MUST NOT: redefine semantics, accept v1-forbidden
 wildcards, or broaden bounds during canonicalization.
