@@ -118,7 +118,7 @@ def main():
         "_meta": {
             "title": "CLC-v1 intersection property cases",
             "principle": "P11 — composition narrows only",
-            "spec_clause": "CLC-v1 §7 rules 2/5/6, §9.3 layer 10",
+            "spec_clause": "CLC-v1 §7 rules 2/5/6, §9.1 layer 10",
             "property": ("if Intersect(sources) succeeds, the result MUST be "
                          "covered by every source and MUST NOT depend on the "
                          "order of the sources; otherwise it MUST deny with a "

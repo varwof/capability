@@ -204,7 +204,7 @@
         "verdict": "deny",
         "reason": "capability_not_authorized"
       },
-      "derivation": "OCMP §3 R2 first row: no grant covers the request -> deny with the CLC-v1 §9.3 layer 10 code"
+      "derivation": "OCMP §3 R2 first row: no grant covers the request -> deny with the CLC-v1 §9.1 layer 10 code"
     }
   ]
 }

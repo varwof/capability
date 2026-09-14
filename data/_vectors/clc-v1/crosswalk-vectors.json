@@ -27,7 +27,7 @@
   {
     "id": "xw-002",
     "kind": "crosswalk",
-    "spec_clause": "§9.3 layer 9",
+    "spec_clause": "§9.1 layer 9",
     "profile": "oauth-rar->clc-v1",
     "source": {
       "type": "std/database-v1",
@@ -112,7 +112,7 @@
   {
     "id": "xw-006",
     "kind": "crosswalk",
-    "spec_clause": "§9.3 layers 3-4 collapsed by Authorize",
+    "spec_clause": "§9.1 layers 3-4 collapsed by Authorize",
     "profile": "ucan->clc-v1",
     "source": {
       "with": "varwof/demo-mysql-v1",

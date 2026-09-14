@@ -154,7 +154,7 @@
       "verdict": "deny",
       "reason": "different_namespace"
     },
-    "derivation": "action-class 'query' vs 'admin' under same scheme -> different namespace (scheme + class, §9.3 layer 3)"
+    "derivation": "action-class 'query' vs 'admin' under same scheme -> different namespace (scheme + class, §9.1 layer 3)"
   },
   {
     "id": "entail-005",
@@ -837,7 +837,7 @@
       "verdict": "deny",
       "reason": "params_missing"
     },
-    "derivation": "intersection of {limit:100}/{limit:50} -> {limit:50}; operation requests only max_rows (no limit key) -> params_missing (§9.3 layer 7); no max_rows constraint is declared"
+    "derivation": "intersection of {limit:100}/{limit:50} -> {limit:50}; operation requests only max_rows (no limit key) -> params_missing (§9.1 layer 7); no max_rows constraint is declared"
   },
   {
     "id": "combined-004",
@@ -921,7 +921,7 @@
       "verdict": "deny",
       "reason": "capability_not_authorized"
     },
-    "derivation": "grant declares unknown scheme 'unknown' -> namespace differs from std/database-v1 -> no grant covers (§9.3 layers 3/10, collapsed in Authorize); not a constraint-type failure"
+    "derivation": "grant declares unknown scheme 'unknown' -> namespace differs from std/database-v1 -> no grant covers (§9.1 layers 3/10, collapsed in Authorize); not a constraint-type failure"
   },
   {
     "id": "combined-007",
@@ -1262,7 +1262,7 @@
       "verdict": "deny",
       "reason": "invalid_params_duplicate_key"
     },
-    "derivation": "duplicate JSON key in raw request params rejected at input normalization (§6.2 step 2, §9.3 layer 2); a map decode would silently drop it"
+    "derivation": "duplicate JSON key in raw request params rejected at input normalization (§6.2 step 2, §9.1 layer 2); a map decode would silently drop it"
   },
   {
     "id": "params-017",
@@ -1285,7 +1285,7 @@
       "verdict": "deny",
       "reason": "invalid_params_number"
     },
-    "derivation": "non-finite number literal 1e400 rejected at input normalization (§6.2 step 3, §9.3 layer 2); JSON cannot carry +Inf as a plain value"
+    "derivation": "non-finite number literal 1e400 rejected at input normalization (§6.2 step 3, §9.1 layer 2); JSON cannot carry +Inf as a plain value"
   },
   {
     "id": "params-018",
@@ -1308,7 +1308,7 @@
       "verdict": "deny",
       "reason": "invalid_params_size"
     },
-    "derivation": "params serialized form exceeds 512 bytes -> invalid_params_size (§6.2 step 4, §9.3 layer 2)"
+    "derivation": "params serialized form exceeds 512 bytes -> invalid_params_size (§6.2 step 4, §9.1 layer 2)"
   },
   {
     "id": "params-019",
@@ -1331,7 +1331,7 @@
       "verdict": "deny",
       "reason": "invalid_params_size"
     },
-    "derivation": "nesting depth 33 exceeds the depth-32 limit -> invalid_params_size (§6.2 step 4, §9.3 layer 2)"
+    "derivation": "nesting depth 33 exceeds the depth-32 limit -> invalid_params_size (§6.2 step 4, §9.1 layer 2)"
   },
   {
     "id": "revision-001",
@@ -1419,7 +1419,7 @@
       "verdict": "deny",
       "reason": "not_in_enum"
     },
-    "derivation": "drug-class categorical allowlist: 'anesthetic' is not a member of the granted set ['narcotic'] (§9.3 layer 8); scheme std/clinical-v1 declares drug-class as an array domain"
+    "derivation": "drug-class categorical allowlist: 'anesthetic' is not a member of the granted set ['narcotic'] (§9.1 layer 8); scheme std/clinical-v1 declares drug-class as an array domain"
   },
   {
     "id": "clinical-002",
@@ -1445,7 +1445,7 @@
       "verdict": "deny",
       "reason": "params_exceed_grant"
     },
-    "derivation": "dose is an ordered upper bound: requested 15 > granted 10 (§9.3 layer 9)"
+    "derivation": "dose is an ordered upper bound: requested 15 > granted 10 (§9.1 layer 9)"
   },
   {
     "id": "payments-001",
@@ -1472,7 +1472,7 @@
       "verdict": "deny",
       "reason": "not_in_enum"
     },
-    "derivation": "counterparty whitelist: scalar request must be a member; 'paypal-ltd' is not in the granted allowlist (§9.3 layer 8)"
+    "derivation": "counterparty whitelist: scalar request must be a member; 'paypal-ltd' is not in the granted allowlist (§9.1 layer 8)"
   },
   {
     "id": "payments-002",
@@ -1540,7 +1540,7 @@
     "expect": {
       "verdict": "allow"
     },
-    "derivation": "purpose/region classification expressed as params (allowed-set arrays); scalar request members are within the grant -> allow; this is the CLC-v1-decidable form (§9.3 layers 3-8); the constraint-triple form data:purpose:/data:region: is recorded for CLC v2 (design-notes §18)"
+    "derivation": "purpose/region classification expressed as params (allowed-set arrays); scalar request members are within the grant -> allow; this is the CLC-v1-decidable form (§9.1 layers 3-8); the constraint-triple form data:purpose:/data:region: is recorded for CLC v2 (design-notes §18)"
   },
   {
     "id": "data-002",
@@ -1564,12 +1564,12 @@
       "verdict": "deny",
       "reason": "params_exceed_grant"
     },
-    "derivation": "rows is an ordered upper bound: requested 20000 > granted 10000 (§9.3 layer 9)"
+    "derivation": "rows is an ordered upper bound: requested 20000 > granted 10000 (§9.1 layer 9)"
   },
   {
     "id": "undeclared-001",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §6.2 / §9.3 layer 7",
+    "spec_clause": "CLC-v1 §6.2 / §9.1 layer 7",
     "clc_revision": "CLC-1.1",
     "conformance_class": "CLC-A",
     "grant": {
@@ -1593,12 +1593,12 @@
       "verdict": "deny",
       "reason": "undeclared_param"
     },
-    "derivation": "key closure (P2' Plan A): request key 'extra' is not declared by the bounded grant -> deny(\"undeclared_param\") (§9.3 layer 7, request side; §6.2); an unconstrained grant would accept it"
+    "derivation": "key closure (P2' Plan A): request key 'extra' is not declared by the bounded grant -> deny(\"undeclared_param\") (§9.1 layer 7, request side; §6.2); an unconstrained grant would accept it"
   },
   {
     "id": "undeclared-002",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3 layer 7",
+    "spec_clause": "CLC-v1 §9.1 layer 7",
     "clc_revision": "CLC-1.1",
     "conformance_class": "CLC-A",
     "grant": {
@@ -1672,7 +1672,7 @@
   {
     "id": "decide-016",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3 pre-check",
+    "spec_clause": "CLC-v1 §9.1 pre-check",
     "clc_revision": "CLC-1.1",
     "conformance_class": "CLC-A",
     "grant": {},
@@ -1681,12 +1681,12 @@
       "verdict": "deny",
       "reason": "capability_not_authorized"
     },
-    "derivation": "absent/empty effective grant short-circuits before any layer, even when the operation is also absent -> capability_not_authorized (§9.3 pre-check)"
+    "derivation": "absent/empty effective grant short-circuits before any layer, even when the operation is also absent -> capability_not_authorized (§9.1 pre-check)"
   },
   {
     "id": "decide-017",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3 layer 1",
+    "spec_clause": "CLC-v1 §9.1 layer 1",
     "clc_revision": "CLC-1.1",
     "conformance_class": "CLC-A",
     "grant": {
@@ -1839,7 +1839,7 @@
   {
     "id": "params-024",
     "kind": "entail",
-    "spec_clause": "CLC-v1 §9.3 layer 6",
+    "spec_clause": "CLC-v1 §9.1 layer 6",
     "clc_revision": "CLC-1.1",
     "conformance_class": "CLC-A",
     "grant": {
@@ -2186,7 +2186,7 @@
   {
     "id": "decide-028",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3",
+    "spec_clause": "CLC-v1 §9.1",
     "clc_revision": "CLC-1.3",
     "conformance_class": "CLC-A",
     "grant": {
@@ -2202,12 +2202,12 @@
     "expect": {
       "verdict": "allow"
     },
-    "derivation": "grant carries an explicit empty params object: {\"params\":{}} == params absent == unconstrained (rev CLC-1.3 §9.3) -> any operation params allowed, no key closure (empty declared name set)"
+    "derivation": "grant carries an explicit empty params object: {\"params\":{}} == params absent == unconstrained (rev CLC-1.3 §9.1) -> any operation params allowed, no key closure (empty declared name set)"
   },
   {
     "id": "decide-029",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3",
+    "spec_clause": "CLC-v1 §9.1",
     "clc_revision": "CLC-1.3",
     "conformance_class": "CLC-A",
     "grant": {
@@ -2234,12 +2234,12 @@
     "expect": {
       "verdict": "allow"
     },
-    "derivation": "multi-grant Authorize (grant set = grant + others): G1 {limit:10} denies limit=50, G2 {limit:100} allows it -> any-allowing grant authorizes (rev CLC-1.3 §9.3); no residual obligations -> allow"
+    "derivation": "multi-grant Authorize (grant set = grant + others): G1 {limit:10} denies limit=50, G2 {limit:100} allows it -> any-allowing grant authorizes (rev CLC-1.3 §9.1); no residual obligations -> allow"
   },
   {
     "id": "decide-030",
     "kind": "decide",
-    "spec_clause": "CLC-v1 §9.3",
+    "spec_clause": "CLC-v1 §9.1",
     "clc_revision": "CLC-1.3",
     "conformance_class": "CLC-A",
     "grant": {
@@ -2267,7 +2267,7 @@
       "verdict": "deny",
       "reason": "params_exceed_grant"
     },
-    "derivation": "multi-grant Authorize: G1 {limit:10} and G2 {limit:6} both deny limit=50; no covering grant allows -> deny with the FIRST covering grant reason in canonical (input) order (rev CLC-1.3 §9.3)"
+    "derivation": "multi-grant Authorize: G1 {limit:10} and G2 {limit:6} both deny limit=50; no covering grant allows -> deny with the FIRST covering grant reason in canonical (input) order (rev CLC-1.3 §9.1)"
   },
   {
     "id": "decide-031",

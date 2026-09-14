@@ -95,7 +95,7 @@ This repository also carries the machine-readable side of **CLC-v1** (the
 minimal capability decision language):
 
 - `data/_vectors/clc-v1/` — **105 conformance vectors** (syntax 9 / entail 38 /
-  intersect 14 / decide 44) and **30 evidence-side vectors**
+  intersect 14 / decide 44) and **32 evidence-side vectors**
   (`evidence-vectors.json`: evidence constraints, requirements, `ActionId` and
   `Match`), `vectors.schema.json`, `clc-v1-ambiguities.md`
   (resolution log), **1184 deterministic P11 property cases**

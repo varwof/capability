@@ -708,5 +708,58 @@
       "verdict": "INDETERMINATE"
     },
     "derivation": "different action types are not comparable without a relying-party-pinned Action-Mapping Profile; indeterminate is never a match"
+  },
+  {
+    "id": "eva-006",
+    "kind": "action_id",
+    "spec_clause": "§4.3 ActionId / RFC 8785 §3.2.2.2",
+    "action_type": {
+      "type": "probe.action.1",
+      "material_fields": [
+        "value"
+      ]
+    },
+    "suite": "jcs-sha256",
+    "action": {
+      "value": "&"
+    },
+    "expect": {
+      "action_id": "clc-action:1:probe.action.1:jcs-sha256:mi_igvJzMHC1qRoYLpfY799ulBNeR5CnOjgCVyAKKQM"
+    },
+    "derivation": "JCS (RFC 8785 §3.2.2.2) does not escape '&', so {\"value\":\"&\"} stays {\"value\":\"&\"} and sha256 = 9a2fe282f2733070b5a91a182e97d8efdf6e94135e4790a73a380257200a2903.  Go's json.Marshal HTML-escaped it to \\u0026 and produced a different identifier; that defect is fixed in CLC-1.6."
+  },
+  {
+    "id": "evr-007",
+    "kind": "requirement",
+    "spec_clause": "§10 tri-state evaluation, binary report",
+    "requirement": {
+      "@version": "CLC-REQUIREMENT-v1",
+      "requirement_id": "single-report@1",
+      "expression": "human-authorization",
+      "constraints": [
+        {
+          "role": "human-authorization",
+          "constraint": "varwof/evidence-v1:consumption:once"
+        }
+      ]
+    },
+    "context": {
+      "now": "2026-09-13T12:00:00Z"
+    },
+    "facts": [
+      {
+        "type": "human-authorization",
+        "subject": "alice",
+        "verified": true,
+        "issued_at": "2026-09-13T11:59:30Z"
+      }
+    ],
+    "expect": {
+      "satisfaction": {
+        "verdict": "UNSATISFIED",
+        "reason": "evidence_not_core_evaluated"
+      }
+    },
+    "derivation": "the consumption constraint is recognized but owned by the enforcement point, so the internal evaluation is `unknown`; §10's exported report is binary and MUST be UNSATISFIED with a stable reason, never SATISFIED."
   }
 ]

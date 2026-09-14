@@ -44,7 +44,7 @@
       },
       "raw_params": {
         "type": "string",
-        "description": "Raw JSON object text of the request (operation) params, for inputs whose meaning cannot survive a decoded map: duplicate JSON keys, non-finite or over-precision numbers, and size/depth overruns. Runners MUST validate this at the input boundary (§6.2.1, §9.3 layer 2) and short-circuit to deny(<code>) when invalid.",
+        "description": "Raw JSON object text of the request (operation) params, for inputs whose meaning cannot survive a decoded map: duplicate JSON keys, non-finite or over-precision numbers, and size/depth overruns. Runners MUST validate this at the input boundary (§6.2.1, §9.1 layer 2) and short-circuit to deny(<code>) when invalid.",
         "minLength": 1
       },
       "grant": {
@@ -68,7 +68,7 @@
       },
       "request": {
         "type": "object",
-        "description": "Operation under test (for entail/decide vectors). An operation with no `id` ({} or an omitted field) is a legitimate fail-closed input and MUST resolve to deny(\"missing_capability_id\") per CLC-v1 §9.3 layer 1.",
+        "description": "Operation under test (for entail/decide vectors). An operation with no `id` ({} or an omitted field) is a legitimate fail-closed input and MUST resolve to deny(\"missing_capability_id\") per CLC-v1 §9.1 layer 1.",
         "properties": {
           "id": {
             "type": "string"
@@ -78,7 +78,7 @@
       },
       "others": {
         "type": "array",
-        "description": "Additional grant sources. For kind=intersect these are additional sources merged by Intersect; when the vector carries \"multi\": true (kind=decide) these form the authorization grant SET for §9.3 multi-grant aggregation.",
+        "description": "Additional grant sources. For kind=intersect these are additional sources merged by Intersect; when the vector carries \"multi\": true (kind=decide) these form the authorization grant SET for §9.1 multi-grant aggregation.",
         "items": {
           "type": "object",
           "properties": {
@@ -151,7 +151,7 @@
       },
       "multi": {
         "type": "boolean",
-        "description": "rev CLC-1.3: when true (kind=decide), `grant` + `others` form the authorization grant SET and Authorize aggregates per §9.3 (any-allowing grant authorizes; unresolved unioned across covering-and-allowing grants; deterministic first reason when none allows). Default false."
+        "description": "rev CLC-1.3: when true (kind=decide), `grant` + `others` form the authorization grant SET and Authorize aggregates per §9.1 (any-allowing grant authorizes; unresolved unioned across covering-and-allowing grants; deterministic first reason when none allows). Default false."
       },
       "derivation": {
         "type": "string",

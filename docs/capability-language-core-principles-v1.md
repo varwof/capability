@@ -301,7 +301,7 @@ normative text.
    language.
 4. **CLC-E (evidence side)** — **resolved 2026-09-13, the other way**: the
    evidence side now has a value grammar (§8.2, §10), a reference implementation
-   and a corpus (`evidence-vectors.json`, 30 vectors: constraints, requirement
+   and a corpus (`evidence-vectors.json`, 32 vectors: constraints, requirement
    binding, ActionId, Match), and §12 states explicitly that **this revision
    makes no CLC-E conformance claim**.  The claim is withheld **on principle**,
    not for lack of material: P12 sets the bar at ≥2 *independent*
