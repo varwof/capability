@@ -325,7 +325,7 @@ P_effective 公式）。v2 的 Match/Satisfaction 抽象来自 EMILIA AEB-04
 而工位号/区域号/工具号这类**离散标识**不能这样解释——"授权 3 号工位"会顺带
 覆盖 1、2 号（Go/Python 两边一致判 allow，属规范层问题而非实现 bug）。
 
-详情与候选修法见 `mailarchive/clc-v1-finding-param-domain-2026-09-10.md`：
+候选修法（记录于实现对照）：
 - 方案 A（v1.1，已采纳）：授予侧数组表示集合，请求侧允许标量，规则改为
   "标量必须 ∈ 授予数组"，新增 reason code `not_in_enum`；
 - 方案 B（v2 方向，未启动）：scheme 声明参数域（bound / enum / exact），语义按域分派。
