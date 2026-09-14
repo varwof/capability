@@ -147,9 +147,9 @@ segments like `22:00→00:00` + `00:00→06:00`).
 
 | Item | State |
 |---|---|
-| Conformance corpus | `vectors.json` — **105 vectors** (syntax 9 / entail 37 / intersect 14 / decide 38) |
+| Conformance corpus | `vectors.json` — **107 vectors** (syntax 9 / entail 40 / intersect 14 / decide 44) |
 | Property corpus | `property-cases.json` — 1184 deterministic P11 cases, reproducible byte-for-byte |
-| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 105/105 and 1184/1184 (0 failures; counters 869/841) |
+| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 107/107 and 1184/1184 (0 failures; counters 869/841) |
 | Schema | `vectors.schema.json` (verdict enum incl. `allow_unresolved`, `multi` switch), enforced in CI together with the documented counts |
 
 Engineering discipline carried from the principles: one contract with several

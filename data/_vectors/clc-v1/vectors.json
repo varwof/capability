@@ -2429,5 +2429,49 @@
       "verdict": "allow"
     },
     "derivation": "the same canonical value written with \\u00e9 escapes must get the same verdict as the literal spelling (510 UTF-8 octets ≤ 512; rev CLC-1.4)"
+  },
+  {
+    "id": "params-031",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.6)",
+    "clc_revision": "CLC-1.6",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "raw_params": "{\"s\":\"\\ud800\"}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "a lone surrogate escape is not valid Unicode, so it has no canonical encoding: refused at the input boundary instead of being repaired to U+FFFD (RFC 8785 §3.2.2.2; §6.2 step 2)"
+  },
+  {
+    "id": "params-032",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.6)",
+    "clc_revision": "CLC-1.6",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "😂"
+      }
+    },
+    "raw_params": "{\"s\":\"\\ud83d\\ude02\"}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "a surrogate pair is one character (U+1F602, four UTF-8 octets): accepted, and counted as four octets by the size rule"
   }
 ]
