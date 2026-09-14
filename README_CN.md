@@ -79,7 +79,7 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
   **12 条 OCMP 离线用例**（`offline-vectors.json`）。消费方实现：
   `varwof/register`（Go）、`varwof/aic-capability-demo`（Python）与其 `ts/`（TypeScript，仅 Node、零依赖），
   三方断言 **verdict、规范码 reason 与交集结果（`result_params` / `result_constraints`）**，
-  并覆盖 CLC-1.3 的 `allow_unresolved` 独立 verdict 与 §9.3 多 grant 聚合；
+  并覆盖 CLC-1.3 的 `allow_unresolved` 独立 verdict 与 §9.1 多 grant 聚合；
   属性测试（收窄性 + 顺序无关）与 offline 用例的覆盖/词表门禁均由 `scripts/` 校验并进 CI。
 - `data/std/robot-line-v1/v1.json` —— 工业机器人产线能力（10 项）；工位等分类值按
   CLC-v1 的枚举规则用数组表示（`"station": [1,2,3]`）。

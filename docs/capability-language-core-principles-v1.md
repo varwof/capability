@@ -59,8 +59,8 @@ evaluator — identical result.
 vector's outcome — `grant {"station":[3]}` must not cover `station 2`.
 
 **P5 — Deterministic and terminating — including the reason.** Same inputs →
-same verdict **and the same normative reason code** (fixed ordering §9.3,
-stable codes §9.4).
+same verdict **and the same normative reason code** (fixed ordering §9.1,
+stable codes §9.2).
 *Falsifiable check:* both implementations are compared on the **canonical
 reason**, not only the verdict.  Determinism of the *conclusion* is this
 principle; predictability of the *cost* is P10.  Keep them separate.
@@ -153,7 +153,7 @@ runs with no I/O.
 *From:* P4 (domains, not types) + §6.
 *In practice:* adding constraint types (`freshness`, `consumption`, `quorum`,
 `exclusion`) extends a value grammar and may enter the core; adding a wildcard
-shape rewrites §3 and MUST be given a position in the §9.3 ordering.
+shape rewrites §3 and MUST be given a position in the §9.1 ordering.
 
 **R3 — Changing the core for one vendor is a defect; that belongs to a profile.**
 *From:* P7 (define once) + P8① (carrier independence).
@@ -205,7 +205,7 @@ parity between implementations that share an author does not satisfy this rule.
 
 - Adding a **domain** (e.g. `range`, `pattern`) = adding a type, not syntax.
 - Adding an **operator** (e.g. `**`, `{a,b}`, `[a-z]`) = adding syntax, and it
-  MUST be given a position in the §9.3 ordering.
+  MUST be given a position in the §9.1 ordering.
 - Anything that needs state, time, or network belongs to a **carrier** or a
   **profile** (e.g. the Offline Capability Manifest Profile), never to the core.
 
@@ -222,8 +222,8 @@ that tests it, and its state.  States are `ok`, `gap` (something is missing) or
 | P2 No control flow | §3 grammar, §6.3 | no such construct exists | ok |
 | P3 Immutable values | §6.3, §9 | both runners, 1184 property cases | ok |
 | P4 Domains | §6.2 | `params-001..027` | ok |
-| P5 Determinism incl. reason | §9.3 (pre-check + 11 layers), §9.4 (21 codes), §12.1 | 105 vectors assert the canonical reason (incl. §9.3 multi-grant aggregation, rev CLC-1.3) | ok — the 6 undocumented codes and the revision rule were added; the layer table now matches the numbering the corpus cites |
-| P6 Fail-closed | §6.2.1, §6.3 step 4, §9.3 layers 5–7 | `params-*`, `undeclared-001/002`, closure probes in the property test | ok — closure applies to the effective grant (§7 rule 2), so an undeclared parameter is still denied |
+| P5 Determinism incl. reason | §9.1 (pre-check + 11 layers), §9.2 (21 codes), §12.1 | 105 vectors assert the canonical reason (incl. §9.1 multi-grant aggregation, rev CLC-1.3) | ok — the 6 undocumented codes and the revision rule were added; the layer table now matches the numbering the corpus cites |
+| P6 Fail-closed | §6.2.1, §6.3 step 4, §9.1 layers 5–7 | `params-*`, `undeclared-001/002`, closure probes in the property test | ok — closure applies to the effective grant (§7 rule 2), so an undeclared parameter is still denied |
 | P7 Define once | §11, Appendix A | `ruleexec` consumes `semantics.Entails` | **gap** — no carrier document cites CLC yet, and `aic-jwt/wit-wpt-interop` ships a second subset implementation whose wildcard surface (`**`, `{a,b}`, `[a-z]`) is v1-forbidden |
 | P8 Separation | Appendix A | Go, Python and TypeScript agree on 105 vectors **and** 1184 property cases | **gap** — all three implementations share one author; third-party parity is the unproven half |
 | P9 Local decidability | §6.3; OCMP §3 | `offline-vectors.json` (12 cases, 11/11 codes) with a coverage+vocabulary gate in CI | ok — the profile has no evaluator by design, so the gate checks coverage and vocabulary, not evaluation |
@@ -332,7 +332,7 @@ normative text.
 - **三条纪律**：① **没有控制流**（条件性只能靠"更窄的能力 + 更紧的约束"表达）；② **值不可变**（无赋值、无状态，单次纯求值）；
   ③ **类型系统 = 值域**（bound / enum / exact，语义按值域分派）。
 - **六条不可让**：不做通用策略语言；不做信任与密钥绑定；不做发放/吊销传输；不做执行生命周期；不做线格式；**不靠"缺省即允许"**。
-- **R1–R5（§2.5，派生判定规则，不是新原则）**：R1 状态/时间/网络 → 归 carrier 或 profile，绝不进核心；R2 新值域 = 加类型、新算子 = 加语法（且必须进 §9.3 顺序）；R3 为某一家改核心 = 缺陷，那属于 profile；R4 没有条文或没有向量的规则是装饰；**R5 一致性类只在 ≥2 个独立实现通过语料后才声称**（因此证据侧现在是「已实现、有语料、不声称」）。
+- **R1–R5（§2.5，派生判定规则，不是新原则）**：R1 状态/时间/网络 → 归 carrier 或 profile，绝不进核心；R2 新值域 = 加类型、新算子 = 加语法（且必须进 §9.1 顺序）；R3 为某一家改核心 = 缺陷，那属于 profile；R4 没有条文或没有向量的规则是装饰；**R5 一致性类只在 ≥2 个独立实现通过语料后才声称**（因此证据侧现在是「已实现、有语料、不声称」）。
 - **P1–P12**：P1 最小核、P2 无控制流、P3 值不可变、P4 值域而非类型、P5 确定性（含 reason）、P6 缺省即拒绝、
   P7 定义一次处处消费、P8 载体与语义分离（分①载体无关②实现语言无关两层检验）、
   P9 **本地可判**、P10 **有界工作量**（参数 ≤512 字节、嵌套 ≤32 层，超限即拒）、

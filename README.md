@@ -107,7 +107,7 @@ minimal capability decision language):
   (TypeScript, Node-only, zero dependencies); all three are asserted on
   **verdict, normative reason code and the merged intersection result**
   (`result_params` / `result_constraints`), the `allow_unresolved` verdict and
-  §9.3 multi-grant aggregation of rev CLC-1.3, and the property and offline
+  §9.1 multi-grant aggregation of rev CLC-1.3, and the property and offline
   checks run in CI (`scripts/`).
 - `data/std/robot-line-v1/v1.json` — industrial robot line capabilities
   (10 capabilities).  Categorical station ids are expressed as arrays

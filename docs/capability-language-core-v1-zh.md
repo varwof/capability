@@ -24,7 +24,10 @@
 本语言**与承载方式无关**：它定义「评估什么」，不定义「如何承载与如何建立信任」。信任模型、
 原生验证、执行生命周期、回执或令牌格式均不在范围内（见 §11）。一致性由公开语料检验：
 **105 条向量 + 1184 条性质用例**，三个共享同一作者的实现（Go / Python / TypeScript）全部通过。
-本修订声称**授权侧一致性类 CLC-A**。证据侧一致性类 **CLC-E 不声称**：它的关系、值文法、参考实现与语料都在本修订里，但**声称一个一致性类的门槛（两个独立实现，§12）尚未达到**。
+**实现符合性与「本文件声称某个一致性类」是两件事。** 一个实现满足 §12 为该类列出的义务，就是符合 CLC-A，
+它可以自行声称这一符合，与还存在多少别的实现无关；§12 另外为**本文件**的声称设了一条成熟度门槛
+—— 两个独立实现在裁决与原因码上一致 —— 这条门槛对 CLC-A 已满足。本修订声称**授权侧一致性类 CLC-A**。
+证据侧一致性类 **CLC-E 不声称**：它的关系、值文法、参考实现与语料都在本修订里，但该门槛尚未达到。
 
 ### 修订历史
 
@@ -33,10 +36,10 @@
 | 修订 | 日期 | 影响范围 | 变更 |
 |-----|------|-------|--------|
 | CLC-1.1 | 2026-09-10 | — | 基线工作稿 |
-| CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(新), §9, §9.4, §11, §12, 附录 B, 安全 | 残差义务通道 `unresolved`（被识别但未求值的约束显式携带，绝不静默丢弃）；`time:window` 值文法定为多段 UTC 窗口数组；识别升级为「类型名 × 值文法」双重校验并新增 `invalid_constraint` 原因码；「time → intersection」合并规则降级到 v2；约束合并归一化并确定性排序 |
-| CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, 附录 B | 授权闭环收紧 + 约束身份命名空间化：`Decision.verdict` 三值化（`allow`/`deny`/`allow_unresolved`），残差义务不再混入 `allow`（消除「消费方只判 `verdict == allow`」导致的 fail-closed 断裂，§8.4）；约束身份改为 `(scheme,type)` 二元组，core 只识别 `varwof/constraint-v1` 下的 `max_rows`/`time`/`network`，其余一律 `unknown_constraint`（消除跨 scheme 语义污染，§8.1）；`time:window` 值文法收紧：单段必须同日内（`start < end`），**禁止单段跨午夜**（跨午夜须拆成两段，`end:"00:00"` 保留表示「次日零点」），段列升序、互不重叠、≤32；`params:{}` 与缺席等价 = 无参数约束（蕴涵与交集语义一致）；多 grant 聚合规则显式化（任一覆盖即授权 + 残差义务并集 + 确定性拒绝原因，§9.3） |
+| CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(新), §9, §9.2, §11, §12, 附录 B, 安全 | 残差义务通道 `unresolved`（被识别但未求值的约束显式携带，绝不静默丢弃）；`time:window` 值文法定为多段 UTC 窗口数组；识别升级为「类型名 × 值文法」双重校验并新增 `invalid_constraint` 原因码；「time → intersection」合并规则降级到 v2；约束合并归一化并确定性排序 |
+| CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.1, 附录 B | 授权闭环收紧 + 约束身份命名空间化：`Decision.verdict` 三值化（`allow`/`deny`/`allow_unresolved`），残差义务不再混入 `allow`（消除「消费方只判 `verdict == allow`」导致的 fail-closed 断裂，§8.4）；约束身份改为 `(scheme,type)` 二元组，core 只识别 `varwof/constraint-v1` 下的 `max_rows`/`time`/`network`，其余一律 `unknown_constraint`（消除跨 scheme 语义污染，§8.1）；`time:window` 值文法收紧：单段必须同日内（`start < end`），**禁止单段跨午夜**（跨午夜须拆成两段，`end:"00:00"` 保留表示「次日零点」），段列升序、互不重叠、≤32；`params:{}` 与缺席等价 = 无参数约束（蕴涵与交集语义一致）；多 grant 聚合规则显式化（任一覆盖即授权 + 残差义务并集 + 确定性拒绝原因，§9.1） |
 | CLC-1.4 | 2026-09-13 | §6.2, §8.1, §10, §12, 附录 B | 操作侧值域收紧：`max_rows` 请求必须携带**有限非负整数**，其余（字符串、布尔、负数、分数、非有限数）一律 `max_rows:violated`，不再未经检查地放行。尺寸上限在所有路径（解码与原始）重申并按**规范化序列化的 UTF-8 八位组**实现；以码点或 UTF-16 码元计量不符合规范（非 ASCII 边界向量 `params-028`/`params-029` 固定该行为）。同一工作修订内完成证据侧范围：证据侧值文法（`varwof/evidence-v1:*`）与 `CLC-REQUIREMENT-v1` 被定义（§8.2、§10），证据侧语料随本修订发布（§12，`evidence-vectors.json`，30 条，含 ActionId/Match）—— **CLC-E 已实现并由语料钉住，但不声称**，因为声称需要两个独立实现（§12；原则文件 P12）；通用性由 `crosswalk-vectors.json`（13 条，双向）检验 |
-| CLC-1.5 | 2026-09-14 | §4.2、§4.3、§6.4、§10、§11、§12、消费者表、安全考虑 | **实例身份不再自称 CAID。** 投影身份属于本语言自己（`clc-action:1:<type>:<suite>:<b64url>`），v1 的 suite 集合只保留 `jcs-sha256`（自造的 `jcs-sha384` 删除），并写明 CAID **不是**什么：它覆盖**完整** Action Object，且不标识某次「发生」；本投影只覆盖声明的实质集合，绑定「发生」要消费执行边界提供的判别符。§10 写明逐约束三值求值 → 顶层二值报告的折叠（顶层 `unknown` **必须**产出 `UNSATISFIED`）；§11 写明 `allow_unresolved` 是授权结果而非证据，并固定分层（CAID 作素材动作身份、AEC 作证据满足、AEB 作边界生命周期）；§12、消费者表与安全考虑不再把委托链读作包含关系。CLC-A 的规范算法未变，CLC-1.4 的输入仍可读。 |
+| CLC-1.5 | 2026-09-14 | §4.2、§4.3、§6.4、§10、§11、§12、消费者表、安全考虑 | **实例身份不再自称 CAID。** 投影身份属于本语言自己（`clc-action:1:<type>:<suite>:<b64url>`），v1 的 suite 集合只保留 `jcs-sha256`（自造的 `jcs-sha384` 删除），并写明 CAID **不是**什么：它覆盖**完整** Action Object，且不标识某次「发生」；本投影只覆盖声明的实质集合，绑定「发生」要消费执行边界提供的判别符。§10 写明逐约束三值求值 → 顶层二值报告的折叠（顶层 `unknown` **必须**产出 `UNSATISFIED`）；§11 写明 `allow_unresolved` 是授权结果而非证据，并固定分层（CAID 作素材动作身份、AEC 作证据满足、AEB 作边界生命周期）；§12、消费者表与安全考虑不再把委托链读作包含关系。CLC-A 的规范算法未变，CLC-1.4 的输入仍可读。  **本修订的 2026-09-14 复核更正**（仅文本）：致谢改为如实写明重跑了哪些套件、针对哪个修订；§12.1 声明 CLC-1.5；原因顺序与原因码两节按渲染编号引用为 §9.1/§9.2；§9 写明附录 D15 已钉住的「grant 侧预检优先」；摘要把「实现符合性」与「本文件的声称」分开；occurrence 那句点明 CAID-02 §4.5/§7。 |
 
 ---
 
@@ -176,8 +179,10 @@ ObservedAction 携带：
 | 类 | CapabilityId | 覆盖一类动作 | `std/database-v1:query:*` |
 | 实例 | ActionId（投影摘要） | 标识一个动作的实质内容，**不是**某次「发生」 | `clc-action:1:payment.release.1:jcs-sha256:...` |
 
-CapabilityId 覆盖一类；ActionId 标识一个动作的实质内容。它**不**标识某次「发生」：把证据绑定到
-具体的「发生」需要消费执行边界（AEB）提供的 occurrence 判别符，本语言不自行发明（§6.4）。
+CapabilityId 覆盖一类；ActionId 标识一个动作的实质内容。它**不**标识某次「发生」：ActionId 绑定的是
+声明的实质内容，而要与某次具体「发生」关联，还需要由消费方 profile 定义并校验的 occurrence 判别符。
+CAID-02 §4.5 就把这样一个判别符作为动作对象的可选 `occurrence_id`；profile 若使用它，必须让它出现在声明的
+实质字段里，才能影响摘要。分配唯一「发生」、证明一次性消费或已执行，都不在这两份文件范围内（CAID-02 §7）。
 蕴涵检查**类**的覆盖，Match 检查内容的绑定。
 
 ---
@@ -247,17 +252,17 @@ scheme 作者**应当**把分类参数（station、cell、batch、tool id）编�
 显式空的 grant 数组 `[]` 拒绝整个类（`empty_bound_denies_class`）。
 
 **无 params 的 grant**（或 **`"params":{}` 空对象**）覆盖任意操作参数（不受约束）。
-`params` 缺席与 `"params":{}` **语义等价** —— 在蕴涵（§6.3）与交集（§7 规则 6、§9.3）中一致。
+`params` 缺席与 `"params":{}` **语义等价** —— 在蕴涵（§6.3）与交集（§7 规则 6、§9.1）中一致。
 
 `null` 参数值在 v1 中非法 → 拒绝（`invalid_params_null`）。**缺席 ≠ 显式空**（见 §8）。
 
 **键闭包（Plan A）。** 带边界的 grant 管辖它声明的键：操作携带 grant 未声明的参数键即被拒绝
-→ `deny("undeclared_param")`（fail-closed，§9.3 第 7 层请求侧）。无约束 grant（无 `params`
+→ `deny("undeclared_param")`（fail-closed，§9.1 第 7 层请求侧）。无约束 grant（无 `params`
 或 `params:{}`）接受任意操作参数，因此不适用键闭包。在第 7 层内部，缺键检查
 （`params_missing`）先于未声明键检查（`undeclared_param`）；两者都是键级检查，
 先于枚举/上界值检查（第 8–9 层）。
 
-**Params 表示与输入归一化（v1.1）。** 任何 §9.3 层运行之前，`params` 对象在**输入边界**归一化：
+**Params 表示与输入归一化（v1.1）。** 任何 §9.1 层运行之前，`params` 对象在**输入边界**归一化：
 
 1. **规范化序列化。** params 按 JSON 规范化方案（I-JSON，RFC 8785）序列化 —— 键序、数字形式、
    空白都精确保留。评估绝不猜测；有损的重新序列化（例如会丢重复键的 map）**不**用于裁决。
@@ -272,7 +277,7 @@ scheme 作者**应当**把分类参数（station、cell、batch、tool id）编�
    `deny("invalid_params_size")`。嵌套深度**同时**计入对象与数组，最外层对象计为第 1 层
    （因此顶层对象内嵌 31 层数组 = 深度 32）。
 5. **检查顺序。** 尺寸/深度（4）先于重复键（2），重复键先于数字形状（3）；第一个失败的检查胜出。
-   五项全部早于 §9.3 第 1 层运行，因此各层看到的只有归一化后的 params。
+   五项全部早于 §9.1 第 1 层运行，因此各层看到的只有归一化后的 params。
 6. **已解码对象路径。** 调用方若直接提供**已解码**的 params（没有 `raw_params` 文本），
    无法还原原始字节流；此时尺寸检查（4）作用于**规范化序列化**（已解码对象的 JCS 形式：
    键排序、紧凑），深度检查（4）直接作用于解码后的结构。与某份原始文本的字节级一致只对
@@ -283,14 +288,14 @@ scheme 作者**应当**把分类参数（station、cell、batch、tool id）编�
 
 ```
 Entails(G, O) → bool:
-  1. G.namespace ≠ O.namespace → false      (namespace = scheme + action Class, §9.3 layer 3)
-  2. G.id doesn't cover O.id → false        (path coverage, §9.3 layer 4)
+  1. G.namespace ≠ O.namespace → false      (namespace = scheme + action Class, §9.1 layer 3)
+  2. G.id doesn't cover O.id → false        (path coverage, §9.1 layer 4)
   3. G.params absent (or `{}`) → true       (grant unconstrained — absent ≡ empty object)
   4. O.params absent → false                (bounded grant, request omits it → fail-closed)
-  5. params_subset(O.params, G.params)      (both present → compare, §9.3 layers 5–9)
+  5. params_subset(O.params, G.params)      (both present → compare, §9.1 layers 5–9)
 ```
 
-当多个检查同时失败时，报告的原因遵循 §9.3 固定的**已解析原因顺序**。本节其余规则不变。
+当多个检查同时失败时，报告的原因遵循 §9.1 固定的**已解析原因顺序**。本节其余规则不变。
 
 **操作参数缺失的规则**：若 grant 带有参数上界（第 3 步不适用），而操作**完全没有 `params` 字段**
 （不只是某个键缺失，而是整个字段不存在），则适用第 4 步：`Entails → false` →
@@ -301,8 +306,8 @@ Entails(G, O) → bool:
 没有这样的声明默认值时，第 4 步拒绝。
 
 **第 6 层（null）先于存在性判定。** 若 grant 的 params 携带 `null` 值（或操作的 params 携带），
-失败原因是 `invalid_params_null`（§9.3 第 6 层），**即使**操作完全省略 `params` 字段也照此报告 ——
-即第 6 层先于第 4 步的 `params_missing`。这是 §9.3 的固定顺序；它**遮盖**了上面算法中
+失败原因是 `invalid_params_null`（§9.1 第 6 层），**即使**操作完全省略 `params` 字段也照此报告 ——
+即第 6 层先于第 4 步的 `params_missing`。这是 §9.1 的固定顺序；它**遮盖**了上面算法中
 「先列存在性、后列 null 检查」的字面步骤顺序。
 
 ### 6.4 Match（证据侧绑定）
@@ -314,9 +319,9 @@ Entails(G, O) → bool:
 2. E 的 ActionId 等于对 ObservedAction 重新计算的 ActionId。
 3. 该 ActionId 是在**依赖方钉定的 suite 与定义来源**下计算的。
 
-Match **只是内容关联**：它不校验原生工件，也不授权执行。它同样不标识某次「发生」：针对该内容
-某次**发生**的证据绑定，需要消费执行边界（AEB）提供的 occurrence 判别符，这么做时 profile
-**必须**钉定方式。
+Match **只是内容关联**：它不校验原生工件，也不授权执行。它同样不标识某次「发生」：要与某次具体**发生**关联，
+还需要由消费方 profile 定义并校验的 occurrence 判别符（CAID-02 §4.5），使用它的 profile
+**必须**钉定判别符的来源，以及语言如何通过声明的实质字段看到它。
 
 跨格式映射（E 的原生格式 ≠ A 的规范形式）使用 **Action-Mapping Profile**：由依赖方钉定、
 以哈希标识的投影，结果为 `EQUIVALENT_UNDER_PROFILE`、`NOT_EQUIVALENT` 或 `INDETERMINATE`。
@@ -486,23 +491,25 @@ Decision = { verdict: "allow"|"deny"|"allow_unresolved",
              unresolved: string[] }   // additive, §8.4
 ```
 
-算法：
+算法。有一条优先级贯穿整个函数：**grant 侧预检先于操作校验。** grant 集缺失或为空时，
+即使操作也缺失，也以 `capability_not_authorized` 拒绝（§9.1 第 10 层；附录 D15 钉住这一点），
+因此两个输入都缺席的调用方拿到的是该原因码，而不是 `missing_capability_id`。
 
 1. 校验操作：`id` 缺失/非法 → 以稳定原因码拒绝。报告操作**第 1 层的具体原因码** ——
    `missing_capability_id`（无 id）、`unsupported_wildcard`（v1 禁止的通配形状）或
    `invalid_capability_id`（其他文法违规）—— **不**折叠为通用码。
 2. 通过蕴涵（§6.1）寻找覆盖型 grant。`grants` 为空/零值 → 直接
-   `deny("capability_not_authorized")`（§9.3 第 10 层）。
+   `deny("capability_not_authorized")`（§9.1 第 10 层）。
 3. 对每个覆盖型 grant：求值约束（§8.1）：未被识别的 `(scheme,type)` → `unknown_constraint`；
    已识别但值不合文法 → `invalid_constraint`；已识别且有 core 求值器
    （`varwof/constraint-v1:max_rows`）且被违反 → `{type}:violated`；已识别但无 core 求值器
    （`time`、`network`）→ 残差义务（§8.4）。
-4. **聚合**（多 grant 集合，§9.3）：
+4. **聚合**（多 grant 集合，§9.1）：
    - 任一覆盖型 grant「放行」（参数层与约束层都无拒绝）→ 整体放行；
    - 残差义务 = **所有覆盖且放行的 grant** 的 `unresolved` **并集**（归一化 + 排序；
      任何覆盖型 grant 的义务都不得丢弃）；
    - 当没有任何覆盖型 grant 放行时：若至少一个覆盖型 grant 在参数/约束层拒绝 → 采用
-     **规范化顺序下首个覆盖型 grant** 的拒绝原因（确定性，§9.3）；若完全没有 grant 覆盖 →
+     **规范化顺序下首个覆盖型 grant** 的拒绝原因（确定性，§9.1）；若完全没有 grant 覆盖 →
      `capability_not_authorized`。
 5. 放行且残差义务非空 → `verdict = allow_unresolved`；放行且义务为空 → `verdict = allow`。
 
@@ -513,7 +520,7 @@ grant 集合**可以缺席或为空** —— 例如集成方用空能力记录�
 
 性质：确定性（相同输入 → 相同输出）、fail-closed、原因码稳定。
 
-### 9.3 已解析原因顺序（规范性）
+### 9.1 已解析原因顺序（规范性）
 
 当一个 grant/操作组合有多个条件失败时，**已解析原因**（被报告的那一个码）是下表中
 **第一个适用层**的码。它适用于 `Entails`（§6.3）、`Intersect`（§7）与 `Authorize`（本节）。
@@ -579,7 +586,7 @@ grant 集合**可以缺席或为空** —— 例如集成方用空能力记录�
 
 ---
 
-### 9.4 原因码（规范性）
+### 9.2 原因码（规范性）
 
 原因码是稳定标识符。v1 定义如下：
 
@@ -591,10 +598,10 @@ grant 集合**可以缺席或为空** —— 例如集成方用空能力记录�
 | `unsupported_wildcard` | v1 禁止的通配形状（裸 `*`、部分段、`**`、`{a,b}`、`[a-z]`） |
 | `invalid_capability_id` | CapabilityId 不符合 §3 文法 |
 | `missing_capability_id` | 操作没有 `id`（第 1 层） |
-| `invalid_params_duplicate_key` | params 含重复 JSON 键（§6.2 表示、§9.3 第 2 层） |
-| `invalid_params_number` | 数值参数非有限或过精度（> 17 位有效十进制数字）（§6.2 表示、§9.3 第 2 层） |
-| `invalid_params_size` | params 超过 512 字节序列化尺寸或深度 32 的嵌套上限（§6.2 表示、§9.3 第 2 层） |
-| `different_namespace` | grant 与操作的命名空间不同（scheme + 动作 Class，§9.3 第 3 层） |
+| `invalid_params_duplicate_key` | params 含重复 JSON 键（§6.2 表示、§9.1 第 2 层） |
+| `invalid_params_number` | 数值参数非有限或过精度（> 17 位有效十进制数字）（§6.2 表示、§9.1 第 2 层） |
+| `invalid_params_size` | params 超过 512 字节序列化尺寸或深度 32 的嵌套上限（§6.2 表示、§9.1 第 2 层） |
+| `different_namespace` | grant 与操作的命名空间不同（scheme + 动作 Class，§9.1 第 3 层） |
 | `literal_mismatch` | 字面标识符不同 |
 | `wildcard_requires_trailing_segment` | 通配没有剩余段（`...:*` 不覆盖 `...`） |
 | `capability_not_authorized` | 有效集合中没有任何 grant 覆盖该操作 |
@@ -602,7 +609,7 @@ grant 集合**可以缺席或为空** —— 例如集成方用空能力记录�
 | `absent_source` | 对零来源求交 —— 没有有效集合（§7 规则 5） |
 | `params_exceed_grant` | 请求参数超出已授权上界 |
 | `params_missing` | grant 约束了某参数但请求省略它，或请求完全没有 `params` 字段（fail-closed，§6.3 第 4 步） |
-| `undeclared_param` | 操作参数键未被 grant 的 params 声明（键闭包，§6.2；§9.3 第 7 层请求侧） |
+| `undeclared_param` | 操作参数键未被 grant 的 params 声明（键闭包，§6.2；§9.1 第 7 层请求侧） |
 | `empty_bound_denies_class` | 参数值处显式空上界（`[]`/`{}`）拒绝整个类。`params:{}` 不是空上界：它等价于 `params` 缺席（§7 规则 6） |
 | `not_in_enum` | 请求值不是以数组形式授权的允许集合的成员（§6.2 枚举规则） |
 | `invalid_params_null` | `null` 参数值（v1 拒绝） |
@@ -681,7 +688,7 @@ CLC-v1 定义**两个一致性类**：
 裁决函数（§9）、对未被识别 `(scheme,type)` 约束的拒绝（`unknown_constraint`，§8.1）、
 对已识别类型值不合文法的拒绝（`invalid_constraint`，§8.1）、把已识别但未求值的约束通过决定的
 `unresolved` 字段以**独立的 `allow_unresolved` 裁决**暴露（绝不静默丢弃，§8.4）、
-多 grant 聚合（§9.3）以及稳定原因码（§9.4）。
+多 grant 聚合（§9.1）以及稳定原因码（§9.2）。
 
 **委托收窄不属于本修订。** 委托策略可能要求「agent 请求的约束集合落在主体边界之内」，并要求
 委托记录携带有效子集。该义务属于委托/授权绑定 profile，而不属于语言本身：本修订既不为它定义
@@ -725,12 +732,12 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
 
 **实验性邻居不是 CLC。** `varwof/aic-jwt` 中的 WIT/WPT 互操作研究（`wit-wpt-interop/`）
 是一个**实验性**研究产物，它实现了一套**不同且更宽**的通配面（`**`、`{a,b}`、`[a-z]`），
-而本修订将其作为 `unsupported_wildcard` 拒绝（§9.4）。它不是 CLC-A 实现，
+而本修订将其作为 `unsupported_wildcard` 拒绝（§9.2）。它不是 CLC-A 实现，
 **不得**被引用为 CLC-A 实现；它的存在是为了研究 WIT/WPT 供给，自带 EXPERIMENTAL 标识。
 
 ### 12.1 语言修订
 
-每个实现声明一个语言修订 `CLC-<major>.<minor>` —— 本文档声明 **`CLC-1.4`**。
+每个实现声明一个语言修订 `CLC-<major>.<minor>` —— 本文档声明 **`CLC-1.5`**。
 能力输入（grant、操作或 OCM）**应当**携带其撰写时所依据的修订；未声明修订的输入按 `CLC-1.0` 处理。
 
 - **兼容读取**：实现**可以**求值「声明主版本等于自身 且 声明次版本 ≤ 自身」的输入
@@ -746,7 +753,7 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
   跨午夜窗口文法之前，不是 CLC-A 符合（§12）。
 - **不兼容读取必须 fail closed**，以 `deny("unsupported_language_revision")` 拒绝。
   实现**不得**在不同修订下静默求值 —— 不降级、不「先告警后放行」。
-- 修订检查在**任何 §9.3 层之前**解析，并产出单一已解析原因码 `unsupported_language_revision`。
+- 修订检查在**任何 §9.1 层之前**解析，并产出单一已解析原因码 `unsupported_language_revision`。
 
 向量：`revision-001`（输入 CLC-1.0，对声明 CLC-1.3 的实现 → 正常求值，allow）；
 `revision-002`（输入 CLC-2.0 → 拒绝 `unsupported_language_revision`）。
@@ -808,7 +815,7 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
 - **「已识别但未求值」不是静默接受**：core 识别但无法求值的约束**必须**出现在决定的 `unresolved`
   字段中 —— 绝不丢弃（§8.4）。消费方在行动前必须对每条此类约束求值或确认，否则**必须**拒绝（AAC §6.6）。
 - **原因码的细节后缀仅供诊断**：第一个 `:` 之后的内容（例如违规参数名）**不得**改变裁决，
-  **不得**被作为裁决依据。消费方按 `:` 之前的码前缀匹配（§9.4）。
+  **不得**被作为裁决依据。消费方按 `:` 之前的码前缀匹配（§9.2）。
 - **修订不匹配 fail-closed**：不兼容的语言修订（§12.1）产出
   `deny("unsupported_language_revision")`，在任何层之前解析 —— 绝不静默降级或尽力重解释。
 - **资源耗竭在输入边界被限定**：512 字节序列化尺寸上限与深度 32 嵌套上限（§6.2 第 4 步）
@@ -831,7 +838,7 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
   工作时段（`time` 窗口）、租户名或用途。部署方应把 grant 视为策略机密材料。
 - 不同的原因码会泄露 grant 的形状：`params_missing`、`undeclared_param` 与 `not_in_enum`
   之间的差别会告诉观察者该 grant 约束了什么。在请求方不可信的地方，消费方应考虑在边界处折叠原因码 ——
-  正如本规范已对标识符级失败所做的那样（§9.3）。
+  正如本规范已对标识符级失败所做的那样（§9.1）。
 - 若某 scheme 如此定义，参数值可能携带个人数据。scheme 作者应避免把个人标识符用作参数名或参数值。
 - 残差义务（`unresolved`，§8.4）以及任何基于决定构建的审计记录会持久化策略与使用信息；
   留存是承载方的责任（§11）。
@@ -841,10 +848,11 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
 
 Iman Schrock（EMILIA Protocol）对照 1.1 版语料审阅了交集与约束语义，并提供了
 1.2 与 1.3 修订所修复的对抗性用例：交集里的嵌套部分重叠、`max_rows` 的约束值处理，
-以及公开入口点的契约。他还在 1.4 与 1.5 修订的钉定头部上重跑了 Go、Python、TypeScript
-三个实现与语料，闭环了他就 `max_rows` 值域与 UTF-8 尺寸上界提出的两个反对意见，并给出了本修订
-承载的四处更正：三值求值到二值报告的折叠（§10）、`allow_unresolved` 与证据的分离（§11）、
-委托的范围（§12），以及本投影身份与 CAID 的边界（§4.2、§4.3、§6.4）。
+以及公开入口点的契约。1.4 修订时他重跑了 Go、Python、TypeScript 三个实现与 1184 条性质用例，
+闭环了就 `max_rows` 值域与 UTF-8 尺寸上界提出的两个反对意见；1.5 修订时他重跑的是**三套 Go 套件**
+—— 105 条授权、30 条证据、13 条 crosswalk —— 并给出该修订承载的四处更正：三值求值到二值报告的
+折叠（§10）、`allow_unresolved` 与证据的分离（§11）、委托的范围（§12），以及本投影身份与 CAID
+的边界（§4.2、§4.3、§6.4）。
 
 ## 参考文献
 
@@ -861,6 +869,7 @@ Iman Schrock（EMILIA Protocol）对照 1.1 版语料审阅了交集与约束语
 - [AIC-JWT] J. Wei, "AI Agent Identity Certificate (AIC) JSON Web Token
   Profile", draft-wei-aic-jwt-01, Work in Progress, September 2026.
 - [CAID] "Canonical Action Identifier",
-  draft-schrock-canonical-action-identifier-02, Work in Progress.
+  draft-schrock-canonical-action-identifier-02, Work in Progress.  §4.5 定义可选的
+  `occurrence_id`；§7 把「发生的分配」与「一次性消费」留在标识符之外。
 - [EMILIA-AEB] "Action Evidence Boundary",
   draft-schrock-action-evidence-boundary-05, Work in Progress.

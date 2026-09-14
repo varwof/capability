@@ -308,7 +308,7 @@ P_effective 公式）。v2 的 Match/Satisfaction 抽象来自 EMILIA AEB-04
 2. **§12 一致性分两类**：`CLC-A`（授权侧，v1 基线：grammar + entailment +
    intersection + decision）与 `CLC-E`（证据侧可选：match + satisfaction）。
    理由：v1 要保持"最小"，只做授权侧的实现不应被判不合规。
-3. **§9.4 错误码表转为规范性**：13 个稳定 reason code（与 parity 报告枚举一致），
+3. **§9.2 错误码表转为规范性**：13 个稳定 reason code（与 parity 报告枚举一致），
    其它 scheme 可扩展但不得重定义。
 4. **术语提示**：§2 明确 "Binding ≠ 密钥绑定"（后者属原生凭证规范，见 §11）；
    verdict 大小写按 EMILIA/AEB 惯例（授权侧小写 allow/deny，证据侧大写）。
@@ -331,7 +331,7 @@ P_effective 公式）。v2 的 Match/Satisfaction 抽象来自 EMILIA AEB-04
 - 方案 B（v2 方向，未启动）：scheme 声明参数域（bound / enum / exact），语义按域分派。
 
 **落地记录（2026-09-10，用户裁决方案 A）**：
-- 规范：§6.2 数组 enum 语义 + §9.4 `not_in_enum`；附录 B.3 8 → 14 条，总量 46 → 52；
+- 规范：§6.2 数组 enum 语义 + §9.2 `not_in_enum`；附录 B.3 8 → 14 条，总量 46 → 52；
 - 实现：Go `valueSubset` array 分支改精确成员相等（`enumEqual`），Python 同步；
   空数组 → `empty_bound_denies_class`（params-007 reason 修正）；`not_in_enum` 进入
   `Authorize` 的 params 级传播集合；
@@ -351,7 +351,7 @@ P_effective 公式）。v2 的 Match/Satisfaction 抽象来自 EMILIA AEB-04
 v1.1 落地后实测发现 6 条"向量期望 vs 双实现"的 reason 差异（entail-004、
 intersect-002、combined-003/005/006/011）。根因：**检查顺序未定义**——同一次
 失败可能命中间隔层，实现与向量各取其一。特此引入规范性检查顺序
-（规范 §9.3，正文本为英文）：
+（规范 §9.1，正文本为英文）：
 
 | # | 层 | 触发 | reason |
 |---|-----|------|--------|
@@ -382,7 +382,7 @@ intersect-002、combined-003/005/006/011）。根因：**检查顺序未定义**
 - 验证：Go/Python 52/52 全绿，**impl ≡ 向量期望 = 0 差异**，
   Go==Python 逐条一致；改 reason 码从 v1.1 的 6 条差异降为 0。
 
-**状态：已落地（v1.2）。** 校验顺序成为 §9.4 规范性主张的机械保证。
+**状态：已落地（v1.2）。** 校验顺序成为 §9.2 规范性主张的机械保证。
 
 ---
 
@@ -390,9 +390,9 @@ intersect-002、combined-003/005/006/011）。根因：**检查顺序未定义**
 
 独立比对在"0 差异"结论下又挖出 3 个问题（1 个为评审工具自身）：
 
-- **F1（规范格式）**：实现返回 `invalid_params_null: limit`，而 §9.4 与
+- **F1（规范格式）**：实现返回 `invalid_params_null: limit`，而 §9.2 与
   向量期望是裸码。双侧实现彼此一致（非双实现分歧），但字符串比较恰恰是
-  互操作最容易炸的点。→ **§9.4 明确：规范码 = 首个 `:` 之前的部分；
+  互操作最容易炸的点。→ **§9.2 明确：规范码 = 首个 `:` 之前的部分；
   实现 MAY 追加 `: <detail>` 作为诊断后缀；工具一律按规范码比较。**
 - **F2（fail-closed）**：Python `authorize(None, op)` 抛 `TypeError`
   （Go 侧被 runner 的 nil 短路掩盖，同风险）。→ **两侧对空/缺省 grant
@@ -419,7 +419,7 @@ Reason-fail: 0（工具强制，非临时脚本）；gofmt / vet / go test 全�
 
 closeout 审查（2026-09-11）的 P2/P3/P4 合并裁决，改动如下：
 
-1. **§9.3 新增第 2 层 Params 规范化**（原层 2–10 → 层 3–11）。三个理由码：
+1. **§9.1 新增第 2 层 Params 规范化**（原层 2–10 → 层 3–11）。三个理由码：
    - `invalid_params_duplicate_key`：JCS 序列化下重复 JSON 键。map 解码只剩
      最后一个值，必须回到**原文**判定；
    - `invalid_params_number`：非有限（如 `1e400`）或 >17 位有效数字的数值。
@@ -432,7 +432,7 @@ closeout 审查（2026-09-11）的 P2/P3/P4 合并裁决，改动如下：
 2. **§12.1 语言修订协商**：实现声明 `CLC-<major>.<minor>`（本文档 **CLC-1.1**）；
    兼容读法 = 同 major 且输入 minor ≤ 自己；不兼容一律
    `deny("unsupported_language_revision")`（fail-closed，禁静默降级），
-   在任何 §9.3 层之前判定。向量 revision-001（1.0 → 允许）/-002（2.0 → 拒）。
+   在任何 §9.1 层之前判定。向量 revision-001（1.0 → 允许）/-002（2.0 → 拒）。
 3. **§6.2 输入规范化规范块**（5 语句：JCS 优先序列化 / 重复键 / 数字形状 /
    大小深度 / 检查顺序）。
 4. **Security Considerations 补 4 条**：解析分歧不得改变判决；reason 冒号后缀
@@ -542,14 +542,14 @@ go test / vet 全绿；schema 校验 60 条通过。
 - 操作携带 grant 未声明的参数键 → `deny("undeclared_param")`（负向闸门，
   fail-closed）；
 - 无参数 grant（unconstrained）接受任意操作参数，键闭合不适用；
-- §9.3 层 7 内次序：**缺失键（`params_missing`）先于未声明键
+- §9.1 层 7 内次序：**缺失键（`params_missing`）先于未声明键
   （`undeclared_param`）**，两者都先于层 8–9 的值检查；
 - 只检查**顶层键**：键存在时值的嵌套对象类型递归（enum/上界）照旧。
 
 **落地**：
 
-- §6.2 新增规范段「Key closure (Plan A)」；§9.3 层 7 行更新为双向；
-  §9.4 新增 `undeclared_param` 行。
+- §6.2 新增规范段「Key closure (Plan A)」；§9.1 层 7 行更新为双向；
+  §9.2 新增 `undeclared_param` 行。
 - Go（`register/semantics`）：`ErrParamsUndeclared`；`paramsSubset` 在
   缺失键循环之后新增未声明键循环；`isParamsLevelReason` 加前缀。
 - Python（`aic-capability-demo`）：`ParamsUndeclared`；`params_subset`
@@ -580,7 +580,7 @@ go test / vet 全绿；schema 校验 60 条通过。
   P18 的反侧）、`params-021`（嵌套恰深 32 → allow，P19 的反侧）；
   原始载荷走 `raw_params`，两侧实现一致通过。
 - **决策层 `Authorize` 路径（2）**：`decide-016`（空 grant 且空 op →
-  `capability_not_authorized`，§9.3 预检查先于一切层）、`decide-017`
+  `capability_not_authorized`，§9.1 预检查先于一切层）、`decide-017`
   （grant 有效但 op 无 `id` → `missing_capability_id`，层 1）。
 - **交集 §7 规则 5–6（4）**：`intersect-007`（零源 → fail-closed
   `absent_source`）、`intersect-008/-009`（空 params 源不得挤掉已有上界，
@@ -661,7 +661,7 @@ py/ts 输出逐字节一致；附录 B / design-notes / principles 全对齐；�
 
 ### 2026-09-12 CLC-1.3 落地收口
 
-**范围**：把残留的"伪 allow"叙事清掉，并钉死 §9.3 多 grant 聚合。相对 CLC-1.2 为加性修订
+**范围**：把残留的"伪 allow"叙事清掉，并钉死 §9.1 多 grant 聚合。相对 CLC-1.2 为加性修订
 （旧输入仍可读）。
 
 **新增规范面（rev CLC-1.3）**：
@@ -675,7 +675,7 @@ py/ts 输出逐字节一致；附录 B / design-notes / principles 全对齐；�
   `end:"00:00"` 保留为次日零点（`22:00→00:00` = 同日 `[22:00,24:00)`）；整日段 `00:00→00:00`
   非法；段列按 (start,end) 升序、两两不重叠（相接允许）。
 - **grant params `{}` ≡ absent ≡ 无约束**：空对象不再触发 key closure，op 可带任意 params。
-- **§9.3 多 grant 聚合**：新增 `AuthorizeSet(grants, op)`——任一覆盖且放行的 grant 放行
+- **§9.1 多 grant 聚合**：新增 `AuthorizeSet(grants, op)`——任一覆盖且放行的 grant 放行
   （并集）；`unresolved` 跨全部覆盖且放行 grant 取并；全部拒绝时取**首个覆盖 grant** 的
   参数/约束层 reason（输入序）。
 
