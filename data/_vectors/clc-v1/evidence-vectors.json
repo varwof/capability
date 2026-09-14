@@ -587,9 +587,9 @@
       "currency": "USD"
     },
     "expect": {
-      "action_id": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
+      "action_id": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
     },
-    "derivation": "ActionId = caid:1:<type>:<suite>:<b64url(sha256(JCS(material projection)))> over the declared material set only"
+    "derivation": "ActionId = clc-action:1:<type>:<suite>:<b64url(sha256(JCS(material projection)))> over the declared material set only"
   },
   {
     "id": "eva-002",
@@ -610,7 +610,7 @@
       "trace_id": "abc-1"
     },
     "expect": {
-      "action_id": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
+      "action_id": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4"
     },
     "derivation": "memo/trace_id are not declared material, so they are excluded from the digest and MUST NOT affect Match (same id as eva-001)"
   },
@@ -651,7 +651,7 @@
       "currency": "USD"
     },
     "expect": {
-      "action_id": "caid:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84"
+      "action_id": "clc-action:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84"
     },
     "derivation": "a different material value is a different action identity"
   },
@@ -666,22 +666,22 @@
         "currency"
       ]
     },
-    "suite": "jcs-sha384",
+    "suite": "cbor-sha256",
     "action": {
       "amount": "100.00",
       "currency": "USD"
     },
     "expect": {
-      "action_id": "caid:1:payment.release.1:jcs-sha384:A05KfH43GUMuPAQOz6cfs0LtvslfKqbymeoj3nR8qPXSfdGhnvbp-KszJACcKA1_"
+      "error": "action_suite"
     },
-    "derivation": "the same projection under another suite is a different identifier string (and is not comparable by Match)"
+    "derivation": "v1 defines one suite (jcs-sha256).  A name outside the closed set is refused fail-closed, never computed under an assumed algorithm."
   },
   {
     "id": "evm-001",
     "kind": "match",
     "spec_clause": "§6.4 step 2",
-    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
-    "evidence": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "observed": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
     "expect": {
       "verdict": "MATCH"
     },
@@ -691,8 +691,8 @@
     "id": "evm-002",
     "kind": "match",
     "spec_clause": "§6.4 step 2",
-    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
-    "evidence": "caid:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84",
+    "observed": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "clc-action:1:payment.release.1:jcs-sha256:rPvYxWxXFED5-oGMGNDzhrG_7y8AFU0w5ZGwP8mIc84",
     "expect": {
       "verdict": "NOT_EQUIVALENT"
     },
@@ -701,12 +701,12 @@
   {
     "id": "evm-003",
     "kind": "match",
-    "spec_clause": "§6.4 step 3 (pinned suite)",
-    "observed": "caid:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
-    "evidence": "caid:1:payment.release.1:jcs-sha384:A05KfH43GUMuPAQOz6cfs0LtvslfKqbymeoj3nR8qPXSfdGhnvbp-KszJACcKA1_",
+    "spec_clause": "§6.4 step 1-3 (cross-type comparison)",
+    "observed": "clc-action:1:payment.release.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
+    "evidence": "clc-action:1:payment.refund.1:jcs-sha256:Z3l3B4SmuQqrLFCtLEj1jrTR3IAX5lxYUM2whptwYM4",
     "expect": {
       "verdict": "INDETERMINATE"
     },
-    "derivation": "different suites are not comparable without a relying-party-pinned mapping profile; indeterminate is never a match"
+    "derivation": "different action types are not comparable without a relying-party-pinned Action-Mapping Profile; indeterminate is never a match"
   }
 ]

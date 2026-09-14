@@ -130,7 +130,7 @@
   {
     "id": "xw-007",
     "kind": "crosswalk",
-    "spec_clause": "§7 intersection (delegation narrows)",
+    "spec_clause": "§7 intersection over the declared sets (containment is out of scope, §12)",
     "profile": "delegation-chain->clc-v1",
     "source": {
       "links": [
@@ -162,7 +162,7 @@
   {
     "id": "xw-008",
     "kind": "crosswalk",
-    "spec_clause": "§7 intersection (delegation narrows)",
+    "spec_clause": "§7 intersection over the declared sets (containment is out of scope, §12)",
     "profile": "delegation-chain->clc-v1",
     "source": {
       "links": [
