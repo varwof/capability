@@ -1241,7 +1241,14 @@ what carriers put into it and from what evaluators report:
 Iman Schrock (EMILIA Protocol) reviewed the intersection and constraint
 semantics against the revision 1.1 corpus and supplied the adversarial cases
 that revisions 1.2 and 1.3 fix: nested partial overlap in intersection,
-constraint value handling for `max_rows`, and the public entry-point contract.
+constraint value handling for `max_rows`, and the public entry-point contract.  He also re-ran the Go,
+Python and TypeScript implementations and the corpora at the pinned heads for
+revisions 1.4 and 1.5, closed the two objections he had raised against the
+`max_rows` value domain and the UTF-8 size bound, and drew the four corrections
+this revision carries: the collapse from three-valued evaluation to the binary
+report (Section 10), the separation of `allow_unresolved` from evidence
+(Section 11), the scope of delegation (Section 12), and the boundary between this
+projection identity and CAID (Sections 4.2, 4.3 and 6.4).
 
 ## References
 
