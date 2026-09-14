@@ -5,9 +5,12 @@
 
 > ⚠️ **Preview** — Not for production use. APIs and features may change before official release.
 
-Status: declaration, **rev 3** — 2026-09-13 (adds the derived decision rules
-R1–R5 in §2.5, and resolves the CLC-E entry in §9).  rev 2 = 2026-09-11 (P9–P12,
-three clarifications, the clause↔evidence ledger).  rev 1 = 2026-09-10, P1–P8.
+Status: declaration, **rev 4** — 2026-09-14 (scopes P11 to composition and takes
+delegation containment out of it: a chain shows an intersection of the declared
+sets, not containment of a child inside its parent).  rev 3 = 2026-09-13 (adds
+the derived decision rules R1–R5 in §2.5, and resolves the CLC-E entry in §9).
+rev 2 = 2026-09-11 (P9–P12, three clarifications, the clause↔evidence ledger).
+rev 1 = 2026-09-10, P1–P8.
 Companion (normative): `capability-language-core-v1.md`
 
 ## 0. What this is
@@ -99,16 +102,22 @@ construct with super-linear cost.
 at exactly the depth limit, and a negative case one step past each.  The limits
 are normative text, not an implementation constant.
 
-**P11 — Composition narrows only.** Intersection and delegation attenuation
-MUST only remove authority: the effective grant MUST stay within **every**
-source, order-independently, with no exception rule.  Two different relations
-are involved and must not be confused:
+**P11 — Composition narrows only.** Intersection MUST only remove authority:
+the effective grant MUST stay within **every** source, order-independently,
+with no exception rule.  Two different relations are involved and must not be
+confused:
 
 * **Source coverage (⊑)** — grant against grant, per §7 rule 2: for every
   parameter key the source declares, the merged bound is inside the source's
   bound, and no declared constraint is dropped.  Keys a source does not declare are not
   compared: composition authorizes a parameter when *some* source declares it,
   so the effective key set is the union.
+P11 governs **composition**.  It does not govern **delegation containment**:
+whether a child grant stays inside its parent's authorization boundary is a
+separate relation this document does not define, so no conformance claim rests
+on it (language core §12).  A delegation chain shows an intersection of the
+declared sets, which is not the same theorem.
+
 * **`Entails`** — grant against *operation*, the authorization relation, which
   applies key closure.  Closure belongs to the **effective** grant only: it is
   the single grant a verifier evaluates, and it is what stops an operation from
@@ -190,7 +199,7 @@ parity between implementations that share an author does not satisfy this rule.
 | AIC-JWT DA | Grant / Operation / Entailment / Decision | matching, subset, deny rules |
 | EMILIA AEB | Match + evidence-side verdict mapping | authorization semantics |
 | OAuth RAR `authorization_details` | capability-shaped details | subset / deny rules |
-| Delegation chain | Intersection across hops (narrowing) | per-hop semantics |
+| Delegation chain | Intersection of the declared sets across hops | per-hop semantics; containment is not defined here (language core §12) |
 
 ## 6. Extension rules (for v2)
 
@@ -219,7 +228,7 @@ that tests it, and its state.  States are `ok`, `gap` (something is missing) or
 | P8 Separation | Appendix A | Go, Python and TypeScript agree on 105 vectors **and** 1184 property cases | **gap** — all three implementations share one author; third-party parity is the unproven half |
 | P9 Local decidability | §6.3; OCMP §3 | `offline-vectors.json` (12 cases, 11/11 codes) with a coverage+vocabulary gate in CI | ok — the profile has no evaluator by design, so the gate checks coverage and vocabulary, not evaluation |
 | P10 Bounded work | §6.2.1 (512 bytes, depth 32, counting rule) | `params-018/019` (negative) + `params-020/021` (positive) | ok |
-| P11 Narrows only | §7 rules 2, 5, 6 (⊑ defined) | property test over 1184 cases in all three implementations (they report identical numbers); `intersect-007/008/009/010`; dict intersection requires identical key sets, else `no_overlap` (P11 catch, rev CLC-1.2) | ok — the closure/union conflict is resolved in §8; the 2026-09-12 key-set catch is fixed in all three |
+| P11 Narrows only (composition; delegation containment is out of scope, rev 4) | §7 rules 2, 5, 6 (⊑ defined) | property test over 1184 cases in all three implementations (they report identical numbers); `intersect-007/008/009/010`; dict intersection requires identical key sets, else `no_overlap` (P11 catch, rev CLC-1.2) | ok — the closure/union conflict is resolved in §8; the 2026-09-12 key-set catch is fixed in all three |
 | P12 Agreement is the bar | §12, §12.1, vectors README | 105 vectors with `result_*` assertions + property cases, CI in three repositories | **gap** — the corpus cannot see the same-author limitation |
 
 ## 8. What the property test found (2026-09-11)

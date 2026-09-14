@@ -35,6 +35,7 @@ conformance class (two independent implementations, §12) is not met yet.
 | CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(new), §9, §9.4, §11, §12, Appendix B, Security | Residual-obligation channel `unresolved` (recognized-but-not-evaluated constraints carried explicitly, never silently dropped); `time:window` value grammar defined as a multi-segment UTC window array; recognition upgraded to a "type-name × value-grammar" double check with a new `invalid_constraint` reason code; the "time → intersection" merge rule demoted to v2; constraint merge normalized with deterministic ordering |
 | CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, Appendix B | Authorization loop tightened + constraint identity namespaced: `Decision.verdict` is three-valued (`allow`/`deny`/`allow_unresolved`), residual obligations no longer mixed into `allow` (kills the fail-closed break where a consumer judges only `verdict == allow`, §8.4); constraint identity becomes the `(scheme,type)` pair, the core recognizes only `max_rows`/`time`/`network` under `varwof/constraint-v1`, everything else → `unknown_constraint` (removes cross-scheme semantic pollution, §8.1); `time:window` value grammar tightened: a single segment must stay within one day (`start < end`), **no single segment may cross midnight** (a crossing must be split into two segments, `end:"00:00"` stays reserved as "next-day midnight"), segment list ascending, non-overlapping, ≤32; `params:{}` ≡ absent = no param constraint (entailment and intersection semantics agree); multi-grant aggregation made explicit (any-one-covers authorizes + residual union + deterministic deny reason, §9.3) |
 | CLC-1.4 | 2026-09-13 | §6.2, §8.1, Appendix B | Operation-side value domain enforced: `max_rows` requests must carry a finite non-negative integer; anything else (string, boolean, negative, fractional, non-finite) → `max_rows:violated` instead of passing unchecked.  Size cap restated and implemented in **UTF-8 octets of the canonical serialization** in every path (decoded and raw); measuring code points or UTF-16 code units is non-conforming (the non-ASCII boundary vectors `params-028`/`params-029` pin it).  Evidence-side scope completed in the same working revision: the evidence-side value grammar (`varwof/evidence-v1:*`) and `CLC-REQUIREMENT-v1` are defined (§8.2, §10) and the evidence-side corpus ships (§12, `evidence-vectors.json`, 30 vectors, including ActionId/Match) — CLC-E is **implemented and pinned by a corpus but not claimed**, because the claim needs two independent implementations (§12, P12 of the principles document); genericity is exercised by `crosswalk-vectors.json` (13 vectors, both directions) |
+| CLC-1.5 | 2026-09-14 | §4.2, §4.3, §6.4, §10, §11, §12, consumer table, Security | **Instance identity stops claiming CAID.**  The projection identity is the language's own (`clc-action:1:<type>:<suite>:<b64url>`), the v1 suite set is `jcs-sha256` only (the invented `jcs-sha384` is gone), and the text now says what a CAID is not: it covers the **complete** Action Object and identifies no occurrence, while this projection covers the declared material set and occurrence binding consumes a discriminator from the effect boundary.  §10 states the tri-state evaluation → binary report collapse (a top-level `unknown` MUST yield `UNSATISFIED`); §11 states that `allow_unresolved` is an authorization result and not evidence, and fixes the layering (CAID for material-action identity, AEC for evidence satisfaction, AEB for the boundary lifecycle); §12, the consumer table and Security Considerations no longer read a delegation chain as containment.  CLC-A's normative algorithm is unchanged and CLC-1.4 inputs stay readable. |
 
 ---
 
@@ -157,16 +158,21 @@ executor-controlled facts.  CLC-v1 defines the interface, not the
 construction algorithm.
 
 An ObservedAction carries:
-- `action_type`: the CAID action type (or equivalent canonical form) [CAID]
+- `action_type`: the action type name declared by the relying-party-pinned type definition (the class this projection belongs to)
 - `material_fields`: every field the type definition declares **material**
 - `digest`: computed over the canonical **material projection** (below)
 
 The material projection is deterministic and normative:
 - The action type declares a **material field set** (required and
   optional-but-included).  Only that set enters the digest.
-- Canonical serialization is the JSON Canonicalization Scheme (JCS) [RFC8785].  The `ActionId` suite identifies the hash algorithm
-  (SHA-256 by default), as in `caid:1:payment.release.1:jcs-sha256:...`
-  (§4.3).
+- Canonical serialization is the JSON Canonicalization Scheme (JCS) [RFC8785];
+  the one suite defined in v1 is `jcs-sha256` (§4.3).
+- The projection identity is the language's own, not a CAID:
+  `clc-action:1:<type>:<suite>:<b64url>`.  A CAID [CAID] covers the **complete**
+  Action Object under its own suite registry and identifies the action object,
+  not an occurrence; this projection covers only the declared material set.  The
+  two are related by a relying-party-pinned Action-Mapping Profile (§6.4), never
+  by treating the strings as interchangeable.
 - A field the type does not declare as material MUST be excluded from the
   digest and MUST NOT affect Match: an ObservedAction carrying undeclared
   fields is not invalidated, but those fields carry no action identity.
@@ -187,10 +193,13 @@ Two identity levels, corresponding to the two Action forms:
 | Level | Identity | Scope | Example |
 |-------|----------|-------|---------|
 | Class | CapabilityId | Covers a class of actions | `std/database-v1:query:*` |
-| Instance | ActionId | Identifies one exact action | `caid:1:payment.release.1:jcs-sha256:...` |
+| Instance | ActionId (projection digest) | Identifies the material content of one action, **not** an occurrence | `clc-action:1:payment.release.1:jcs-sha256:...` |
 
-A CapabilityId covers a class; an ActionId identifies a single instance.
-Entailment checks class coverage; Match checks instance binding.
+A CapabilityId covers a class; an ActionId identifies the material content of one
+action.  It does not identify an **occurrence**: binding evidence to a particular
+occurrence consumes the occurrence discriminator the effect boundary supplies
+(AEB), which this language does not invent (§6.4).  Entailment checks class
+coverage; Match checks content binding.
 
 ---
 
@@ -362,13 +371,18 @@ before the null checks.
 ### 6.4 Match (evidence binding)
 
 Evidence E is bound to exact action A if:
-1. E carries a valid ActionId (CAID or equivalent) [CAID].
+1. E carries a valid ActionId in the language's projection form (`clc-action:1:…`,
+   §4.3).  A CAID is a different object and relates to it only through a pinned
+   Action-Mapping Profile.
 2. E's ActionId equals the recomputed ActionId of the ObservedAction.
 3. The ActionId was computed under the relying-party-pinned suite and
    definition source.
 
 Match is content correlation only.  It does not validate a native
-artifact and does not authorize execution.
+artifact and does not authorize execution.  It also does not identify an
+occurrence: evidence about one **occurrence** of that content is bound by
+consuming the occurrence discriminator the effect boundary supplies (AEB), and a
+profile that does so MUST pin how.
 
 Cross-format mapping (E's native format ≠ A's canonical form) uses an
 Action-Mapping Profile: a hash-identified projection pinned by the
@@ -777,6 +791,13 @@ Algorithm:
 5. All required roles filled and bound → `SATISFIED`.
 6. Any role unfilled, unbound, or violated → `UNSATISFIED`.
 
+**Tri-state evaluation, binary report.**  A recognized evidence-side constraint
+is evaluated three-valued (`satisfied` / `violated` / `unknown`).  `Satisfaction`
+itself is binary.  A constraint that evaluates to `unknown` at the top level —
+including one whose evaluation belongs to the enforcement point (`consumption`) —
+MUST produce `UNSATISFIED` with a stable reason, never `SATISFIED`.  `unknown`
+is an internal evaluation result, not a third top-level verdict.
+
 Properties: deterministic, fail-closed, stable reason codes.
 
 ---
@@ -807,6 +828,15 @@ The boundary is:
 - CLC-v1 defines each known type's **value grammar** (what counts as a legal
   constraint value); the declaring scheme defines **how** that value is
   evaluated (whether this window/CIDR currently forms a boundary)
+- **`allow_unresolved` is an authorization result, not evidence.**  It marks an
+  unresolved authorization (or policy) condition.  A consumer that can evaluate
+  the obligation under a pinned rule may release it; one that cannot MUST refuse.
+  It takes on an evidence role only where a relying party separately defines one
+  together with the native verifier for it (AEB); the language itself makes no
+  such claim, and `unresolved` MUST NOT be read as "evidence still required"
+- CLC-A stays the **scope language**: material-action identity is referenced from
+  CAID, evidence satisfaction from AEC, and the boundary lifecycle from AEB; the
+  narrow crosswalk between them is the composition point
 
 ---
 
@@ -824,7 +854,7 @@ exposure of recognized-but-unevaluated constraints via the decision's
 silently dropped, §8.4), multi-grant aggregation (§9.3), and stable
 reason codes (§9.4).
 
-**Delegation narrowing is not part of this revision.**  A delegation policy may require that the constraint set an agent requests lies inside the principal's boundary, and that the delegation record carry the effective subset.  That obligation belongs to the delegation/authorization binding profile, not to the language: this revision defines neither a conformance class nor a reason code for it, and implementations must not infer one.  A future revision may add a core relation for it — a deterministic constraint-subset check alongside entailment and intersection — once the profile that requires it is settled.
+**Delegation narrowing is not part of this revision.**  A delegation policy may require that the constraint set an agent requests lies inside the principal's boundary, and that the delegation record carry the effective subset.  That obligation belongs to the delegation/authorization binding profile, not to the language: this revision defines neither a conformance class nor a reason code for it, and implementations must not infer one.  A future revision may add it as **one reusable containment relation with a shared corpus**, alongside entailment and intersection, once the profile that requires it is settled.  Delegation stays out of CLC-A until that relation exists: the delegation examples in this document and in the crosswalk corpus demonstrate an **intersection of the declared grant sets**, which is not a proof that a child grant remains inside its parent's authorization boundary.  An operation fitting a grant proves nothing about a child staying inside its parent, and where containment cannot be established a binding profile MUST NOT authorize the delegation.
 
 **CLC-E (evidence side)** — optional conformance profile, **implemented and
 pinned by a corpus in this revision, but NOT claimed**.  §6.4 (match) and §10
@@ -966,7 +996,7 @@ required profiles: conformance to CLC-A does not depend on any of them.
 | AIC-JWT DA | capability[].id | Entailment (§6.1) | Decision (§9) | AIC-JWT §5 binding |
 | EMILIA AEB | AEG capability_class | Match (§6.4) + Entailment (§6.1) | SATISFIED (§10) + Decision (§9) | AEB §3 decision levels (VERIFIED/MATCH/SATISFIED) + §5.1 ObservedAction + §7 AEC slots; a VERIFIED authorization artifact carries the Grant |
 | RAR authorization_details | type="capability" | Entailment (§6.1) | Decision (§9) | RFC 9396 format |
-| Delegation chain | each DA narrows | Intersection (§7) | Decision (§9) | monotonic narrowing |
+| Delegation chain | each hop's declared set | Intersection (§7) | Decision (§9) | intersection over declared sets only; containment is out of scope (§12) |
 
 ---
 
@@ -1142,7 +1172,9 @@ Shorthand: params shown compact; constraints use colon notation.
 - **Fail-closed**: undefined/malformed/unknown → deny.
 - **Deny-when-declared**: empty bounds deny the class.
 - **No canonical broadening**: segment-boundary, not lexical prefix.
-- **Delegation monotonicity**: capability shrinks along chain.
+- **Composition narrows only**: an intersection removes authority.  Whether a
+  *delegated* grant stays inside its parent's boundary is a containment question
+  this revision does not answer anywhere (§12).
 - **Stable reason codes**: same input → same reason across implementations.
 - **Evidence binding is separate from native verification**: Match checks
   content correlation; native verification is the consumer's responsibility.

@@ -36,6 +36,7 @@
 | CLC-1.2 | 2026-09-12 | §7, §8.1, §8.4(新), §9, §9.4, §11, §12, 附录 B, 安全 | 残差义务通道 `unresolved`（被识别但未求值的约束显式携带，绝不静默丢弃）；`time:window` 值文法定为多段 UTC 窗口数组；识别升级为「类型名 × 值文法」双重校验并新增 `invalid_constraint` 原因码；「time → intersection」合并规则降级到 v2；约束合并归一化并确定性排序 |
 | CLC-1.3 | 2026-09-12 | §1, §6.2, §8.1, §8.4, §9, §9.3, 附录 B | 授权闭环收紧 + 约束身份命名空间化：`Decision.verdict` 三值化（`allow`/`deny`/`allow_unresolved`），残差义务不再混入 `allow`（消除「消费方只判 `verdict == allow`」导致的 fail-closed 断裂，§8.4）；约束身份改为 `(scheme,type)` 二元组，core 只识别 `varwof/constraint-v1` 下的 `max_rows`/`time`/`network`，其余一律 `unknown_constraint`（消除跨 scheme 语义污染，§8.1）；`time:window` 值文法收紧：单段必须同日内（`start < end`），**禁止单段跨午夜**（跨午夜须拆成两段，`end:"00:00"` 保留表示「次日零点」），段列升序、互不重叠、≤32；`params:{}` 与缺席等价 = 无参数约束（蕴涵与交集语义一致）；多 grant 聚合规则显式化（任一覆盖即授权 + 残差义务并集 + 确定性拒绝原因，§9.3） |
 | CLC-1.4 | 2026-09-13 | §6.2, §8.1, §10, §12, 附录 B | 操作侧值域收紧：`max_rows` 请求必须携带**有限非负整数**，其余（字符串、布尔、负数、分数、非有限数）一律 `max_rows:violated`，不再未经检查地放行。尺寸上限在所有路径（解码与原始）重申并按**规范化序列化的 UTF-8 八位组**实现；以码点或 UTF-16 码元计量不符合规范（非 ASCII 边界向量 `params-028`/`params-029` 固定该行为）。同一工作修订内完成证据侧范围：证据侧值文法（`varwof/evidence-v1:*`）与 `CLC-REQUIREMENT-v1` 被定义（§8.2、§10），证据侧语料随本修订发布（§12，`evidence-vectors.json`，30 条，含 ActionId/Match）—— **CLC-E 已实现并由语料钉住，但不声称**，因为声称需要两个独立实现（§12；原则文件 P12）；通用性由 `crosswalk-vectors.json`（13 条，双向）检验 |
+| CLC-1.5 | 2026-09-14 | §4.2、§4.3、§6.4、§10、§11、§12、消费者表、安全考虑 | **实例身份不再自称 CAID。** 投影身份属于本语言自己（`clc-action:1:<type>:<suite>:<b64url>`），v1 的 suite 集合只保留 `jcs-sha256`（自造的 `jcs-sha384` 删除），并写明 CAID **不是**什么：它覆盖**完整** Action Object，且不标识某次「发生」；本投影只覆盖声明的实质集合，绑定「发生」要消费执行边界提供的判别符。§10 写明逐约束三值求值 → 顶层二值报告的折叠（顶层 `unknown` **必须**产出 `UNSATISFIED`）；§11 写明 `allow_unresolved` 是授权结果而非证据，并固定分层（CAID 作素材动作身份、AEC 作证据满足、AEB 作边界生命周期）；§12、消费者表与安全考虑不再把委托链读作包含关系。CLC-A 的规范算法未变，CLC-1.4 的输入仍可读。 |
 
 ---
 
@@ -144,7 +145,7 @@ v1 标识符形如 `scheme:action`（例如 `std/database-v1:query:SELECT`）。
 
 ObservedAction 携带：
 
-- `action_type`：CAID 动作类型（或等价的规范化形式）[CAID]
+- `action_type`：由依赖方钉定的类型定义所声明的动作类型名（本投影所属的类）
 - `material_fields`：类型定义中声明为**实质（material）**的全部字段
 - `digest`：对规范化**实质投影**（见下）计算的摘要
 
@@ -152,8 +153,11 @@ ObservedAction 携带：
 
 - 动作类型声明一个**实质字段集合**（必填字段与「可选但计入」的字段都列在其中）。
   **只有**该集合进入摘要。
-- 规范化序列化采用 JSON 规范化方案（JCS）[RFC8785]；`ActionId` 的 suite 标识哈希算法
-  （默认 SHA-256），形如 `caid:1:payment.release.1:jcs-sha256:...`（§4.3）。
+- 规范化序列化采用 JSON 规范化方案（JCS）[RFC8785]；v1 只定义一个 suite，即 `jcs-sha256`（§4.3）。
+- 投影身份属于**本语言自己**，不是 CAID：形如 `clc-action:1:<type>:<suite>:<b64url>`。
+  CAID [CAID] 覆盖的是**完整** Action Object 并使用它自己的 suite 注册表，标识的是动作对象而非
+  某次「发生」；本投影只覆盖声明的实质集合。二者由依赖方钉定的 Action-Mapping Profile 关联
+  （§6.4），**不得**把两者的字符串当作可互换。
 - 类型**未**声明为实质的字段**必须**被排除在摘要之外，且**不得**影响 Match：
   携带未声明字段的 ObservedAction 并不因此无效，但这些字段不承载任何动作身份。
 - 类型声明为实质的字段**缺失**时，该 ObservedAction **不可匹配**：覆盖关系**不得**被推断、
@@ -170,9 +174,11 @@ ObservedAction 携带：
 | 层级 | 身份 | 范围 | 示例 |
 |-------|----------|-------|---------|
 | 类 | CapabilityId | 覆盖一类动作 | `std/database-v1:query:*` |
-| 实例 | ActionId | 标识一个确切动作 | `caid:1:payment.release.1:jcs-sha256:...` |
+| 实例 | ActionId（投影摘要） | 标识一个动作的实质内容，**不是**某次「发生」 | `clc-action:1:payment.release.1:jcs-sha256:...` |
 
-CapabilityId 覆盖一类，ActionId 标识单个实例。蕴涵检查**类**的覆盖，Match 检查**实例**的绑定。
+CapabilityId 覆盖一类；ActionId 标识一个动作的实质内容。它**不**标识某次「发生」：把证据绑定到
+具体的「发生」需要消费执行边界（AEB）提供的 occurrence 判别符，本语言不自行发明（§6.4）。
+蕴涵检查**类**的覆盖，Match 检查内容的绑定。
 
 ---
 
@@ -303,11 +309,14 @@ Entails(G, O) → bool:
 
 当满足下列全部条件时，证据 E 绑定到确切动作 A：
 
-1. E 携带合法的 ActionId（CAID 或等价形式）[CAID]。
+1. E 携带合法 ActionId，形式为本语言的投影形式（`clc-action:1:…`，§4.3）。CAID 是另一个对象，
+   只能通过钉定的 Action-Mapping Profile 与之关联。
 2. E 的 ActionId 等于对 ObservedAction 重新计算的 ActionId。
 3. 该 ActionId 是在**依赖方钉定的 suite 与定义来源**下计算的。
 
-Match **只是内容关联**：它不校验原生工件，也不授权执行。
+Match **只是内容关联**：它不校验原生工件，也不授权执行。它同样不标识某次「发生」：针对该内容
+某次**发生**的证据绑定，需要消费执行边界（AEB）提供的 occurrence 判别符，这么做时 profile
+**必须**钉定方式。
 
 跨格式映射（E 的原生格式 ≠ A 的规范形式）使用 **Action-Mapping Profile**：由依赖方钉定、
 以哈希标识的投影，结果为 `EQUIVALENT_UNDER_PROFILE`、`NOT_EQUIVALENT` 或 `INDETERMINATE`。
@@ -625,6 +634,11 @@ Satisfaction = { verdict: "SATISFIED"|"UNSATISFIED", reason: string|null }
 5. 所有必需角色都已填入并绑定 → `SATISFIED`。
 6. 任一角色未填入、未绑定或被违反 → `UNSATISFIED`。
 
+**逐约束三值、顶层报告二值。** 已识别的证据侧约束按三值求值（`satisfied` / `violated` /
+`unknown`），而 `Satisfaction` 本身是二值的：顶层为 `unknown` 的约束 —— 包括其求值属于执行点
+（`consumption`）的那类 —— **必须**产出 `UNSATISFIED` 并带稳定原因，绝不出 `SATISFIED`。
+`unknown` 是内部求值结果，不是第三种顶层裁决。
+
 性质：确定性、fail-closed、原因码稳定。
 
 ---
@@ -650,6 +664,12 @@ CLC-v1 **不**定义：
 - 消费方定义**拿输出做什么**（调用、记录、对账）
 - CLC-v1 定义每个已知类型的**值文法**（什么算合法的约束值）；声明 scheme 定义该值**如何**被求值
   （这个窗口/CIDR 此刻是否构成边界）
+- **`allow_unresolved` 是授权结果，不是证据。** 它标记的是一个**未决的授权（或策略）条件**：
+  消费方若能在钉定规则下求值该义务，可以释放；不能则**必须**拒绝。只有当依赖方另行定义了证据
+  角色与对应的原生验证方（AEB）时，它才取得证据角色；语言本身不作此主张，`unresolved` **不得**
+  读作"证据仍不足"
+- CLC-A 保持**范围语言**的位置：素材动作身份引用 CAID、证据满足引用 AEC、边界生命周期引用 AEB；
+  它们之间的**窄 crosswalk** 即组合点
 
 ---
 
@@ -666,7 +686,10 @@ CLC-v1 定义**两个一致性类**：
 **委托收窄不属于本修订。** 委托策略可能要求「agent 请求的约束集合落在主体边界之内」，并要求
 委托记录携带有效子集。该义务属于委托/授权绑定 profile，而不属于语言本身：本修订既不为它定义
 一致性类，也不为它定义原因码，实现**不得**自行推断一个。未来的修订可以在所需 profile 确定之后，
-为它加入一条核心关系 —— 与蕴涵、交集并列的**确定性约束子集检查**。
+把它作为**一条可复用的包含关系 + 共享语料**加入 —— 与蕴涵、交集并列。在该关系存在之前，委托
+不进 CLC-A：本文档与 crosswalk 语料里的委托示例只证明**声明授权集合的交集**，并不证明子授权
+留在父授权的边界之内。某个操作落在 grant 之内，不足以证明子授权不越出父授权；无法确立包含
+关系时，绑定 profile **不得**授权该委托。
 
 **CLC-E（证据侧）** —— 可选的一致性 profile，本修订**已实现并由语料钉住，但不声称**。§6.4（Match）与
 §10（满足）定义证据侧关系；本修订还定义了证据侧约束值文法（`varwof/evidence-v1:freshness:sec:<n>`、
@@ -739,7 +762,7 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
 | AIC-JWT DA | capability[].id | Entailment（§6.1） | Decision（§9） | AIC-JWT §5 绑定 |
 | EMILIA AEB | AEG capability_class | Match（§6.4）+ Entailment（§6.1） | SATISFIED（§10）+ Decision（§9） | AEB §3 判定层级（VERIFIED/MATCH/SATISFIED）+ §5.1 ObservedAction + §7 AEC 槽位；一个已 VERIFIED 的授权工件承载 Grant |
 | RAR authorization_details | type="capability" | Entailment（§6.1） | Decision（§9） | RFC 9396 格式 |
-| 委托链 | 每条 DA 收窄 | Intersection（§7） | Decision（§9） | 单调收窄 |
+| 委托链 | 每一跳声明的集合 | Intersection（§7） | Decision（§9） | 只做声明集合的交集；包含关系不在本修订范围（§12） |
 
 ---
 
@@ -774,7 +797,8 @@ CLC-E 一致性由同目录下的 `evidence-vectors.json` 检验 —— **30 条
 - **Fail-closed**：未定义/畸形/未知 → 拒绝。
 - **声明即拒绝**：空上界拒绝整个类。
 - **规范化不得放宽**：按段边界比较，不是词法前缀。
-- **委托单调性**：能力沿链收缩。
+- **组合只做收窄**：交集只会移除权限。而**被委托的** grant 是否留在父授权边界内，是一个
+  本修订未在任何地方回答的包含性问题（§12）。
 - **原因码稳定**：相同输入在任何实现中得到相同原因。
 - **证据绑定与原生验证分离**：Match 检查内容关联；原生验证是消费方的责任。
 - **解析分歧不得改变裁决**：params 在输入边界按 §6.2 归一化（JCS 序列化、重复键、
