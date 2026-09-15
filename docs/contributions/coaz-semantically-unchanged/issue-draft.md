@@ -65,6 +65,13 @@ From the thread (Alex Olivier, 2026-09-15):
   mapping revision; the projection MUST be deterministic, and a change to the projection definition is
   itself a change of the basis."
 
+## Where the material lives
+
+Pinned at tag `coaz-review-v1`:
+https://github.com/varwof/capability/tree/coaz-review-v1/docs/contributions/coaz-semantically-unchanged
+
+`reproduce/` contains the harness (value-level and decision-level cases, one runner per language).
+
 ## Vectors
 
 `vectors.json` (28 vectors: value-level pairs and decision-level grant/operation pairs) records, for
