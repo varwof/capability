@@ -1,0 +1,20 @@
+[
+ {"id":"a05-key-order","axis":5,"evaluated":"{\"a\":1,\"b\":2}","applied":"{\"b\":2,\"a\":1}"},
+ {"id":"a05-key-order-nested","axis":5,"evaluated":"{\"o\":{\"x\":1,\"y\":2}}","applied":"{\"o\":{\"y\":2,\"x\":1}}"},
+ {"id":"a06-duplicate-key","axis":6,"evaluated":"{\"limit\":100,\"limit\":150}","applied":"{\"limit\":150}"},
+ {"id":"a07-nfc-vs-nfd","axis":7,"evaluated":"{\"s\":\"\u00e9\"}","applied":"{\"s\":\"e\u0301\"}"},
+ {"id":"a07-escape-vs-literal","axis":7,"evaluated":"{\"s\":\"\\u00e9\"}","applied":"{\"s\":\"\u00e9\"}"},
+ {"id":"a07-case","axis":7,"evaluated":"{\"s\":\"A\"}","applied":"{\"s\":\"a\"}"},
+ {"id":"a07-lone-surrogate","axis":7,"evaluated":"{\"s\":\"\\ud800\"}","applied":"{\"s\":\"\u00e9\"}"},
+ {"id":"a08-int-forms","axis":8,"evaluated":"{\"n\":1}","applied":"{\"n\":1.0}"},
+ {"id":"a08-int-exponent","axis":8,"evaluated":"{\"n\":1}","applied":"{\"n\":1e0}"},
+ {"id":"a08-nonfinite","axis":8,"evaluated":"{\"n\":1e400}","applied":"{\"n\":1}"},
+ {"id":"a09-absent-vs-empty","axis":9,"evaluated":"{}","applied":"{\"params\":{}}"},
+ {"id":"a09-null","axis":9,"evaluated":"{\"limit\":null}","applied":"{}"},
+ {"id":"a09-empty-array-bound","axis":9,"evaluated":"{\"tables\":[]}","applied":"{}"},
+ {"id":"a10-number-vs-string","axis":10,"evaluated":"{\"n\":1}","applied":"{\"n\":\"1\"}"},
+ {"id":"a10-bool-vs-number","axis":10,"evaluated":"{\"b\":true}","applied":"{\"b\":1}"},
+ {"id":"a11-array-order","axis":11,"evaluated":"{\"t\":[1,2]}","applied":"{\"t\":[2,1]}"},
+ {"id":"a11-array-duplicate","axis":11,"evaluated":"{\"t\":[1,1]}","applied":"{\"t\":[1]}"},
+ {"id":"a13-extra-field","axis":13,"evaluated":"{\"a\":1}","applied":"{\"a\":1,\"extra\":true}"}
+]

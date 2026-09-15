@@ -1,0 +1,530 @@
+[
+  {
+    "id": "a05-key-order",
+    "axis": 5,
+    "coaz_clause": "RFC 8259 §4 (member order not semantic); Alex Olivier 2026-09-15",
+    "classification": "DETERMINED",
+    "input": {
+      "evaluated": "{\"a\":1,\"b\":2}",
+      "applied": "{\"b\":2,\"a\":1}"
+    },
+    "derivation": "Canonical bytes identical in all three implementations (clean HEAD); both inputs are the same value.",
+    "expect": {
+      "relation": "unchanged",
+      "pep_action": "apply"
+    }
+  },
+  {
+    "id": "a05-key-order-nested",
+    "axis": 5,
+    "coaz_clause": "RFC 8259 §4 (member order not semantic); Alex Olivier 2026-09-15",
+    "classification": "DETERMINED",
+    "input": {
+      "evaluated": "{\"o\":{\"x\":1,\"y\":2}}",
+      "applied": "{\"o\":{\"y\":2,\"x\":1}}"
+    },
+    "derivation": "Canonical bytes identical in all three implementations (clean HEAD); both inputs are the same value.",
+    "expect": {
+      "relation": "unchanged",
+      "pep_action": "apply"
+    }
+  },
+  {
+    "id": "a06-duplicate-key",
+    "axis": 6,
+    "coaz_clause": "Alex Olivier 2026-09-15; RFC 8259 §4 (names SHOULD be unique)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"limit\":100,\"limit\":150}",
+      "applied": "{\"limit\":150}"
+    },
+    "derivation": "All three implementations refuse with invalid_params_duplicate_key.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "invalid_params_duplicate_key"
+    }
+  },
+  {
+    "id": "a07-nfc-vs-nfd",
+    "axis": 7,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"s\":\"é\"}",
+      "applied": "{\"s\":\"é\"}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a07-escape-vs-literal",
+    "axis": 7,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"s\":\"\\u00e9\"}",
+      "applied": "{\"s\":\"é\"}"
+    },
+    "derivation": "Canonical bytes identical in all three implementations (clean HEAD); both inputs are the same value.",
+    "expect": {
+      "relation": "unchanged",
+      "pep_action": "apply"
+    }
+  },
+  {
+    "id": "a07-case",
+    "axis": 7,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"s\":\"A\"}",
+      "applied": "{\"s\":\"a\"}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a07-lone-surrogate",
+    "axis": 7,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"s\":\"\\ud800\"}",
+      "applied": "{\"s\":\"é\"}"
+    },
+    "derivation": "All three implementations refuse with invalid_params_number.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "invalid_params_number"
+    }
+  },
+  {
+    "id": "a08-int-forms",
+    "axis": 8,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "UNDETERMINED",
+    "input": {
+      "evaluated": "{\"n\":1}",
+      "applied": "{\"n\":1.0}"
+    },
+    "derivation": "Not decided by the current text: recorded so the open point has a case, no expectation asserted."
+  },
+  {
+    "id": "a08-int-exponent",
+    "axis": 8,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "UNDETERMINED",
+    "input": {
+      "evaluated": "{\"n\":1}",
+      "applied": "{\"n\":1e0}"
+    },
+    "derivation": "Not decided by the current text: recorded so the open point has a case, no expectation asserted."
+  },
+  {
+    "id": "a08-nonfinite",
+    "axis": 8,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "UNDETERMINED",
+    "input": {
+      "evaluated": "{\"n\":1e400}",
+      "applied": "{\"n\":1}"
+    },
+    "derivation": "Not decided by the current text: recorded so the open point has a case, no expectation asserted."
+  },
+  {
+    "id": "a09-absent-vs-empty",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{}",
+      "applied": "{\"params\":{}}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a09-null",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"limit\":null}",
+      "applied": "{}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a09-empty-array-bound",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"tables\":[]}",
+      "applied": "{}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a10-number-vs-string",
+    "axis": 10,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"n\":1}",
+      "applied": "{\"n\":\"1\"}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a10-bool-vs-number",
+    "axis": 10,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"b\":true}",
+      "applied": "{\"b\":1}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a11-array-order",
+    "axis": 11,
+    "coaz_clause": "Alex Olivier 2026-09-15; RFC 8259 §5 (arrays are ordered)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"t\":[1,2]}",
+      "applied": "{\"t\":[2,1]}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a11-array-duplicate",
+    "axis": 11,
+    "coaz_clause": "Alex Olivier 2026-09-15; RFC 8259 §5 (arrays are ordered)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"t\":[1,1]}",
+      "applied": "{\"t\":[1]}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "a13-extra-field",
+    "axis": 13,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": "{\"a\":1}",
+      "applied": "{\"a\":1,\"extra\":true}"
+    },
+    "derivation": "All three implementations judge the two inputs different (canonical bytes differ); the value is a legal re-evaluation case.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "reevaluate"
+    }
+  },
+  {
+    "id": "d01-bool-grant-vs-number-op",
+    "axis": 10,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "p": true
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "p": 1
+        }
+      }
+    },
+    "derivation": "All three implementations agree: deny with params_exceed_grant.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "params_exceed_grant"
+    }
+  },
+  {
+    "id": "d02-null-grant-op-no-params",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "p": null
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT"
+      }
+    },
+    "derivation": "All three implementations agree: deny with invalid_params_null.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "invalid_params_null"
+    }
+  },
+  {
+    "id": "d03-extra-field-bounded-grant",
+    "axis": 13,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "a": 1
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "a": 1,
+          "extra": true
+        }
+      }
+    },
+    "derivation": "All three implementations agree: deny with undeclared_param.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "undeclared_param"
+    }
+  },
+  {
+    "id": "d04-empty-array-bound",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "tables": []
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "tables": []
+        }
+      }
+    },
+    "derivation": "All three implementations agree: deny with empty_bound_denies_class.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "empty_bound_denies_class"
+    }
+  },
+  {
+    "id": "d05-array-order-grant-enum",
+    "axis": 11,
+    "coaz_clause": "Alex Olivier 2026-09-15; RFC 8259 §5 (arrays are ordered)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "t": [
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "t": [
+            3,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    "derivation": "All three implementations agree: the grant covers the operation (allow).",
+    "expect": {
+      "relation": "unchanged",
+      "pep_action": "apply",
+      "reason_code": ""
+    }
+  },
+  {
+    "id": "d06-array-duplicate-op",
+    "axis": 11,
+    "coaz_clause": "Alex Olivier 2026-09-15; RFC 8259 §5 (arrays are ordered)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "t": [
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "t": [
+            1,
+            1
+          ]
+        }
+      }
+    },
+    "derivation": "All three implementations agree: the grant covers the operation (allow).",
+    "expect": {
+      "relation": "unchanged",
+      "pep_action": "apply",
+      "reason_code": ""
+    }
+  },
+  {
+    "id": "d07-missing-key",
+    "axis": 9,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "a": 1,
+          "b": 2
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "a": 1
+        }
+      }
+    },
+    "derivation": "All three implementations agree: deny with params_missing.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "params_missing"
+    }
+  },
+  {
+    "id": "d09-number-vs-string",
+    "axis": 10,
+    "coaz_clause": "Alex Olivier 2026-09-15 (input values semantically unchanged)",
+    "classification": "DIVERGENT",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "n": 2
+        }
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT",
+        "params": {
+          "n": "1"
+        }
+      }
+    },
+    "derivation": "All three implementations agree: deny with params_exceed_grant.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "params_exceed_grant"
+    }
+  },
+  {
+    "id": "d10-unknown-constraint",
+    "axis": 17,
+    "coaz_clause": "Alex Olivier 2026-09-15 (every rewrite it knows about); issue #603 (UNVERIFIED)",
+    "classification": "UNDETERMINED",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "constraints": [
+          "vendor-x/unknown-v1:widget"
+        ]
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT"
+      }
+    },
+    "derivation": "All three implementations agree: deny with unknown_constraint.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "unknown_constraint"
+    }
+  },
+  {
+    "id": "d12-constraint-type-segment",
+    "axis": 17,
+    "coaz_clause": "Alex Olivier 2026-09-15 (every rewrite it knows about); issue #603 (UNVERIFIED)",
+    "classification": "UNDETERMINED",
+    "input": {
+      "evaluated": {
+        "id": "std/db-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:time:window:3600"
+        ]
+      },
+      "applied": {
+        "id": "std/db-v1:query:SELECT"
+      }
+    },
+    "derivation": "All three implementations agree: deny with invalid_constraint.",
+    "expect": {
+      "relation": "changed",
+      "pep_action": "refuse",
+      "reason_code": "invalid_constraint"
+    }
+  }
+]

@@ -1,0 +1,196 @@
+[
+ {
+  "id": "d01-bool-grant-vs-number-op",
+  "axis": 10,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "p": true
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "p": 1
+   }
+  }
+ },
+ {
+  "id": "d02-null-grant-op-no-params",
+  "axis": 9,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "p": null
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT"
+  }
+ },
+ {
+  "id": "d03-extra-field-bounded-grant",
+  "axis": 13,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": 1
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": 1,
+    "extra": true
+   }
+  }
+ },
+ {
+  "id": "d04-empty-array-bound",
+  "axis": 9,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "tables": []
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "tables": []
+   }
+  }
+ },
+ {
+  "id": "d05-array-order-grant-enum",
+  "axis": 11,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "t": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "t": [
+     3,
+     2,
+     1
+    ]
+   }
+  }
+ },
+ {
+  "id": "d06-array-duplicate-op",
+  "axis": 11,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "t": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "t": [
+     1,
+     1
+    ]
+   }
+  }
+ },
+ {
+  "id": "d07-missing-key",
+  "axis": 9,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": 1,
+    "b": 2
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": 1
+   }
+  }
+ },
+ {
+  "id": "d08-null-canonical",
+  "axis": 9,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": 1
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "a": null
+   }
+  }
+ },
+ {
+  "id": "d09-number-vs-string",
+  "axis": 10,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "n": 2
+   }
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT",
+   "params": {
+    "n": "1"
+   }
+  }
+ },
+ {
+  "id": "d10-unknown-constraint",
+  "axis": 17,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "constraints": [
+    "vendor-x/unknown-v1:widget"
+   ]
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT"
+  }
+ },
+ {
+  "id": "d11-op-id-wildcard-shape",
+  "axis": 2,
+  "grant": {
+   "id": "std/db-v1:query:SELECT"
+  },
+  "op": {
+   "id": "*:query:SELECT"
+  }
+ },
+ {
+  "id": "d12-constraint-type-segment",
+  "axis": 17,
+  "grant": {
+   "id": "std/db-v1:query:SELECT",
+   "constraints": [
+    "varwof/constraint-v1:time:window:3600"
+   ]
+  },
+  "op": {
+   "id": "std/db-v1:query:SELECT"
+  }
+ }
+]
