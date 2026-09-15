@@ -18,7 +18,7 @@ three-valued verdict (`allow`, `deny`, `allow_unresolved`).
 The language is carrier-neutral: it defines what is evaluated, not how it is
 carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
-exercised by a published corpus of 113 vectors and 1184 property cases; three
+exercised by a published corpus of 114 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.
 **Implementation conformance and this document's claim of a conformance class
 are separate.**  An implementation conforms to CLC-A when it meets the
@@ -47,7 +47,7 @@ grammar, reference implementation and corpus ship here.
 | CLC-1.5 | 2026-09-14 | §4.2, §4.3, §6.4, §10, §11, §12, consumer table, Security | **Instance identity stops claiming CAID.**  The projection identity is the language's own (`clc-action:1:<type>:<suite>:<b64url>`), the v1 suite set is `jcs-sha256` only (the invented `jcs-sha384` is gone), and the text now says what a CAID is not: it covers the **complete** Action Object and identifies no occurrence, while this projection covers the declared material set and occurrence binding consumes a discriminator from the effect boundary.  §10 states the tri-state evaluation → binary report collapse (a top-level `unknown` MUST yield `UNSATISFIED`); §11 states that `allow_unresolved` is an authorization result and not evidence, and fixes the layering (CAID for material-action identity, AEC for evidence satisfaction, AEB for the boundary lifecycle); §12, the consumer table and Security Considerations no longer read a delegation chain as containment.  CLC-A's normative algorithm is unchanged and CLC-1.4 inputs stay readable.  **2026-09-14 review corrections to this revision** (text only): the acknowledgement now states which suites were re-run, for which revision; §12.1 declares CLC-1.5; the reason-ordering and reason-code sections are referenced as §9.1/§9.2 to match the rendered numbering; §9 states the grant-side pre-check precedence that Appendix D15 already pins; the abstract separates implementation conformance from this document's claim of a class; and the occurrence sentence names CAID-02 §4.5/§7. |
 | CLC-1.6 | 2026-09-14 | §4.3, §6.2, §10, §12, Appendix B | **`jcs-sha256` is now a real RFC 8785 implementation.** The canonical serializer no longer uses `json.Marshal`'s HTML escaping (which wrote `&`, `<`, `>` as `\u0026`, `\u003c`, `\u003e`): it orders object members by UTF-16 code units (§3.2.3), escapes strings per §3.2.2.2 (only `"`, `\` and the control characters), renders numbers per ECMAScript `Number::toString` (§3.2.2.3), emits no insignificant whitespace, and fails on invalid UTF-8 or lone surrogates instead of substituting U+FFFD.  **The bytes change, so every `clc-action:` identifier and Decision Record input digest changes for material containing `&`, `<` or `>` — the old digests were not JCS and MUST NOT be compared against the new ones.**  Non-ASCII object keys are re-ordered where UTF-16 order differs from UTF-8 byte order.  Refusal of lone surrogates is enforced on the **raw params text** — a decoder would substitute U+FFFD first — and pinned by `params-031`/`params-032`.  CLC-A's verdicts are unchanged and CLC-1.4/1.5 inputs stay readable; the evidence corpus is 32 vectors (adds the RFC 8785 `&` action-id vector and a requirement vector asserting the exported §10 `Satisfaction` report).  **2026-09-15 review corrections**: the abstract no longer states that the independent-implementation bar is met for CLC-A — Section 12's honest scope governs (all three implementations share an author); the decoded-parameter paths of the three implementations now return the same stable denial for malformed Unicode, and Python's decoded size check measures the JCS serialization, matching Go and TypeScript. |
 | CLC-1.7 | 2026-09-15 | §6.2, §12, abstract | **Implementation alignment, not a semantic change.**  The decoded parameter paths of the three implementations now return the same stable denial for malformed Unicode (`invalid_params_number`) that the raw path already returned, and Python's decoded size check measures the JCS serialization instead of a serializer's re-encoding — both were implementations disagreeing with §6.2, not gaps in the language.  The abstract no longer states that the independent-implementation bar is met for CLC-A: Section 12's honest scope governs, since the three implementations share an author.  No change for well-formed inputs. |
-| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string).  No change for well-formed input below the cap. |
+| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  No change for well-formed input below the cap. |
 
 ---
 
@@ -923,7 +923,7 @@ profile §6.4/§10 themselves.
 
 **Conformance corpora.**  CLC-A conformance is exercised by two
 machine-readable reference suites shipped at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 113 vectors mapped
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 114 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
@@ -1062,7 +1062,7 @@ call the intersect function (`combined-004/-005/-008/-011`).
 | E5 | `std/database-v1:query:*` | `std/database-v1:query` | deny | no trailing segment |
 | E6 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | deny | literal mismatch |
 
-### B.3 Params (35 vectors)
+### B.3 Params (36 vectors)
 
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
@@ -1099,6 +1099,7 @@ call the intersect function (`combined-004/-005/-008/-011`).
 | P31 | `{}` | `{"n":1.0,"s":"<498 a>"}` (decoded) | allow | decoded counterpart of P30: a raw check counting the received token would refuse it (`params-036`) |
 | P32 | `{}` | raw `{"s":"<100×U+1F600>"}` | allow | 100 literal astral characters are 408 JCS octets; counting UTF-16 code units would double the count and refuse (`params-037`) |
 | P33 | `{}` | raw `{"s":"<100×\ud83d\ude00>"}` | allow | escaped spelling of P32: literal and escaped forms of one string MUST reach the same verdict and the same size (`params-038`) |
+| P34 | `{}` | raw `{"s":"a\nb"}` (literal U+000A) | deny(`invalid_params_number`) | a literal control character is not valid JSON text; Go and Python refused it already (`params-039`) |
 
 ### B.4 Intersection (10 vectors)
 
@@ -1166,7 +1167,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 113 vectors**
+**Total: 114 vectors**
 
 > Decisions D17–D28 are the corpus pin for the
 > residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1
