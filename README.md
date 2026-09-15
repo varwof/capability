@@ -94,7 +94,7 @@ specification, the corpora, and the reference implementation in
 This repository also carries the machine-readable side of **CLC-v1** (the
 minimal capability decision language):
 
-- `data/_vectors/clc-v1/` — **107 conformance vectors** and **32 evidence-side vectors**
+- `data/_vectors/clc-v1/` — **114 conformance vectors** and **32 evidence-side vectors**
   (`evidence-vectors.json`: evidence constraints, requirements, `ActionId` and
   `Match`), `vectors.schema.json`, `clc-v1-ambiguities.md`
   (resolution log), **1184 deterministic P11 property cases**
