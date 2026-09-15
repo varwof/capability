@@ -261,3 +261,48 @@ property cases，三实现 98/98、1184/1184、py/ts runner 逐字节一致）�
 - **计数收口**：decide 35 → **38**、语料 95 → **98**；schema verdict enum
   增 `allow_unresolved`，附 `multi` 布尔位；附录 D/D17/D22、parity report
   同步 CLC-1.3。
+
+## 9. malformed Unicode 边界 + 解码尺寸口径（2026-09-15）
+
+**Status**: Resolved（2026-09-15；spec rev CLC-1.6，107 向量 + 1184 property +
+各实现 edge 测试全绿）。
+
+评审复验（2026-09-15 回信）指出三条实现 decoded 授权路径对 malformed
+Unicode 处理不一致、且 Python 解码尺寸检查仍用 `json.dumps`。逐项定位后：
+- **解码路径 lone surrogate**：TS 用 `JSON.stringify`（把 lone surrogate 输出成
+  `\ud800` 转义、不抛错）+ `TextEncoder` 静默修复为 U+FFFD → 放行；Python 的
+  `.encode("utf-8")` 未捕获 `UnicodeEncodeError`；Go 的 `validateObjectParams`
+  对 `CanonicalJSON` 的失败**吞错并放行**（尺寸检查被跳过、返回 nil）。
+  修复：三实现解码路径统一在序列化前 walk 全树（含 key），lone surrogate /
+  无效 UTF-8 → `invalid_params_number`（raw surrogate checks 同码的稳定 denial）。
+- **解码尺寸检查**：Python `json.dumps` 用 Python float repr（`1e-06`）而 JCS
+  §3.2.2.3 要求 `0.000001` → `{"n":1e-06,"a":494×a}` 被 Python 计 509 放行、
+  Go/TS 计 514 拒绝；反向（解码 int 的完整精度字面量 vs JCS 的 ECMAScript
+  指数形式）则让 Python 误拒。修复：Python 尺寸检查改为 `canonical_json`
+  （RFC 8785）字节；Go decoded 尺寸已按 `CanonicalJSON` 字节、TS 按
+  `canonicalStringify`（数字即 ECMAScript）——三实现口径对齐。
+- **Go raw 边界**：`scanRawUnicodeEscapes` 原只拒 `\uD800` 转义，字面坏字节
+  经 `json.Marshal` 被静默修复为 U+FFFD；`ValidateRawParams` 增 `utf8.ValidString`
+  前置拒绝 → `invalid_params_number`。
+- 新增固定用例：Go `rawparams_sanity_test.go`（字面坏字节 value/key/ws +
+  decoded invalid UTF-8 + lone-surrogate 三字节形 + JCS-515 解码尺寸）、Python
+  `edge_test.py`（lone surrogate value/key/deep、JCS 514 vs dumps 509、
+  反向 big-int 不误拒）、TS `edge_test.ts`（lone surrogate value/key/deep、
+  JCS 514 拒绝）。语料 107 向量与 1184 property cases 不变（这些是 JSON
+  语料无法携带的边界），不计数。
+
+**§6.2 size 口径收口（raw 路径，同日）**：对拍确认 raw 路径尺寸计数仍有三处
+跨实现分叉，且均偏离 JCS：Go 走 `json.Marshal` 对 `&`/`<`/`>` 做 HTML 转义
+（计 6 字节）并对 U+2028/U+2029 转义（计 6）；Python/TS 对非 shortcut 控制
+字符固定计 2（`\u0011` 应为 6）、对 `"`/`\` 计 1（应为 2）；TS 还漏计字符串
+两侧引号（每串少 2）。现统一为 **RFC 8785 §3.2.2.2 解码后字符的 JCS 形态
+octet 数**：`"`/`\`=2、控制 shortcut `\b\f\n\r\t`=2、其余 C0=`\u00xx`=6、
+`&`/`<`/`>`=1（原样）、U+2028/U+2029=3（原样 UTF-8）、非 ASCII=其 UTF-8
+长度，并计入全部引号；Go raw 直接复用 `writeCanonicalString`（尺寸与解码路径
+`CanonicalJSON` 完全一致），Python `_scan_raw_params` 与 TS `scanRawParams`
+改用 `_jcs_octets`/`jcsOctets`。边界回归：
+`\u0011`×250=1508 拒（旧 Python/TS 508 放行）、`\u0022`×256=520 拒（旧
+Python/TS 放行）、`&`×250=258 放行（旧 Go 计 1508 拒）、U+2028×160=488 放行
+/×169=515 拒（旧 Go 计 968/1015 全拒）、`\t`×250=508 放行。21 例差分对拍
+（控制/引号/反斜杠/`&`/`<`/U+2028/29/非 ASCII × 240/300 边界）三实现 raw 与
+decoded 码、尺寸全同。
