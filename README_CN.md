@@ -73,7 +73,7 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 
 本仓同时承载 **CLC-v1**（极小能力判定语言）的机器可读部分：
 
-- `data/_vectors/clc-v1/` —— **114 条一致性向量**、
+- `data/_vectors/clc-v1/` —— **120 条一致性向量**、
   `vectors.schema.json`、`clc-v1-ambiguities.md`（裁决记录）、**1184 条 P11 属性用例**
   （`property-cases.json`，由 `scripts/gen-property-cases.py` 确定性生成）与
   **12 条 OCMP 离线用例**（`offline-vectors.json`）。消费方实现：

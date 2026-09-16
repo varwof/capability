@@ -794,7 +794,7 @@
         "agent-proxy"
       ],
       "grants": [
-        "gateway:*"
+        "agent:manage"
       ]
     }
   }

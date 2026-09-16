@@ -18,7 +18,7 @@ three-valued verdict (`allow`, `deny`, `allow_unresolved`).
 The language is carrier-neutral: it defines what is evaluated, not how it is
 carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
-exercised by a published corpus of 114 vectors and 1184 property cases; three
+exercised by a published corpus of 120 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.
 **Implementation conformance and this document's claim of a conformance class
 are separate.**  An implementation conforms to CLC-A when it meets the
@@ -47,7 +47,7 @@ grammar, reference implementation and corpus ship here.
 | CLC-1.5 | 2026-09-14 | §4.2, §4.3, §6.4, §10, §11, §12, consumer table, Security | **Instance identity stops claiming CAID.**  The projection identity is the language's own (`clc-action:1:<type>:<suite>:<b64url>`), the v1 suite set is `jcs-sha256` only (the invented `jcs-sha384` is gone), and the text now says what a CAID is not: it covers the **complete** Action Object and identifies no occurrence, while this projection covers the declared material set and occurrence binding consumes a discriminator from the effect boundary.  §10 states the tri-state evaluation → binary report collapse (a top-level `unknown` MUST yield `UNSATISFIED`); §11 states that `allow_unresolved` is an authorization result and not evidence, and fixes the layering (CAID for material-action identity, AEC for evidence satisfaction, AEB for the boundary lifecycle); §12, the consumer table and Security Considerations no longer read a delegation chain as containment.  CLC-A's normative algorithm is unchanged and CLC-1.4 inputs stay readable.  **2026-09-14 review corrections to this revision** (text only): the acknowledgement now states which suites were re-run, for which revision; §12.1 declares CLC-1.5; the reason-ordering and reason-code sections are referenced as §9.1/§9.2 to match the rendered numbering; §9 states the grant-side pre-check precedence that Appendix D15 already pins; the abstract separates implementation conformance from this document's claim of a class; and the occurrence sentence names CAID-02 §4.5/§7. |
 | CLC-1.6 | 2026-09-14 | §4.3, §6.2, §10, §12, Appendix B | **`jcs-sha256` is now a real RFC 8785 implementation.** The canonical serializer no longer uses `json.Marshal`'s HTML escaping (which wrote `&`, `<`, `>` as `\u0026`, `\u003c`, `\u003e`): it orders object members by UTF-16 code units (§3.2.3), escapes strings per §3.2.2.2 (only `"`, `\` and the control characters), renders numbers per ECMAScript `Number::toString` (§3.2.2.3), emits no insignificant whitespace, and fails on invalid UTF-8 or lone surrogates instead of substituting U+FFFD.  **The bytes change, so every `clc-action:` identifier and Decision Record input digest changes for material containing `&`, `<` or `>` — the old digests were not JCS and MUST NOT be compared against the new ones.**  Non-ASCII object keys are re-ordered where UTF-16 order differs from UTF-8 byte order.  Refusal of lone surrogates is enforced on the **raw params text** — a decoder would substitute U+FFFD first — and pinned by `params-031`/`params-032`.  CLC-A's verdicts are unchanged and CLC-1.4/1.5 inputs stay readable; the evidence corpus is 32 vectors (adds the RFC 8785 `&` action-id vector and a requirement vector asserting the exported §10 `Satisfaction` report).  **2026-09-15 review corrections**: the abstract no longer states that the independent-implementation bar is met for CLC-A — Section 12's honest scope governs (all three implementations share an author); the decoded-parameter paths of the three implementations now return the same stable denial for malformed Unicode, and Python's decoded size check measures the JCS serialization, matching Go and TypeScript. |
 | CLC-1.7 | 2026-09-15 | §6.2, §12, abstract | **Implementation alignment, not a semantic change.**  The decoded parameter paths of the three implementations now return the same stable denial for malformed Unicode (`invalid_params_number`) that the raw path already returned, and Python's decoded size check measures the JCS serialization instead of a serializer's re-encoding — both were implementations disagreeing with §6.2, not gaps in the language.  The abstract no longer states that the independent-implementation bar is met for CLC-A: Section 12's honest scope governs, since the three implementations share an author.  No change for well-formed inputs. |
-| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  The same revision also states the input-boundary obligation: §6.2 item 7 requires steps 1-5 to run on the received text before any decoding and says an implementation that exposes only a decoded-value entry point MUST NOT be described as refusing malformed Unicode, and §11 states that a §6.2 refusal does not transfer to a decoded value.  Text only - no verdict changes. |
+| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  The same revision also states the input-boundary obligation: §6.2 item 7 requires steps 1-5 to run on the received text before any decoding and says an implementation that exposes only a decoded-value entry point MUST NOT be described as refusing malformed Unicode, and §11 states that a §6.2 refusal does not transfer to a decoded value.  The same revision ships six corpus pins alongside the boundary alignment, taking the corpus from 114 to 120 vectors: `entail-007/-008` (class-position wildcard is not a trailing action wildcard, §5.1/§9.3 layer 3), `decide-035` (multi-grant residual-obligation union across covering grants, §9.1/§8.4) and `nested-001/-002/-003` (key closure and presence recurse into nested objects, §6.2/§9.1 layer 7).  Text only - no verdict changes. |
 
 ---
 
@@ -952,7 +952,7 @@ profile §6.4/§10 themselves.
 
 **Conformance corpora.**  CLC-A conformance is exercised by two
 machine-readable reference suites shipped at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 114 vectors mapped
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 120 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
@@ -1055,14 +1055,15 @@ required profiles: conformance to CLC-A does not depend on any of them.
 **Grouping vs `kind` mapping**: The appendix groups vectors by semantic
 category (B.1–B.6).  The machine-readable `vectors.json` uses a `kind`
 field that collates these groups differently:
-`kind=entail (39)` covers B.2 (6) + B.3 (29) plus the four scheme
-stress-test entail vectors (`clinical-001/-002`, `payments-001`,
-`data-002`); `kind=decide (38)` covers the B.5 rows below (29: the 25
-`decide-*` ids, the two `revision-*` vectors and the two `undeclared-*`
-layer-7 vectors, including the nine residual/value-grammar decision
-vectors, the re-pinned `decide-019/-020/-024` and the added
-`decide-028/-029/-030`) plus the seven combined decision vectors,
-`payments-002` and `data-001`;
+`kind=entail (47)` covers B.2 (8), the 35 params vectors that sit under
+`kind=entail` (B.3's 39 rows minus `params-028/-029/-034/-036`, which are
+`kind=decide`), and the four scheme stress-test entail vectors
+(`clinical-001/-002`, `payments-001`, `data-002`); `kind=decide (50)`
+covers the B.5 rows below (34), the seven combined decision vectors,
+`payments-002` and `data-001`, the four params boundary decisions that
+sit under `kind=decide` (`params-028/-029/-034/-036`, all four also
+listed in B.3) and the three nested key-closure vectors
+(`nested-001/-002/-003`);
 `kind=intersect (14)` covers B.4 (10) plus the four combined vectors that
 call the intersect function (`combined-004/-005/-008/-011`).
 
@@ -1080,7 +1081,7 @@ call the intersect function (`combined-004/-005/-008/-011`).
 | S8 | `bad:op` | deny(`invalid_capability_id`) | §3 scheme grammar: scheme `bad` does not match vendor/product-vN (snips the lax-intake hole) |
 | S9 | `std/data-v1:fetch:item:42` | valid | multi-segment action + conforming scheme (positive boundary) |
 
-### B.2 Entailment (6 vectors)
+### B.2 Entailment (8 vectors)
 
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
@@ -1090,8 +1091,10 @@ call the intersect function (`combined-004/-005/-008/-011`).
 | E4 | `std/database-v1:query:*` | `std/database-v1:admin:DDL` | deny | different namespace |
 | E5 | `std/database-v1:query:*` | `std/database-v1:query` | deny | no trailing segment |
 | E6 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | deny | literal mismatch |
+| E7 | `std/database-v1:*` | `std/database-v1:query:SELECT` | deny | class-position (product-segment) wildcard is v1-forbidden: only a trailing action segment may be `*` (§5.1/§9.3 layer 3) |
+| E8 | `std/database-v1:*` | `std/database-v1:admin:DDL` | deny | same class-position wildcard; the v1-forbidden shape denies regardless of the action it faces (§5.1/§9.3 layer 3) |
 
-### B.3 Params (36 vectors)
+### B.3 Params (39 vectors)
 
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
@@ -1129,6 +1132,11 @@ call the intersect function (`combined-004/-005/-008/-011`).
 | P32 | `{}` | raw `{"s":"<100×U+1F600>"}` | allow | 100 literal astral characters are 408 JCS octets; counting UTF-16 code units would double the count and refuse (`params-037`) |
 | P33 | `{}` | raw `{"s":"<100×\ud83d\ude00>"}` | allow | escaped spelling of P32: literal and escaped forms of one string MUST reach the same verdict and the same size (`params-038`) |
 | P34 | `{}` | raw `{"s":"a\nb"}` (literal U+000A) | deny(`invalid_params_number`) | a literal control character is not valid JSON text; Go and Python refused it already (`params-039`) |
+| P35 | `{}` | `{"x":"<260×é>"}` (decoded) | deny(`invalid_params_size`) | 260 U+00E9 code points serialize to 528 JCS octets > 512; non-ASCII sizes are measured on the canonical UTF-8 form, never in code points or UTF-16 units (`params-028`, rev CLC-1.4) |
+| P36 | `{}` | `{"x":"<251×é>"}` (decoded) | allow | 251 U+00E9 serialize to 510 octets ≤ 512; the positive side of P35 (`params-029`, rev CLC-1.4) |
+| P37 | `{"s":"x"}` | raw `{"s":"<251×\u00e9 escapes>"}` | allow | the same 510-octet string spelled with `\u00e9` escapes reaches the same verdict and the same size as the literal form of P36 (`params-030`, rev CLC-1.4) |
+| P38 | `{"limit":100}` | raw `{"s":"\ud800"}` | deny(`invalid_params_number`) | a lone surrogate escape is not valid Unicode: refused at the raw boundary, never repaired to U+FFFD (RFC 8785 §3.2.2.2; §6.2 step 2; `params-031`, rev CLC-1.6) |
+| P39 | `{}` | raw `{"s":"\ud83d\ude02"}` | allow | a valid surrogate pair is one character (U+1F602, four UTF-8 octets) and counts as such under the size rule (`params-032`, rev CLC-1.6) |
 
 ### B.4 Intersection (10 vectors)
 
@@ -1147,7 +1155,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | I9 | `{}` | `{"limit":50}` | `{"limit":50}` | source order must not matter (empty then bounded, §7 rule 6) |
 | I10 | `{}`, id `query:SELECT` | `{}`, id `query:*` | `{}` | narrower identifier wins; identifier comparison is params-free (§7 rule 2) |
 
-### B.5 Decision (29 vectors)
+### B.5 Decision (34 vectors)
 
 | # | Scenario | Expected | Derivation |
 |---|---------|----------|------------|
@@ -1179,6 +1187,12 @@ Shorthand: params shown compact; constraints use colon notation.
 | D26 | grant `params:{}`, op any params → unconstrained | allow | `{}` ≡ absent (`decide-028`, §9.1) |
 | D27 | multi-grant: G1 `{limit:10}` denies, G2 `{limit:100}` allows | allow | any-one-covers authorizes (`decide-029`, §9.1) |
 | D28 | multi-grant: G1 `{limit:10}` + G2 `{limit:6}`, op `{limit:50}` | deny("params_exceed_grant") | all covering grants reject → first reason in canonical order (`decide-030`, §9.1) |
+| D29 | multi-grant allow_unresolved: G1 `network:cidr` + G2 `time:window` | `allow_unresolved`, `unresolved:[both]` | residual obligations union across covering grants (`decide-035`, §9.1/§8.4) |
+| D30 | operation id uses a forbidden wildcard shape (`*:query:SELECT`) | deny("unsupported_wildcard") | wildcard-shape detection precedes the base grammar, and layer 1 propagates the specific code rather than `invalid_capability_id` (`decide-018`, §3/§9.1) |
+| D31 | grant bounds `max_rows:10`, operation carries `max_rows:"garbage"` | deny("max_rows:violated") | op-side value outside the §8.1 domain (finite non-negative integer) fails closed, never passes unchecked (`decide-031`, rev CLC-1.4) |
+| D32 | grant bounds `max_rows:10`, operation carries `max_rows:true` | deny("max_rows:violated") | boolean is outside the §8.1 domain (`decide-032`, rev CLC-1.4) |
+| D33 | grant bounds `max_rows:10`, operation carries `max_rows:-1` | deny("max_rows:violated") | a negative is outside the §8.1 domain (`decide-033`, rev CLC-1.4) |
+| D34 | grant bounds `max_rows:10`, operation carries `max_rows:1.5` | deny("max_rows:violated") | a fraction is outside the §8.1 domain (`decide-034`, rev CLC-1.4) |
 
 ### B.6 Combined (11 vectors)
 
@@ -1196,7 +1210,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 114 vectors**
+**Total: 120 vectors**
 
 > Decisions D17–D28 are the corpus pin for the
 > residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1
@@ -1205,7 +1219,10 @@ Shorthand: params shown compact; constraints use colon notation.
 > pin the §3 scheme grammar; `decide-021/-022`, `decide-019/-024` pin §8.1
 > time/network value shapes; `decide-019` pins the no-cross-midnight rule;
 > `decide-028/-029/-030` pin §9.1 (`{}`≡absent, any-allow union, deterministic
-> deny reason).
+> deny reason); `decide-035` (D29) pins multi-grant residual-obligation
+> union across covering grants; `decide-031/-032/-033/-034` (D31–D34) pin
+> the §8.1 `max_rows` request-side value domain (rev CLC-1.4); `decide-018`
+> (D30) pins §3 wildcard-shape detection ahead of the base grammar.
 
 > The corpus additionally carries 6 scheme stress-test vectors
 > (`clinical-001/-002`, `payments-001/-002`, `data-001/-002`) exercised

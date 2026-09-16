@@ -21,7 +21,7 @@
       "parameters": {
         "model": {
           "type": "list",
-          "description": "Allowed models (empty = any)",
+          "description": "Allowed models. A present-but-empty list denies the class (empty_bound_denies_class); omit the parameter to allow any model",
           "required": false
         },
         "max_tokens": {

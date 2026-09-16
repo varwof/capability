@@ -2,88 +2,45 @@
   "scheme_id": "varwof/constraint-v1",
   "name": "System Constraints",
   "version": "1.0.0",
-  "description": "System-level execution constraints (session/network/time/operation mode)",
+  "description": "System-level execution constraints (authorization-side, CLC-v1 §8.1). The core recognizes exactly the (scheme,type) pairs max_rows/time/network; any other type under this scheme is unknown_constraint (fail-closed).",
   "vendor": "varwof",
   "product": "constraint-v1",
   "author": "varwof",
   "license": "Apache-2.0",
   "capabilities": [
     {
-      "id": "session:max-concurrent",
-      "description": "Maximum concurrent sessions",
+      "id": "max_rows",
+      "description": "Maximum number of result rows",
       "parameters": {
         "value": {
           "type": "int",
-          "min": 1,
-          "max": 1000,
+          "description": "Strict non-negative integer (JSON number grammar: no leading +, no 0x, no trailing characters)",
+          "min": 0,
           "required": true
         }
       }
     },
     {
-      "id": "session:hard-timeout",
-      "description": "Session hard timeout (seconds)",
+      "id": "time",
+      "description": "Allowed UTC operation time window",
       "parameters": {
-        "value": {
-          "type": "int",
-          "min": 60,
-          "max": 86400,
+        "window": {
+          "type": "list",
+          "description": "Non-empty JSON array (<= 32 elements) of {\"start\":\"HH:MM[:SS]\",\"end\":\"HH:MM[:SS]\"} segments, UTC, repeated daily; a single window = a one-element array; a single segment must have start < end within one day and must not cross midnight; end:\"00:00\" is reserved as next-day midnight; segments ascending and non-overlapping",
           "required": true
         }
       }
     },
     {
-      "id": "session:idle-timeout",
-      "description": "Session idle timeout (seconds)",
+      "id": "network",
+      "description": "Allowed network CIDR set",
       "parameters": {
-        "value": {
-          "type": "int",
-          "min": 30,
-          "max": 3600,
+        "cidr": {
+          "type": "list",
+          "description": "JSON array (<= 32 elements) of legal IPv4/IPv6 CIDR strings (\"addr/mask\"), syntax-level check only",
           "required": true
         }
       }
-    },
-    {
-      "id": "network:cidr",
-      "description": "Allowed network CIDR",
-      "parameters": {
-        "value": {
-          "type": "string",
-          "description": "CIDR notation",
-          "required": true
-        }
-      }
-    },
-    {
-      "id": "time:window",
-      "description": "Allowed operation time window",
-      "parameters": {
-        "start": {
-          "type": "string",
-          "description": "HH:MM",
-          "required": true
-        },
-        "end": {
-          "type": "string",
-          "description": "HH:MM",
-          "required": true
-        }
-      }
-    },
-    {
-      "id": "op:readonly",
-      "description": "Restrict to read-only operations",
-      "parameters": {
-        "value": {
-          "type": "bool",
-          "required": true
-        }
-      }
-    },
-    {
-      "id": "op:audit:required",
-      "description": "Operation must write an audit log"
     }
   ]
 }

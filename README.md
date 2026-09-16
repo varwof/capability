@@ -33,10 +33,10 @@ ls data/
 # std/clinical-v1/v1.json
 # std/payments-v1/v1.json
 # std/data-v1/v1.json
-# varwof/core/v1.json
-# varwof/gateway/v1.json
-# varwof/constraint/v1.json
-# std/database-v1/v1.json
+# varwof/core-v1/v1.json
+# varwof/gateway-v1/v1.json
+# varwof/constraint-v1/v1.json
+# varwof/llm-v1/v1.json
 # x-vendor/acme-v1/v1.json
 ```
 
@@ -48,11 +48,11 @@ data/
 ├── std/clinical-v1/v1.json         — Clinical IS capabilities (records, orders, prescribing)
 ├── std/payments-v1/v1.json         — Payments capabilities (transfers, payouts, KYC, refunds)
 ├── std/data-v1/v1.json             — Data & privacy capabilities (read/export/join/train/delete)
-├── varwof/core/v1.json             — Core permissions (37 capabilities + 10 roles)
-├── varwof/gateway/v1.json          — Gateway permissions (21 capabilities + 5 roles)
-├── varwof/constraint/v1.json       — Execution constraint capabilities
-├── std/database-v1/v1.json         — database operation permissions (params_schema)
-└── x-vendor/acme-v1/v1.json           — Private extension example
+├── varwof/core-v1/v1.json          — Core permissions (37 capabilities + 10 roles)
+├── varwof/gateway-v1/v1.json       — Gateway permissions (21 capabilities + 5 roles)
+├── varwof/constraint-v1/v1.json    — Execution constraint capabilities (§8.1: max_rows/time/network)
+├── varwof/llm-v1/v1.json           — LLM API capabilities
+└── x-vendor/acme-v1/v1.json        — Private extension example
 ```
 
 ## Neutrality
@@ -94,7 +94,7 @@ specification, the corpora, and the reference implementation in
 This repository also carries the machine-readable side of **CLC-v1** (the
 minimal capability decision language):
 
-- `data/_vectors/clc-v1/` — **114 conformance vectors** and **32 evidence-side vectors**
+- `data/_vectors/clc-v1/` — **120 conformance vectors** and **32 evidence-side vectors**
   (`evidence-vectors.json`: evidence constraints, requirements, `ActionId` and
   `Match`), `vectors.schema.json`, `clc-v1-ambiguities.md`
   (resolution log), **1184 deterministic P11 property cases**

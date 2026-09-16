@@ -2608,5 +2608,157 @@
       "reason": "invalid_params_number"
     },
     "derivation": "raw path: a literal U+000A inside a string is not valid JSON text, so the params cannot be normalized.  Go and Python refused it already; TypeScript counted it as a character and accepted until CLC-1.8."
+  },
+  {
+    "id": "entail-007",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §5.1",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:*"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "different_namespace"
+    },
+    "derivation": "* at class position (product-segment) is not a trailing action wildcard; namespace mismatch (§5.1/§9.3 layer 3)"
+  },
+  {
+    "id": "entail-008",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §5.1",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:*"
+    },
+    "request": {
+      "id": "std/database-v1:admin:DDL"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "different_namespace"
+    },
+    "derivation": "same class-position wildcard vs different action; still namespace mismatch (§5.1/§9.3 layer 3)"
+  },
+  {
+    "id": "decide-035",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §9.1/§8.4",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"
+      ]
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"
+        ]
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "multi": true,
+    "expect": {
+      "verdict": "allow_unresolved",
+      "unresolved": [
+        "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]",
+        "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"
+      ]
+    },
+    "derivation": "multi-grant residual-obligation union: G1 carries network:cidr, G2 carries time:window; both recognized but not core-evaluable -> unresolved union across covering grants (§9.1/§8.4, rev CLC-1.3)"
+  },
+  {
+    "id": "nested-001",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2/§9.1",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "a": 10
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "a": 5,
+          "b": 7
+        }
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "undeclared_param"
+    },
+    "derivation": "key closure recurses (§6.2 key closure, §9.1 layer 7): nested request key cfg.b is not declared by the bounded grant -> deny(\"undeclared_param\"), exactly like the top level."
+  },
+  {
+    "id": "nested-002",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2/§9.1",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "a": 10
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {}
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_missing"
+    },
+    "derivation": "presence recurses (§6.2/§9.1 layer 7): grant declares nested key cfg.a, request omits it inside cfg -> deny(\"params_missing\"), exactly like top-level params missing."
+  },
+  {
+    "id": "nested-003",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2/§9.1",
+    "clc_revision": "CLC-1.8",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "limit": 10
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "limit": 15
+        }
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "nested bound exceeded (§6.2/§9.1 layer 7): grant declares cfg.limit <= 10, request carries cfg.limit = 15 -> deny(\"params_exceed_grant\"), same rule as top-level params-002."
   }
 ]
