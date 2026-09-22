@@ -143,14 +143,108 @@ forbids single segments crossing midnight (the reserved `end:"00:00"`
 denotes next-day midnight, so a crossing is *split* into plain same-day
 segments like `22:00→00:00` + `00:00→06:00`).
 
+## D11 — CLC-1.10/1.11 candidate closeout: `param_bounds` and `Resolve` (2026-09-21).
+
+Two of §13.10's four *candidate v1.x* items were closed as additive core
+revisions, in the order 1.1 → 1.2.
+
+**1.1 — extended parameter bounds (§6.5, CLC-1.10).**  The rejected shape was a
+`{min,max}` object *inside* `params` (it collides with object recursion).  The
+bounds went into a sibling grant field `param_bounds`: one value family per key
+(numeric `min`/`max`/`step`, enum `enum`/`min_items`/`max_items`, nested
+`nested`), an orthogonal `optional` marker, and a one-representation binding
+rule (a key MUST NOT appear in both `params` and `param_bounds` →
+`invalid_params_binding`).  Fractions put `params` and `param_bounds` in
+different fields; `min`/`max` are inclusive; `step` uses the IEEE-754 rule
+`q=v/step; q==trunc(q) && q*step==v`.  Containment narrowing is defined in
+§13.4.3 — the subtlety that a **coarser** child grid is the subset (child step
+must be an integer multiple of the parent's) was written backwards first and
+corrected in the corpus and text.  `Intersect` refuses `param_bounds`
+fail-closed (its intersection is undefined in this revision).  43 core vectors
+plus 14 containment-narrowing vectors.
+
+**1.2 — the residual-obligation consumer loop (§8.5, CLC-1.11).**  §8.4
+delivered `allow_unresolved` but not the loop.  `Resolve(decision, resolutions,
+now?)` adds it: each obligation is reported `satisfied`/`violated`/`unknown`,
+sources combine most-restrictive-first (`violated` ≻ `satisfied` ≻ `unknown`),
+and the verdict collapses to `allow` / `deny({type}:violated)` /
+`allow_unresolved(remainder)`; terminal `deny`/`allow` pass through untouched.
+Supplying `now` lets the **core clock** evaluate a `time:window` obligation
+(half-open `[start,end)`, UTC) and gives it a **TTL**: the discharge horizon is
+the end of the segment containing `now`, so a cached `allow` expires with the
+window — a stale `satisfied` report is overridden by a `violated` core clock
+(the most-restrictive rule).  The `now`-less path accepts a consumer assertion
+(scheme owns its clock) but attaches no core TTL.  Two input-error codes
+(`invalid_resolution`, `invalid_timestamp`) and 26 vectors.  The coarser
+identity-level gate `Discharge` stays as the `satisfied`-only case.
+
+Both are additive: no `Authorize` verdict, reason code or vector changes, and an
+implementation that does not implement either remains CLC-A conformant.  This
+also settles the §13.10.2 split — the earlier design note said `Resolve` was
+core but TTL was profile policy; the owner ruled both into the core.
+
+**1.3 — chain constraints stay out of `Contains` (§7.1, CLC-1.12).**  The
+constraint-axis ruling (constraints are a *union*, not a containment, so
+`Contains` must not read them) left §13.10.3 open: should `Contains` also return
+the accumulated union?  The owner chose a separate function rather than
+overloading the relation.  `ConstraintUnion(chain)` exposes exactly the
+constraint projection of `Intersect` rule 3 — normalized union, duplicates
+folded, lexically sorted — as a **projection, not a meet**: no identifier or
+parameter comparison, no constraint reading/validation, no containment check,
+and an empty chain fails closed with `absent_source`.  `Contains` therefore
+stays the pure subset over `(identifier, parameters)`, and a consumer composes
+the two (per-hop `Contains` + `ConstraintUnion` over the chain).  Folding the
+union into `Contains` was rejected because it would stop the relation being a
+subset on the declared tuple and a null constraint check could hide a broken
+boundary.  12 vectors.
+
+**1.4 — the fused chain check (§13.11, CLC-1.13, CLC-D).**  §13.10.4 named a
+possible fourth relation.  `AuthorizeWithChain(chain, op)` is it: an empty chain
+denies `absent_source`; each adjacent hop is checked with `Contains` and the
+first failure denies with that hop's §13.5 code **before** op validation;
+otherwise the operation is authorized against `Intersect(chain...)`.  The key
+design point is soundness: because constraints are a union axis *outside*
+containment, authorizing against the leaf grant alone (§13.10.4's literal
+"op fits child") would let an operation pass that violates an ancestor's
+constraints; the effective intersection is what brings ancestors' params and
+constraints into force.  The user chose the intersection judgment and a
+`Decision deny(reason)` outcome for a broken chain.  It is a CLC-D function:
+CLC-D conformance now also requires it and the chain vectors.  As shipped in
+CLC-1.13 it refused a `param_bounds` chain with `invalid_params_binding`
+(Intersect defined no `param_bounds` intersection), rather than dropping the
+bound; **1.5 supersedes that** by defining the meet.
+
+**1.5 — `Intersect` meets `param_bounds` (§6.6, CLC-1.14).**  1.4 left a real
+gap: `Contains` accepted a `param_bounds` chain hop, but the fused function's
+next step, `Intersect`, refused any source carrying `param_bounds`, so a
+delegation chain that used the CLC-1.10 bounds could never be authorized
+(`AuthorizeWithChain` denied `invalid_params_binding`).  CLC-1.14 defines the
+meet.  Per family: numeric `min` is the greatest declared minimum, `max` the
+least maximum, and `step` is the **coarser** grid when one exactly divides the
+other (otherwise the two grids have no single representable `step` and the meet
+fails closed); the enum member sets intersect with tightened cardinality;
+`nested` recurses over an identical key set; `optional` combines by
+conjunction; numeric∩enum reduces to the filtered enum; scalar∩nested and
+`min>max` are an empty meet (`no_overlap`).  A key must keep one declaration
+site across the sources — §13.4.3 already guarantees this for a valid chain, so
+the cross-site refusal only affects independent sources.  The meet is strictly
+additive: a chain without `param_bounds` is unchanged, so every existing
+verdict, reason code and vector is untouched; it adds 25 `BoundMeet` vectors
+and two `authorize-chain` vectors (a bounds chain that now allows, and an
+out-of-range request that is denied against the effective intersection).  It
+also aligns `Authorize`'s params-level reason propagation with the four bound
+codes, so a bound violation reports `params_out_of_range` rather than collapsing
+to `capability_not_authorized`.
+
 ## Corpus and tooling state
 
 | Item | State |
 |---|---|
 | Conformance corpus | `vectors.json` — **120 vectors** (syntax 9 / entail 47 / intersect 14 / decide 50) |
+| Revision extensions | `param-bounds-vectors.json` — **43** §6.5 vectors (CLC-1.10); `resolve-vectors.json` — **26** §8.5 vectors (CLC-1.11); `constraint-union-vectors.json` — **12** §7.1 vectors (CLC-1.12); `authorize-chain-vectors.json` — **15** §13.11 vectors (CLC-1.13/1.14); `param-bounds-meet-vectors.json` — **25** §6.6 vectors (CLC-1.14) |
 | Property corpus | `property-cases.json` — 1184 deterministic P11 cases, reproducible byte-for-byte |
-| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 120/120 and 1184/1184 (0 failures; counters 869/841) |
-| Schema | `vectors.schema.json` (verdict enum incl. `allow_unresolved`, `multi` switch), enforced in CI together with the documented counts |
+| Implementations | Go (`varwof/register`), Python and TypeScript (`varwof/aic-capability-demo`) — all three 120/120, 1184/1184, param-bounds 43/43, resolve 26/26, constraint-union 12/12, authorize-chain 15/15 and param-bounds-meet 25/25 (0 failures; counters 869/841) |
+| Schema | `vectors.schema.json` (verdict enum incl. `allow_unresolved`, `multi` switch), `param-bounds-vectors.schema.json`, `resolve-vectors.schema.json`, `constraint-union-vectors.schema.json`, `authorize-chain-vectors.schema.json` and `param-bounds-meet-vectors.schema.json`, enforced in CI together with the documented counts |
 
 Engineering discipline carried from the principles: one contract with several
 consumers; fail-closed by default; all-or-nothing generation; a gate must cover every

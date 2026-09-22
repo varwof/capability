@@ -86,8 +86,10 @@ specification, the corpora, and the reference implementation in
   **English canonical** language specification (CLC-v1).
 - [`docs/capability-language-core-v1-zh.md`](docs/capability-language-core-v1-zh.md) —
   **Chinese reference translation** of the same text (for review; the English text
-  prevails where the two differ).  It carries §1–§12.1 and Appendix A in full; the
-  per-vector tables of Appendix B are not duplicated, to avoid two diverging copies.
+  prevails where the two differ).  It carries §1–§12.1 and Appendix A in full and
+  currently tracks rev CLC-1.8; the CLC-1.9 containment material (§13, Appendix C)
+  is not yet translated.  The per-vector tables of Appendix B are not duplicated,
+  to avoid two diverging copies.
 
 ## CLC-v1 conformance vectors and schemes
 
@@ -108,6 +110,36 @@ minimal capability decision language):
   (`result_params` / `result_constraints`), the `allow_unresolved` verdict and
   §9.1 multi-grant aggregation of rev CLC-1.3, and the property and offline
   checks run in CI (`scripts/`).
+- `data/_vectors/clc-d/` — the **CLC-D delegation-containment** corpus (rev
+  CLC-1.9, spec §13): **64 containment vectors**, **784 forward-closure
+  property cases** (`scripts/gen-contain-property-cases.py`) and **44
+  cross-vendor crosswalk vectors** (AIC-JWT DA, OAuth RAR, UCAN, delegation
+  chain, ATN, AAT, AIP, AAE, AOA, AEGIS).  The relation and its profile
+  contract, reason codes and carrier mapping are spec §13 and Appendix C.
+- `data/_vectors/clc-v1/param-bounds-vectors.json` — **43 vectors** for the
+  §6.5 extended parameter bounds (rev CLC-1.10): inclusive intervals, `step`,
+  enum cardinality, optional keys, nested recursion, scheme defaults and the
+  one-representation binding rule, with `param-bounds-vectors.schema.json`.
+- `data/_vectors/clc-v1/resolve-vectors.json` — **26 vectors** for the §8.5
+  `Resolve` consumer loop (rev CLC-1.11): terminal pass-through, all-satisfied
+  discharge, partial remainders, violation, conflict precedence, the
+  `time:window` core clock and its TTL expiry, and malformed input, with
+  `resolve-vectors.schema.json`.
+- `data/_vectors/clc-v1/constraint-union-vectors.json` — **12 vectors** for the
+  §7.1   `ConstraintUnion` derived projection (rev CLC-1.12): the normalized,
+  deterministically ordered union of a chain's constraints, with
+  `constraint-union-vectors.schema.json`.
+- `data/_vectors/clc-d/authorize-chain-vectors.json` — **15 vectors** for the
+  §13.11 `AuthorizeWithChain` fused chain check (rev CLC-1.13): per-hop
+  `Contains` then `Authorize(Intersect(chain))`, with
+  `authorize-chain-vectors.schema.json`.
+- `data/_vectors/clc-v1/param-bounds-meet-vectors.json` — **25 vectors** for the
+  §6.6 `BoundMeet` intersection of `param_bounds` (rev CLC-1.14): numeric
+  `min`/`max`/`step` meet (including the coarser-grid and fail-closed step
+  cases), enum intersection and cardinality, `optional` conjunction, `nested`
+  recursion, numeric∩enum reduction, the empty and unrepresentable meets, the
+  empty-Bound identity and the cross-site refusal, with
+  `param-bounds-meet-vectors.schema.json`.
 - `data/std/robot-line-v1/v1.json` — industrial robot line capabilities
   (10 capabilities).  Categorical station ids are expressed as arrays
   (`"station": [1,2,3]`) per the CLC-v1 enum rule.
@@ -125,9 +157,9 @@ minimal capability decision language):
   `docs/capability-language-core-design-notes-zh.md` (full Chinese history).
 
 Design principle in one line: a **minimal decision language** — finite values,
-three relations (entailment, match, intersection), two decision functions,
-**no control flow**, fail-closed by default, and **an undeclared parameter does
-not constitute a grant**.
+four relations (entailment, match, intersection, containment), two decision
+functions, **no control flow**, fail-closed by default, and **an undeclared
+parameter does not constitute a grant**.
 
 The principles statement (rev 2) carries P1–P12 plus four properties that can be
 run: **local decidability** (no core rule may need the network), **bounded

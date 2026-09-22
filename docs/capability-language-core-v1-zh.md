@@ -13,6 +13,11 @@
 > 权威副本在 `data/_vectors/clc-v1/`（`vectors.json` 120 条、`property-cases.json` 1184 条、
 > `evidence-vectors.json` 32 条），条目说明见英文正本 Appendix B。代码块、标识符、
 > 原因码与协议字段名一律保持原样不译。
+>
+> **同步状态**：本对照版当前停在英文正本 rev **CLC-1.8**（§1–§12.1、附录 A）。
+> 英文正本 rev **CLC-1.9** 新增的**委托包含关系**（§13 委托包含、附录 C 载体词汇与
+> 原因码映射，CLC-D 类）尚未译入本文件；该部分以英文正本为准。
+> CLC-D 语料在 `data/_vectors/clc-d/`（50 条包含向量、784 条属性用例、44 条 crosswalk 向量）。
 
 ## 摘要
 
