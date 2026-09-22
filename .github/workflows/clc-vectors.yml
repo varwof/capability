@@ -55,5 +55,65 @@ jobs:
           diff -u data/_vectors/clc-v1/property-cases.json /tmp/property-cases.json \
             || (echo "property-cases.json is stale: re-run scripts/gen-property-cases.py"; exit 1)
 
+      - name: Validate the §6.5 param-bound vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/param-bounds-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/param-bounds-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} param-bound vectors")
+          PY
+
+      - name: Validate the §8.5 Resolve vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/resolve-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/resolve-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} Resolve vectors")
+          PY
+
+      - name: Validate the §13.11 AuthorizeWithChain vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-d/authorize-chain-vectors.json"))
+          s = json.load(open("data/_vectors/clc-d/authorize-chain-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} AuthorizeWithChain vectors")
+          PY
+
+      - name: Validate the CLC-D containment vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-d/containment-vectors.json"))
+          s = json.load(open("data/_vectors/clc-d/containment-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} containment vectors")
+          PY
+
+      - name: Validate the §7.1 ConstraintUnion vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/constraint-union-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/constraint-union-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} ConstraintUnion vectors")
+          PY
+
+      - name: Validate the §6.6 BoundMeet vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/param-bounds-meet-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/param-bounds-meet-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} BoundMeet vectors")
+          PY
+
       - name: OCMP offline vectors (coverage + vocabulary)
         run: python3 scripts/check-offline-vectors.py
