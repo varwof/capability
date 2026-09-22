@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://varwof.com/schemas/clc-d/authorize-chain-vectors.schema.json",
+  "title": "CLC-D AuthorizeWithChain test vectors (rev CLC-1.14, §13.11)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "kind",
+      "spec_clause",
+      "clc_revision",
+      "conformance_class",
+      "chain",
+      "request",
+      "expect",
+      "derivation"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^ac-[0-9]{3}$"
+      },
+      "kind": {
+        "type": "string",
+        "enum": ["authorize-chain"]
+      },
+      "spec_clause": {"type": "string"},
+      "clc_revision": {
+        "type": "string",
+        "pattern": "^CLC-[0-9]+\\.[0-9]+$"
+      },
+      "conformance_class": {
+        "type": "string",
+        "enum": ["CLC-D"]
+      },
+      "chain": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {"type": "string"},
+            "params": {"type": "object"},
+            "param_bounds": {"type": "object"},
+            "constraints": {"type": "array", "items": {"type": "string"}}
+          },
+          "additionalProperties": false
+        }
+      },
+      "request": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "params": {"type": ["object", "null"]}
+        },
+        "additionalProperties": false
+      },
+      "expect": {
+        "type": "object",
+        "required": ["verdict"],
+        "properties": {
+          "verdict": {"type": "string", "enum": ["allow", "deny", "allow_unresolved"]},
+          "reason": {"type": ["string", "null"]},
+          "unresolved": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      },
+      "derivation": {"type": "string"}
+    },
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,444 @@
+[
+  {
+    "id": "ac-001",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [],
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "absent_source",
+      "unresolved": []
+    },
+    "derivation": "an empty chain fails closed with absent_source before anything else (§7 rule 5)"
+  },
+  {
+    "id": "ac-002",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "a one-grant chain has no hop to check; the effective grant is the grant and the operation fits → allow"
+  },
+  {
+    "id": "ac-003",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      },
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "identical parent and child are contained; the operation fits → allow (degenerate two-grant form)"
+  },
+  {
+    "id": "ac-004",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 30
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "child narrows the parent (50 within 100); the effective intersection is {limit:50} and the operation fits → allow"
+  },
+  {
+    "id": "ac-005",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      },
+      {
+        "id": "std/database-v1:query:INSERT"
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:INSERT"
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "child_exceeds_parent",
+      "unresolved": []
+    },
+    "derivation": "the child identifier is not covered by the parent → deny with the §13.5 layer-2 code"
+  },
+  {
+    "id": "ac-006",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 10
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_not_narrower",
+      "unresolved": []
+    },
+    "derivation": "the child bound (100) widens the parent's (50) → deny with the §13.5 layer-3 code"
+  },
+  {
+    "id": "ac-007",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      },
+      {
+        "id": "std/database-v1:query:INSERT"
+      }
+    ],
+    "request": {},
+    "expect": {
+      "verdict": "deny",
+      "reason": "child_exceeds_parent",
+      "unresolved": []
+    },
+    "derivation": "the chain gate runs before op validation: a broken hop is reported even though the operation has no id (contrast §9 layer 1, which is inside Authorize)"
+  },
+  {
+    "id": "ac-008",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:max_rows:10"
+        ]
+      },
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 5
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "the ancestor's constraint is in force through Intersect (constraints are outside Contains). It is satisfied (5 ≤ 10) → allow"
+  },
+  {
+    "id": "ac-009",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:max_rows:10"
+        ]
+      },
+      {
+        "id": "std/database-v1:query:SELECT"
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "max_rows": 50
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "max_rows:violated",
+      "unresolved": []
+    },
+    "derivation": "the key soundness vector: the child carries no constraint, so authorizing against the leaf alone would allow this; Intersect brings the ancestor's max_rows into force → deny"
+  },
+  {
+    "id": "ac-010",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant",
+      "unresolved": []
+    },
+    "derivation": "chain is contained, but the op exceeds the effective intersection {limit:50}; the operation-layer §9 reason passes through unchanged"
+  },
+  {
+    "id": "ac-011",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT"
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "constraints": [
+          "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"
+        ]
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "verdict": "allow_unresolved",
+      "reason": null,
+      "unresolved": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"
+      ]
+    },
+    "derivation": "the effective grant carries a recognized-but-unevaluated constraint; Authorize's allow_unresolved + obligation passes through unchanged"
+  },
+  {
+    "id": "ac-012",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "param_bounds": {
+          "limit": {
+            "min": 1,
+            "max": 100
+          }
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "param_bounds": {
+          "limit": {
+            "min": 1,
+            "max": 50
+          }
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "verdict": "allow",
+      "reason": "",
+      "unresolved": []
+    },
+    "derivation": "Contains accepts the param_bounds narrowing, and Intersect now meets the bounds (§6.6) so the effective limit ≤50 admits 50 (rev CLC-1.14)"
+  },
+  {
+    "id": "ac-013",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 50
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 20
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 10
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "three-hop chain, each hop narrower than its parent; the effective intersection is {limit:20} and the operation fits → allow"
+  },
+  {
+    "id": "ac-014",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.13",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 100
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 200
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "limit": 20
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 10
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_not_narrower",
+      "unresolved": []
+    },
+    "derivation": "the middle hop widens the root (200 > 100); the first failing hop ends the call, so the later narrow hop is never reached"
+  },
+  {
+    "id": "ac-015",
+    "kind": "authorize-chain",
+    "spec_clause": "CLC-v1 §13.11",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-D",
+    "chain": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "param_bounds": {
+          "limit": {
+            "min": 1,
+            "max": 100
+          }
+        }
+      },
+      {
+        "id": "std/database-v1:query:SELECT",
+        "param_bounds": {
+          "limit": {
+            "min": 1,
+            "max": 50
+          }
+        }
+      }
+    ],
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 75
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_out_of_range",
+      "unresolved": []
+    },
+    "derivation": "the §6.6 meet keeps the ancestor bound (effective max=50), so an operation at 75 is out of range — authorized against the effective intersection, not the leaf"
+  }
+]

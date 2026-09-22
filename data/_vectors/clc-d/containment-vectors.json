@@ -1,0 +1,1565 @@
+[
+  {
+    "id": "contain-001",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "identical declared id, no params, no constraints -> contained"
+  },
+  {
+    "id": "contain-002",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:*"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "parent trailing wildcard covers child literal id"
+  },
+  {
+    "id": "contain-003",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:query:*"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "child_exceeds_parent"
+    },
+    "derivation": "child wildcard is broader than a literal parent id"
+  },
+  {
+    "id": "contain-004",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/crm-v1:read"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "different_namespace"
+    },
+    "derivation": "scheme differs -> core different_namespace, kept by §4.2"
+  },
+  {
+    "id": "contain-005",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:*"
+    },
+    "child": {
+      "id": "std/database-v1:admin:DDL"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "different_namespace"
+    },
+    "derivation": "action-class differs (query vs admin) -> different_namespace"
+  },
+  {
+    "id": "contain-006",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:INSERT"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "child_exceeds_parent"
+    },
+    "derivation": "same length, last segment literal mismatch -> child_exceeds_parent"
+  },
+  {
+    "id": "contain-007",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:*"
+    },
+    "child": {
+      "id": "std/database-v1:query"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "child_exceeds_parent"
+    },
+    "derivation": "wildcard requires at least one trailing segment; child shorter -> child_exceeds_parent"
+  },
+  {
+    "id": "contain-008",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT:schema"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "child_exceeds_parent"
+    },
+    "derivation": "child path shallower than exact parent id -> not covered"
+  },
+  {
+    "id": "contain-009",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.1",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SEL*"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "mid-identifier wildcard in parent -> CLC-A syntax code, layer 1"
+  },
+  {
+    "id": "contain-010",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.1",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:**"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "unsupported_wildcard"
+    },
+    "derivation": "child id with non-trailing wildcard -> layer 1 syntax"
+  },
+  {
+    "id": "contain-011",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.1",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": ""
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "missing_capability_id"
+    },
+    "derivation": "empty parent id -> layer 1 fail-closed"
+  },
+  {
+    "id": "contain-012",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child uses parent-constrained key within bound"
+  },
+  {
+    "id": "contain-013",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "equal bound"
+  },
+  {
+    "id": "contain-014",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 150
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child bound exceeds parent upper bound"
+  },
+  {
+    "id": "contain-015",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "enum subset"
+  },
+  {
+    "id": "contain-016",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "z"
+        ]
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child enum has element outside parent set"
+  },
+  {
+    "id": "contain-017",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child empty array inside non-empty parent enum is vacuously within"
+  },
+  {
+    "id": "contain-018",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": []
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "parent empty enum denies the class -> not narrowable (§4.3)"
+  },
+  {
+    "id": "contain-019",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100,
+        "offset": 10
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child omits a parent-constrained key -> key closure violation"
+  },
+  {
+    "id": "contain-020",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50,
+        "extra": 1
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child adds a key the parent does not declare -> symmetric closure"
+  },
+  {
+    "id": "contain-021",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child unconstrained under a bounded parent (§4.3 extra rule)"
+  },
+  {
+    "id": "contain-022",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "unconstrained parent (params absent) contains any child params"
+  },
+  {
+    "id": "contain-023",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "{} == absent (CLC-A rev CLC-1.3): unconstrained parent"
+  },
+  {
+    "id": "contain-024",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100,
+        "cfg": {
+          "width": 10
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50,
+        "cfg": {
+          "width": 5
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "nested object recursion, tighter at both levels"
+  },
+  {
+    "id": "contain-025",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 10
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 20
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "nested object bound exceeded"
+  },
+  {
+    "id": "contain-026",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 10
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 5,
+          "dept": "x"
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "nested key closure: child adds a key inside parent object"
+  },
+  {
+    "id": "contain-027",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 10,
+          "dept": "a"
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 5
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "nested key closure: child omits a key inside parent object"
+  },
+  {
+    "id": "contain-028",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.1",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": null
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "invalid_params_null"
+    },
+    "derivation": "child params carry null -> layer 1 grammar rejects the child grant (§4.1), before layer 3"
+  },
+  {
+    "id": "contain-029",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "sort": "asc"
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "sort": "asc"
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "string param exact equality"
+  },
+  {
+    "id": "contain-030",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "sort": "asc"
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "sort": "desc"
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "string param must equal parent's exactly"
+  },
+  {
+    "id": "contain-031",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:50"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "a tighter child constraint does not change containment: constraints are not part of the relation"
+  },
+  {
+    "id": "contain-032",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:50"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "a wider child constraint is still contained: Contains does NOT subset-compare constraints (they compose by union, §7)"
+  },
+  {
+    "id": "contain-033",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:50"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "a child may declare a constraint identity the parent did not; constraints are unioned, not subset-checked"
+  },
+  {
+    "id": "contain-034",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "a child may omit a parent constraint; the parent's constraint is preserved by the chain's union (Intersect), not by Contains"
+  },
+  {
+    "id": "contain-035",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"09:00\",\"end\":\"18:00\"}]",
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "recognized-but-unevaluated and evaluated constraints alike are outside the relation"
+  },
+  {
+    "id": "contain-036",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:time:window:[{\"start\":\"09:00\",\"end\":\"18:00\"}]"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:10"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "a different child constraint identity is irrelevant to containment"
+  },
+  {
+    "id": "contain-037",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "foo/db-v1:max_rows:10"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "constraint identity/grammar is validated by the consumer (and Intersect), not by Contains — it does not affect the boundary relation"
+  },
+  {
+    "id": "contain-038",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3/§4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      },
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      },
+      "constraints": [
+        "varwof/constraint-v1:max_rows:50"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "params decide the verdict; the constraint difference is inert"
+  },
+  {
+    "id": "contain-039",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      },
+      "constraints": [
+        "varwof/constraint-v1:max_rows:50"
+      ]
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "narrower params contain; the child's added constraint is ignored by the relation"
+  },
+  {
+    "id": "contain-040",
+    "kind": "contain",
+    "spec_clause": "CLC §13.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "antisymmetry probe A: parent-bounded/child-tighter is contained"
+  },
+  {
+    "id": "contain-041",
+    "kind": "contain",
+    "spec_clause": "CLC §13.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "antisymmetry probe B: the reverse direction of contain-040 must fail"
+  },
+  {
+    "id": "contain-042",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": -5
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child negative value is within the parent's non-negative-supporting upper bound (declared-value subset only)"
+  },
+  {
+    "id": "contain-043",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": "a"
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child scalar inside parent enum is within it"
+  },
+  {
+    "id": "contain-044",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "tables": "z"
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child scalar not a parent enum member"
+  },
+  {
+    "id": "contain-045",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "width": 10
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {}
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child nested {} under a bounded parent object -> not a subset of its declared key set"
+  },
+  {
+    "id": "contain-046",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.1",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": null
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 50
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "invalid_params_null"
+    },
+    "derivation": "parent params carry null -> layer 1 validation rejects the parent grant"
+  },
+  {
+    "id": "contain-047",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:*"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT:extra"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "parent trailing wildcard covers a deeper child id"
+  },
+  {
+    "id": "contain-048",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.4",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "constraints": [
+        "varwof/constraint-v1:max_rows:100"
+      ]
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "same as contain-034: constraints are not part of the relation, so omitting them changes nothing"
+  },
+  {
+    "id": "contain-049",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "both {} (unconstrained) -> contained"
+  },
+  {
+    "id": "contain-050",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.2",
+    "ext_revision": "CLC-1.9",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "identity containment check symmetric-invertible (twin of contain-001)"
+  },
+  {
+    "id": "contain-051",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "max": 100
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 20,
+          "max": 80
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child interval nested inside parent interval"
+  },
+  {
+    "id": "contain-052",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "max": 100
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 5,
+          "max": 80
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child lowers min below the parent"
+  },
+  {
+    "id": "contain-053",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "max": 100
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 20,
+          "max": 150
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child raises max above the parent"
+  },
+  {
+    "id": "contain-054",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "max": 100
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "max": 100
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "identical bounds"
+  },
+  {
+    "id": "contain-055",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "b"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child enum is a subset"
+  },
+  {
+    "id": "contain-056",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "b",
+            "c"
+          ]
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "d"
+          ]
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child enum has an element outside the parent"
+  },
+  {
+    "id": "contain-057",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "b",
+            "c"
+          ],
+          "max_items": 3
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "tables": {
+          "enum": [
+            "a",
+            "b"
+          ],
+          "max_items": 2
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "enum subset with tightened cardinality"
+  },
+  {
+    "id": "contain-058",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "optional": true
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child makes an optional parent key required = narrower"
+  },
+  {
+    "id": "contain-059",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "min": 10,
+          "optional": true
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child widens a required parent key to optional"
+  },
+  {
+    "id": "contain-060",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "step": 0.5
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "step": 0.25
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child step 0.25 is finer than parent 0.5: the child grid is wider, not a subset"
+  },
+  {
+    "id": "contain-061",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "step": 0.25
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "step": 0.5
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "child step 0.5 is a coarser grid than parent 0.25: every multiple of 0.5 is a multiple of 0.25"
+  },
+  {
+    "id": "contain-062",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "columns": {
+          "nested": {
+            "t": {
+              "enum": [
+                "id",
+                "name"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "columns": {
+          "nested": {
+            "t": {
+              "enum": [
+                "id"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "expect": {
+      "contains": true
+    },
+    "derivation": "nested bound narrowed"
+  },
+  {
+    "id": "contain-063",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "limit": 100
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "max": 50
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "parent declares in params, child in param_bounds = representation difference"
+  },
+  {
+    "id": "contain-064",
+    "kind": "contain",
+    "spec_clause": "CLC §13.4.3 (param_bounds), §6.5",
+    "ext_revision": "CLC-1.10",
+    "conformance_class": "CLC-D",
+    "parent": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "max": 100
+        }
+      }
+    },
+    "child": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {
+        "limit": {
+          "max": 50
+        },
+        "extra": {
+          "max": 1
+        }
+      }
+    },
+    "expect": {
+      "contains": false,
+      "reason": "params_not_narrower"
+    },
+    "derivation": "child adds a bound key the parent does not declare"
+  }
+]

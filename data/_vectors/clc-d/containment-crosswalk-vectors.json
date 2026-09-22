@@ -1,0 +1,442 @@
+[
+  {
+    "id": "ccx-001",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.8/§9.3",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:*", "params": {"limit": 100}}]},
+    "child_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 50}}]},
+    "expect": {"contains": true},
+    "derivation": "AIC-JWT DA principal boundary (wildcard, limit<=100) contains the sub-agent capability (literal, limit<=50)"
+  },
+  {
+    "id": "ccx-002",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 100}}]},
+    "child_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 150}}]},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "sub-agent asks a wider bound than the principal declared"
+  },
+  {
+    "id": "ccx-003",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:SELECT"}]},
+    "child_source": {"capabilities": [{"id": "std/database-v1:query:INSERT"}]},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "sub-agent requests an action the principal did not grant"
+  },
+  {
+    "id": "ccx-004",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 100}}]},
+    "child_source": {"capabilities": [{"id": "std/database-v1:query:SELECT"}]},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "sub-agent drops the principal's bound (unconstrained under a bounded boundary)"
+  },
+  {
+    "id": "ccx-005",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {}}]},
+    "child_source": {"capabilities": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 50}}]},
+    "expect": {"contains": true},
+    "derivation": "an empty params object is unconstrained (CLC-A rev CLC-1.3), so it contains any sub-agent bound"
+  },
+  {
+    "id": "ccx-006",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "oauth-rar->clc-v1",
+    "parent_source": {"type": "std/database-v1", "actions": ["query:SELECT"], "params": {"limit": 100}},
+    "child_source": {"type": "std/database-v1", "actions": ["query:SELECT"], "params": {"limit": 50}},
+    "expect": {"contains": true},
+    "derivation": "RAR authorization_details: the requested action is inside the granted bound"
+  },
+  {
+    "id": "ccx-007",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "oauth-rar->clc-v1",
+    "parent_source": {"type": "std/database-v1", "actions": ["query:SELECT"], "params": {"limit": 50}},
+    "child_source": {"type": "std/database-v1", "actions": ["query:SELECT"], "params": {"limit": 100}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "RAR request exceeds the granted bound"
+  },
+  {
+    "id": "ccx-008",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2",
+    "profile": "ucan->clc-v1",
+    "parent_source": {"with": "std/database-v1", "can": "query:*"},
+    "child_source": {"with": "std/database-v1", "can": "query:SELECT"},
+    "expect": {"contains": true},
+    "derivation": "UCAN {with,can}: the delegated {with,can} is covered by the parent capability"
+  },
+  {
+    "id": "ccx-009",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2",
+    "profile": "ucan->clc-v1",
+    "parent_source": {"with": "std/database-v1", "can": "query:SELECT"},
+    "child_source": {"with": "std/database-v1", "can": "query:*"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "UCAN attenuation violated: the delegated capability widens to a wildcard"
+  },
+  {
+    "id": "ccx-010",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "delegation-chain->clc-v1",
+    "parent_source": {"links": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 100}}]},
+    "child_source": {"links": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 50}}]},
+    "expect": {"contains": true},
+    "derivation": "a hop that tightens the declared bound stays inside the previous hop's effective grant"
+  },
+  {
+    "id": "ccx-011",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3",
+    "profile": "delegation-chain->clc-v1",
+    "parent_source": {"links": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 50}}]},
+    "child_source": {"links": [{"id": "std/database-v1:query:SELECT", "params": {"limit": 100}}]},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "a hop that widens the declared bound breaks attenuation"
+  },
+  {
+    "id": "ccx-012",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2",
+    "profile": "delegation-chain->clc-v1",
+    "parent_source": {"links": [{"id": "std/database-v1:query:*"}]},
+    "child_source": {"links": [{"id": "std/database-v1:query:SELECT"}]},
+    "expect": {"contains": true},
+    "derivation": "a hop that narrows a wildcard parent to a literal child stays contained"
+  },
+  {
+    "id": "ccx-013",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2",
+    "profile": "aic-jwt-da->clc-v1",
+    "parent_source": {"capabilities": [{"id": "std/database-v1:query:SELECT"}]},
+    "child_source": {"capabilities": [{"id": "std/crm-v1:read"}]},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "sub-agent requests a different scheme/action-class: kept as the core different_namespace"
+  },
+  {
+    "id": "ccx-014",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.9.3 (ATN §5.1/§9.2)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read", "bounds": {"max_tokens": 100000}},
+    "child_source": {"id": "data-read", "action": "read", "bounds": {"max_tokens": 50000}},
+    "expect": {"contains": true},
+    "derivation": "ATN resource_bounds are declared ceilings; §9.2 takes the minimum of the two, so a child ceiling <= the parent's is contained"
+  },
+  {
+    "id": "ccx-015",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (ATN §9.2)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read", "bounds": {"max_tokens": 50000}},
+    "child_source": {"id": "data-read", "action": "read", "bounds": {"max_tokens": 100000}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "ATN §9.2 tightest bound wins; a child that raises the ceiling widening the declared set is not contained"
+  },
+  {
+    "id": "ccx-016",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (ATN §9.1)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read"},
+    "child_source": {"id": "data-write", "action": "read"},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "ATN identity rule needs the same id (and schema digest); a different capability id maps to a different CLC action class"
+  },
+  {
+    "id": "ccx-017",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (ATN §5.1)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read", "bounds": {"max_response_size_bytes": 10485760}},
+    "child_source": {"id": "data-read", "action": "read"},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "ATN conditions are optional; a child that declares no bound under a bounded parent has widened the declared set"
+  },
+  {
+    "id": "ccx-018",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAT §4.5 I4)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "query", "args": {"limit": 100}},
+    "child_source": {"tool": "query", "args": {"limit": 50}},
+    "expect": {"contains": true},
+    "derivation": "AAT I4 argument subsumption: the derived numeric bound is at least as restrictive as the parent's"
+  },
+  {
+    "id": "ccx-019",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAT §4.5 I4)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "query", "args": {"limit": 50}},
+    "child_source": {"tool": "query", "args": {"limit": 100}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AAT I4 range subsumption requires derived max <= parent max; a larger bound is rejected"
+  },
+  {
+    "id": "ccx-020",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAT §4.5 I4)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "query", "args": {"limit": 100}},
+    "child_source": {"tool": "query", "args": {}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AAT I4 closed-world key closure: when the parent map is non-empty the derived map must preserve its key set exactly"
+  },
+  {
+    "id": "ccx-021",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AAT §4.5 I4)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "query"},
+    "child_source": {"tool": "admin"},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "AAT I4 tools(derived) must be a subset of tools(parent); a tool the parent did not authorize is a different action class"
+  },
+  {
+    "id": "ccx-022",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAT §4.5 I4 one_of)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "read", "args": {"format": ["pdf", "csv", "xlsx"]}},
+    "child_source": {"tool": "read", "args": {"format": ["pdf", "csv"]}},
+    "expect": {"contains": true},
+    "derivation": "AAT one_of subsumption: the derived value set is a subset of the parent's value set"
+  },
+  {
+    "id": "ccx-023",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAT §4.5 I4 one_of)",
+    "profile": "aat-i4->clc-v1",
+    "parent_source": {"tool": "read", "args": {"format": ["pdf", "csv"]}},
+    "child_source": {"tool": "read", "args": {"format": ["pdf", "csv", "docx"]}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AAT one_of subsumption rejects a derived value outside the parent's permitted set"
+  },
+  {
+    "id": "ccx-024",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AIP §4.4)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search", "budget": 100},
+    "child_source": {"capability": "search", "budget": 50},
+    "expect": {"contains": true},
+    "derivation": "AIP structural attenuation walk: the budget ceiling in the child must not exceed the ancestor's"
+  },
+  {
+    "id": "ccx-025",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AIP §4.4)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search", "budget": 50},
+    "child_source": {"capability": "search", "budget": 100},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AIP aip_budget_exceeded: a child ceiling above the ancestor's widens the declared set"
+  },
+  {
+    "id": "ccx-026",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AIP §4.4)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search"},
+    "child_source": {"capability": "search", "budget": 50},
+    "expect": {"contains": true},
+    "derivation": "AIP resolves an absent dimension to its nearest ancestor; an absent ancestor ceiling is unbounded, so any child ceiling is contained"
+  },
+  {
+    "id": "ccx-027",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AIP §4.4 scope)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search"},
+    "child_source": {"capability": "search:deep"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "AIP scope subset: an exact ancestor grant does not cover a deeper child path unless the ancestor declared a wildcard"
+  },
+  {
+    "id": "ccx-028",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AIP §4.4 wildcard)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search:*"},
+    "child_source": {"capability": "search:deep"},
+    "expect": {"contains": true},
+    "derivation": "AIP: a wildcard in an ancestor permits any specific value in a descendant"
+  },
+  {
+    "id": "ccx-029",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AIP §4.4 wildcard)",
+    "profile": "aip-attenuation->clc-v1",
+    "parent_source": {"capability": "search:deep"},
+    "child_source": {"capability": "search:*"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "AIP: a specific value in an ancestor MUST NOT widen to a wildcard in a descendant"
+  },
+  {
+    "id": "ccx-030",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAE §3 numeric)",
+    "profile": "aae-constraint->clc-v1",
+    "parent_source": {"action": "read", "constraints": {"max_transaction_value": 500}},
+    "child_source": {"action": "read", "constraints": {"max_transaction_value": 300}},
+    "expect": {"contains": true},
+    "derivation": "AAE 'equal to or more restrictive' for numeric upper bounds: the delegated value must be <= the parent value"
+  },
+  {
+    "id": "ccx-031",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAE §3 numeric)",
+    "profile": "aae-constraint->clc-v1",
+    "parent_source": {"action": "read", "constraints": {"max_transaction_value": 300}},
+    "child_source": {"action": "read", "constraints": {"max_transaction_value": 500}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AAE §7.4 delegation amplification: a delegated AAE that raises a numeric bound is not strictly subordinate"
+  },
+  {
+    "id": "ccx-032",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AAE §3 actions)",
+    "profile": "aae-constraint->clc-v1",
+    "parent_source": {"action": "read", "constraints": {"max_transaction_value": 500}},
+    "child_source": {"action": "book", "constraints": {"max_transaction_value": 500}},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "AAE mandate.actions must be a subset of the parent's; a delegated action the parent lacks is a different action class"
+  },
+  {
+    "id": "ccx-033",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAE §3 allowlist)",
+    "profile": "aae-constraint->clc-v1",
+    "parent_source": {"action": "read", "constraints": {"allowed_domains": ["booking.example.com", "flights.example.com"]}},
+    "child_source": {"action": "read", "constraints": {"allowed_domains": ["booking.example.com"]}},
+    "expect": {"contains": true},
+    "derivation": "AAE allowlist constraints: the delegated value must be a subset of the parent value"
+  },
+  {
+    "id": "ccx-034",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AAE §3 allowlist)",
+    "profile": "aae-constraint->clc-v1",
+    "parent_source": {"action": "read", "constraints": {"allowed_domains": ["booking.example.com"]}},
+    "child_source": {"action": "read", "constraints": {"allowed_domains": ["booking.example.com", "evil.example.com"]}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AAE allowlist subset: a delegated value outside the parent value expands the accepted set"
+  },
+  {
+    "id": "ccx-035",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AOA §6.2)",
+    "profile": "aoa-scope->clc-v1",
+    "parent_source": {"operation": "inventory:*"},
+    "child_source": {"operation": "inventory:check"},
+    "expect": {"contains": true},
+    "derivation": "AOA §6.2 scope string containment (the simple case): the requested sub-operation is strictly narrower in scope"
+  },
+  {
+    "id": "ccx-036",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AOA §6.2)",
+    "profile": "aoa-scope->clc-v1",
+    "parent_source": {"operation": "inventory:check"},
+    "child_source": {"operation": "inventory:*"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "AOA §6.2 requires the sub-operation be strictly narrower; widening a specific scope to a wildcard is rejected"
+  },
+  {
+    "id": "ccx-037",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AOA §6.2)",
+    "profile": "aoa-scope->clc-v1",
+    "parent_source": {"operation": "inventory:check"},
+    "child_source": {"operation": "billing:check"},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "AOA §6.3 trust chain preservation: no operation may exceed the cumulative scope of the chain"
+  },
+  {
+    "id": "ccx-038",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AEGIS AIAM1-DEL-010/CAP-020)",
+    "profile": "aegis-delegation->clc-v1",
+    "parent_source": {"capability": "data.database_query", "context": {"max_rows": 1000}},
+    "child_source": {"capability": "data.database_query", "context": {"max_rows": 100}},
+    "expect": {"contains": true},
+    "derivation": "AEGIS monotonic authority narrowing: a delegated parameter limit at or below the delegator's is valid"
+  },
+  {
+    "id": "ccx-039",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.3 (AEGIS AIAM1-DEL-010)",
+    "profile": "aegis-delegation->clc-v1",
+    "parent_source": {"capability": "data.database_query", "context": {"max_rows": 100}},
+    "child_source": {"capability": "data.database_query", "context": {"max_rows": 1000}},
+    "expect": {"contains": false, "reason": "params_not_narrower"},
+    "derivation": "AEGIS AIAM1-DEL-010: a sub-agent must not receive delegated authority that exceeds the delegating agent's"
+  },
+  {
+    "id": "ccx-040",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AEGIS AIAM1-DEL-011)",
+    "profile": "aegis-delegation->clc-v1",
+    "parent_source": {"capability": "telemetry.query"},
+    "child_source": {"capability": "infrastructure.modify"},
+    "expect": {"contains": false, "reason": "different_namespace"},
+    "derivation": "AEGIS AIAM1-DEL-011: a delegator cannot delegate a capability it does not hold; a different domain is a different action class"
+  },
+  {
+    "id": "ccx-041",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 (AEGIS hierarchy)",
+    "profile": "aegis-delegation->clc-v1",
+    "parent_source": {"capability": "telemetry.query.raw"},
+    "child_source": {"capability": "telemetry.query"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "AEGIS dotted capabilities are hierarchical: a parent leaf grant does not cover a broader child prefix"
+  },
+  {
+    "id": "ccx-042",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.4.2 / §8.1 (AEGIS hierarchy)",
+    "profile": "aegis-delegation->clc-v1",
+    "parent_source": {"capability": "telemetry"},
+    "child_source": {"capability": "telemetry.query"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "AEGIS dotted ids are hierarchical but AEGIS grants capabilities individually and defines no domain-level containment; the profile does not invent it (§8.1), so a bare domain grant does not cover a sub-capability (fails closed)"
+  },
+  {
+    "id": "ccx-043",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.8.1 (ATN §9.1 schema binding)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read", "schema_digest": "sha256:b4c5d6"},
+    "child_source": {"id": "data-read", "action": "read", "schema_digest": "sha256:ffff00"},
+    "expect": {"contains": false, "reason": "child_exceeds_parent"},
+    "derivation": "ATN §9.1 rule 2: capabilities whose schema digests differ MUST be treated as distinct, so containment fails closed even when the id matches"
+  },
+  {
+    "id": "ccx-044",
+    "kind": "contain-crosswalk",
+    "spec_clause": "CLC §13.9.3 (ATN §5.1/§9.2)",
+    "profile": "atn-manifest->clc-v1",
+    "parent_source": {"id": "data-read", "action": "read", "schema_digest": "sha256:b4c5d6", "bounds": {"max_tokens": 100000}},
+    "child_source": {"id": "data-read", "action": "read", "schema_digest": "sha256:b4c5d6", "bounds": {"max_tokens": 50000}},
+    "expect": {"contains": true},
+    "derivation": "the same id and the same schema digest satisfy ATN's identity rule; the child ceiling at or below the parent's is contained"
+  }
+]
