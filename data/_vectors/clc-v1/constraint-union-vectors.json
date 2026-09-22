@@ -1,0 +1,152 @@
+[
+  {
+    "id": "cu-001",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]},
+    "derivation": "single grant: the union is its own constraint set, normalized and sorted (max_rows < network)"
+  },
+  {
+    "id": "cu-002",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]},
+    "derivation": "two hops with disjoint constraints: the chain's burden is the union of both"
+  },
+  {
+    "id": "cu-003",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100"]},
+    "derivation": "the same constraint in two hops folds to one (normalized union, duplicates collapsed)"
+  },
+  {
+    "id": "cu-004",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]},
+    "derivation": "a duplicate inside one grant also folds"
+  },
+  {
+    "id": "cu-005",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT"}
+    ],
+    "expect": {"union": []},
+    "derivation": "a grant with no constraints contributes nothing: the projection over a non-empty chain is [] (this is not absent_source)"
+  },
+  {
+    "id": "cu-006",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]", "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "derivation": "three hops: the result is sorted (max_rows < network < time), independent of the input order"
+  },
+  {
+    "id": "cu-007",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [],
+    "expect": {"reason": "absent_source"},
+    "derivation": "an empty chain fails closed with absent_source: a caller that lost the chain must not mistake 'nothing to union' for 'no constraints'"
+  },
+  {
+    "id": "cu-008",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]},
+    "derivation": "reversing the hop order yields the same sorted union (deterministic)"
+  },
+  {
+    "id": "cu-009",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "derivation": "constraint strings are carried verbatim, JSON colons preserved (no re-encoding or corruption)"
+  },
+  {
+    "id": "cu-010",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "params": {"limit": 100, "tables": ["a"]}},
+      {"id": "std/database-v1:query:SELECT", "params": {"limit": 50}}
+    ],
+    "expect": {"union": []},
+    "derivation": "the projection reads only constraints: params are ignored, so a chain that constrains only params yields []"
+  },
+  {
+    "id": "cu-011",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:100"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:max_rows:50"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:max_rows:50"]},
+    "derivation": "the projection does NOT pick a tightest value: same-type constraints are a conjunction kept in full (the tightest binds later at CheckConstraint); sorted lexically, 100 before 50"
+  },
+  {
+    "id": "cu-012",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1",
+    "clc_revision": "CLC-1.12",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]", "varwof/constraint-v1:max_rows:100"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]"]}
+    ],
+    "expect": {"union": ["varwof/constraint-v1:max_rows:100", "varwof/constraint-v1:network:cidr:[\"10.0.0.0/8\"]", "varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "derivation": "mixed overlaps: the shared network constraint folds, max_rows and the time window are added, result sorted and deduped"
+  }
+]

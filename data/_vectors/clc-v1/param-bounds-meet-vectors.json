@@ -1,0 +1,328 @@
+[
+  {
+    "id": "bm-001",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 100}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 50}}}
+    ],
+    "expect": {"param_bounds": {"limit": {"max": 50}}},
+    "derivation": "numeric meet: max is the least declared maximum"
+  },
+  {
+    "id": "bm-002",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"min": 10, "max": 100}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"min": 20, "max": 80}}}
+    ],
+    "expect": {"param_bounds": {"limit": {"min": 20, "max": 80}}},
+    "derivation": "numeric meet: min is the greatest declared minimum, max the least maximum"
+  },
+  {
+    "id": "bm-003",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"min": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"min": 25}}}
+    ],
+    "expect": {"param_bounds": {"limit": {"min": 25}}},
+    "derivation": "numeric meet: the greatest declared minimum"
+  },
+  {
+    "id": "bm-004",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"min": 0, "max": 30, "step": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"step": 10}}}
+    ],
+    "expect": {"param_bounds": {"n": {"min": 0, "max": 30, "step": 10}}},
+    "derivation": "step on one side only is carried through (10 = 2×5, and 10 is exact)"
+  },
+  {
+    "id": "bm-005",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"step": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"step": 10}}}
+    ],
+    "expect": {"param_bounds": {"n": {"step": 10}}},
+    "derivation": "both steps: the coarser grid (10) is the meet, its values a subset of the finer (5)"
+  },
+  {
+    "id": "bm-006",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"step": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"n": {"step": 7}}}
+    ],
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "neither step divides the other: a single binary64 step denotation does not exist → fail closed"
+  },
+  {
+    "id": "bm-007",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"min": 10}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 5}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "min > max after combining: the meet is empty"
+  },
+  {
+    "id": "bm-008",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["a", "b", "c"]}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["b", "c", "d"]}}}
+    ],
+    "expect": {"param_bounds": {"tables": {"enum": ["b", "c"]}}},
+    "derivation": "enum meet: the member sets intersect"
+  },
+  {
+    "id": "bm-009",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["a"]}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["b"]}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "disjoint enum sets: the meet is empty"
+  },
+  {
+    "id": "bm-010",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["a", "b", "c"], "min_items": 1, "max_items": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["a", "b", "c"], "min_items": 2, "max_items": 3}}}
+    ],
+    "expect": {"param_bounds": {"tables": {"enum": ["a", "b", "c"], "min_items": 2, "max_items": 3}}},
+    "derivation": "cardinality tightens: greatest min_items, least max_items"
+  },
+  {
+    "id": "bm-011",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"min_items": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"max_items": 2}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "max_items < min_items after combining: empty meet"
+  },
+  {
+    "id": "bm-012",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 2, "max": 4}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}}
+    ],
+    "expect": {"param_bounds": {"t": {"enum": [3]}}},
+    "derivation": "numeric ∩ enum reduces to the enum members inside the numeric range"
+  },
+  {
+    "id": "bm-013",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 10, "max": 20}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "numeric ∩ enum with no member in range: empty meet"
+  },
+  {
+    "id": "bm-014",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"max": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min_items": 1}}}
+    ],
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "numeric scalar bound ∩ cardinality-only enum cannot be one closed Bound → fail closed"
+  },
+  {
+    "id": "bm-015",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"x": {"max": 5, "optional": true}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"x": {"max": 3}}}
+    ],
+    "expect": {"param_bounds": {"x": {"max": 3}}},
+    "derivation": "optional combines by conjunction: a key required by any source stays required"
+  },
+  {
+    "id": "bm-016",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"x": {"max": 5, "optional": true}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"x": {"max": 3, "optional": true}}}
+    ],
+    "expect": {"param_bounds": {"x": {"max": 3, "optional": true}}},
+    "derivation": "optional combines by conjunction: optional only when every source says so"
+  },
+  {
+    "id": "bm-017",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"a": {"max": 100}, "b": {"min": 1}}}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"a": {"max": 50}, "b": {"min": 2}}}}}
+    ],
+    "expect": {"param_bounds": {"cfg": {"nested": {"a": {"max": 50}, "b": {"min": 2}}}}},
+    "derivation": "nested meet recurses per key over an identical key set"
+  },
+  {
+    "id": "bm-018",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"a": {"max": 1}}}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"b": {"max": 1}}}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "nested key sets differ: no common value (same rule as object-valued params)"
+  },
+  {
+    "id": "bm-019",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"max": 5}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"a": {"max": 5}}}}}
+    ],
+    "expect": {"reason": "no_overlap"},
+    "derivation": "scalar ∩ nested: a number and an object have no common value"
+  },
+  {
+    "id": "bm-020",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 7}}}
+    ],
+    "expect": {"param_bounds": {"limit": {"max": 7}}},
+    "derivation": "the empty Bound {} is the identity for the value families"
+  },
+  {
+    "id": "bm-021",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"a": {"max": 1}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"b": {"max": 2}}}
+    ],
+    "expect": {"param_bounds": {"a": {"max": 1}, "b": {"max": 2}}},
+    "derivation": "distinct keys are unioned (each source constrains its own key), like params"
+  },
+  {
+    "id": "bm-022",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "params": {"limit": 100}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 50}}}
+    ],
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "key declared in params by one source and param_bounds by another: sites must agree"
+  },
+  {
+    "id": "bm-023",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": []}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"tables": {"enum": ["a"]}}}
+    ],
+    "expect": {"reason": "empty_bound_denies_class"},
+    "derivation": "an explicit empty enum denies the class before any meet"
+  },
+  {
+    "id": "bm-024",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 100}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 80}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 50}}}
+    ],
+    "expect": {"param_bounds": {"limit": {"max": 50}}},
+    "derivation": "three-source meet folds associatively: the least maximum"
+  },
+  {
+    "id": "bm-025",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6",
+    "clc_revision": "CLC-1.14",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "params": {"tables": ["a", "b"]}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"limit": {"max": 50}}}
+    ],
+    "expect": {"params": {"tables": ["a", "b"]}, "param_bounds": {"limit": {"max": 50}}},
+    "derivation": "a params key that no source declares in param_bounds stays in params; the bounds key unions in"
+  }
+]

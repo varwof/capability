@@ -1,0 +1,737 @@
+[
+  {
+    "id": "pb-001",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (numeric family, inclusive min/max), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 100}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 50}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "50 within [10,100]"
+  },
+  {
+    "id": "pb-002",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (inclusive min), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 100}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 10}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "min is inclusive"
+  },
+  {
+    "id": "pb-003",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (inclusive max), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 100}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "max is inclusive"
+  },
+  {
+    "id": "pb-004",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (below min), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 100}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 9}
+    },
+    "expect": {"verdict": "deny", "reason": "params_out_of_range"},
+    "derivation": "9 < 10"
+  },
+  {
+    "id": "pb-005",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (above max), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 100}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 101}
+    },
+    "expect": {"verdict": "deny", "reason": "params_out_of_range"},
+    "derivation": "101 > 100"
+  },
+  {
+    "id": "pb-006",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min only), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 5}
+    },
+    "expect": {"verdict": "deny", "reason": "params_out_of_range"},
+    "derivation": "min-only bound still rejects below it"
+  },
+  {
+    "id": "pb-007",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min only, no upper), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 1000}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "no max declared → unbounded above"
+  },
+  {
+    "id": "pb-008",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (max only), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"max": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 10}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "max-only bound, at the inclusive max"
+  },
+  {
+    "id": "pb-009",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (max only), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"max": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 11}
+    },
+    "expect": {"verdict": "deny", "reason": "params_out_of_range"},
+    "derivation": "max-only bound rejects above it"
+  },
+  {
+    "id": "pb-010",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (step, IEEE-754), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"amount": {"step": 0.5}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"amount": 1.5}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "1.5 is an integer multiple of 0.5"
+  },
+  {
+    "id": "pb-011",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (step), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"amount": {"step": 0.5}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"amount": 1.3}
+    },
+    "expect": {"verdict": "deny", "reason": "params_not_multiple"},
+    "derivation": "1.3 is not an integer multiple of 0.5"
+  },
+  {
+    "id": "pb-012",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min/max + step together), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"amount": {"min": 0, "max": 1, "step": 0.25}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"amount": 0.75}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "0.75 in [0,1] and a multiple of 0.25"
+  },
+  {
+    "id": "pb-013",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (step), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"n": {"step": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"n": 3}
+    },
+    "expect": {"verdict": "deny", "reason": "params_not_multiple"},
+    "derivation": "3 is not a multiple of 2"
+  },
+  {
+    "id": "pb-014",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (enum family), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"enum": ["a", "b", "c"]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a", "b"]}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "every element a member (same rule as params array)"
+  },
+  {
+    "id": "pb-015",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (enum family), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"enum": ["a", "b"]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a", "c"]}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "c is not a member"
+  },
+  {
+    "id": "pb-016",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (max_items), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"enum": ["a", "b", "c"], "max_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a", "b"]}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "cardinality 2 ≤ max_items 2"
+  },
+  {
+    "id": "pb-017",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (max_items), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"enum": ["a", "b", "c"], "max_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a", "b", "c"]}
+    },
+    "expect": {"verdict": "deny", "reason": "params_cardinality"},
+    "derivation": "cardinality 3 > max_items 2"
+  },
+  {
+    "id": "pb-018",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min_items), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"enum": ["a", "b", "c"], "min_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a"]}
+    },
+    "expect": {"verdict": "deny", "reason": "params_cardinality"},
+    "derivation": "cardinality 1 < min_items 2"
+  },
+  {
+    "id": "pb-019",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (cardinality without enum), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"min_items": 1, "max_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a", "b"]}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "cardinality-only bound; members unconstrained"
+  },
+  {
+    "id": "pb-020",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min_items, empty array), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"min_items": 1}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": []}
+    },
+    "expect": {"verdict": "deny", "reason": "params_cardinality"},
+    "derivation": "empty request array has cardinality 0"
+  },
+  {
+    "id": "pb-021",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (scalar cardinality = 1), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"station": {"max_items": 1}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"station": 2}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "a scalar request counts as cardinality 1"
+  },
+  {
+    "id": "pb-022",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (scalar cardinality = 1), §9.1 layer 8",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"station": {"min_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"station": 2}
+    },
+    "expect": {"verdict": "deny", "reason": "params_cardinality"},
+    "derivation": "scalar = 1 < min_items 2"
+  },
+  {
+    "id": "pb-023",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (optional), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "optional": true}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "optional key may be omitted (empty params object)"
+  },
+  {
+    "id": "pb-024",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (optional), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "optional": true}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "optional key may be omitted (absent params field)"
+  },
+  {
+    "id": "pb-025",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (required by default), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {"verdict": "deny", "reason": "params_missing"},
+    "derivation": "no optional marker → key required"
+  },
+  {
+    "id": "pb-026",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (optional value still checked), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "optional": true}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 5}
+    },
+    "expect": {"verdict": "deny", "reason": "params_out_of_range"},
+    "derivation": "a present optional value is still bounded"
+  },
+  {
+    "id": "pb-027",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (nested), §9.1 layers 8–9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"columns": {"nested": {"t": {"enum": ["id", "name"]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"columns": {"t": ["id"]}}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "nested enum recursion"
+  },
+  {
+    "id": "pb-028",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (nested), §9.1 layers 8–9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"columns": {"nested": {"t": {"enum": ["id", "name"]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"columns": {"t": ["age"]}}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "nested element outside the parent set"
+  },
+  {
+    "id": "pb-029",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (nested optional), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"columns": {"nested": {"t": {"enum": ["id"], "optional": true}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"columns": {}}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "optional nested key may be omitted"
+  },
+  {
+    "id": "pb-030",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (nested on non-object), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"columns": {"nested": {"t": {"enum": ["id"]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"columns": 5}
+    },
+    "expect": {"verdict": "deny", "reason": "params_exceed_grant"},
+    "derivation": "a nested bound applied to a non-object is fail-closed"
+  },
+  {
+    "id": "pb-031",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (one-representation binding rule), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100},
+      "param_bounds": {"limit": {"max": 50}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 50}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "key declared in both params and param_bounds"
+  },
+  {
+    "id": "pb-032",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (closed Bound grammar), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "foo": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 50}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "unknown Bound member"
+  },
+  {
+    "id": "pb-033",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (one family per Bound), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"enum": ["a"], "max": 5}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": "a"}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "mixed enum and numeric families"
+  },
+  {
+    "id": "pb-034",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min > max), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10, "max": 5}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 7}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "empty interval is malformed"
+  },
+  {
+    "id": "pb-035",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (step > 0), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"n": {"step": 0}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"n": 1}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "step must be positive"
+  },
+  {
+    "id": "pb-036",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (min_items ≤ max_items), §9.1 layer 2",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"tables": {"min_items": 3, "max_items": 2}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"tables": ["a"]}
+    },
+    "expect": {"verdict": "deny", "reason": "invalid_params_binding"},
+    "derivation": "inverted cardinality bound"
+  },
+  {
+    "id": "pb-037",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (numeric family on non-number), §9.1 layer 9",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {"min": 10}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": "x"}
+    },
+    "expect": {"verdict": "deny", "reason": "params_exceed_grant"},
+    "derivation": "a numeric bound applied to a non-number is fail-closed"
+  },
+  {
+    "id": "pb-038",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (empty Bound declares the key), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {"verdict": "deny", "reason": "params_missing"},
+    "derivation": "an empty Bound still declares the key (required by default)"
+  },
+  {
+    "id": "pb-039",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (empty Bound constrains nothing), §9.1 layer 7",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"limit": {}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 12345}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "an empty Bound declares the key with no value constraint"
+  },
+  {
+    "id": "pb-040",
+    "kind": "param-defaults",
+    "spec_clause": "CLC-v1 §6.3 / §6.5 (scheme default materialization)",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100}
+    },
+    "scheme_defaults": {"limit": 10},
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "absent op key materializes the scheme default 10 ≤ 100"
+  },
+  {
+    "id": "pb-041",
+    "kind": "param-defaults",
+    "spec_clause": "CLC-v1 §6.3 / §6.5 (scheme default materialization)",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100}
+    },
+    "scheme_defaults": {"limit": 200},
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {}
+    },
+    "expect": {"verdict": "deny", "reason": "params_exceed_grant"},
+    "derivation": "the default 200 exceeds the grant bound 100"
+  },
+  {
+    "id": "pb-042",
+    "kind": "param-defaults",
+    "spec_clause": "CLC-v1 §6.5 (precedence explicit > default)",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100}
+    },
+    "scheme_defaults": {"limit": 10},
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 50}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "explicit operation value wins over the default"
+  },
+  {
+    "id": "pb-043",
+    "kind": "param-defaults",
+    "spec_clause": "CLC-v1 §6.5 (defaults never add an undeclared key)",
+    "clc_revision": "CLC-1.10",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 100}
+    },
+    "scheme_defaults": {"other": 1},
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"limit": 50}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "a default for a key the grant does not declare is not injected"
+  }
+]

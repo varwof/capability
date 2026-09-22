@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://varwof.com/schemas/clc-v1/constraint-union-vectors.schema.json",
+  "title": "CLC-v1 ConstraintUnion test vectors (rev CLC-1.12, §7.1)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "kind",
+      "spec_clause",
+      "clc_revision",
+      "conformance_class",
+      "chain",
+      "expect",
+      "derivation"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^cu-[0-9]{3}$"
+      },
+      "kind": {
+        "type": "string",
+        "enum": ["constraint-union"]
+      },
+      "spec_clause": {"type": "string"},
+      "clc_revision": {
+        "type": "string",
+        "pattern": "^CLC-[0-9]+\\.[0-9]+$"
+      },
+      "conformance_class": {
+        "type": "string",
+        "enum": ["CLC-A"]
+      },
+      "chain": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {"type": "string"},
+            "params": {"type": "object"},
+            "constraints": {"type": "array", "items": {"type": "string"}}
+          },
+          "additionalProperties": false
+        }
+      },
+      "expect": {
+        "type": "object",
+        "properties": {
+          "union": {"type": "array", "items": {"type": "string"}},
+          "reason": {"type": "string"}
+        },
+        "additionalProperties": false
+      },
+      "derivation": {"type": "string"}
+    },
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,310 @@
+[
+  {
+    "id": "resolve-001",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "deny", "reason": "capability_not_authorized", "unresolved": []},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"}],
+    "expect": {"verdict": "deny", "reason": "capability_not_authorized", "unresolved": []},
+    "derivation": "terminal verdict: a deny passes through unchanged and resolutions are ignored — a deny is never revived by a satisfied report (§8.5 rule 1)"
+  },
+  {
+    "id": "resolve-002",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow", "reason": null, "unresolved": []},
+    "resolutions": [],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "terminal verdict: a fully evaluated allow carries nothing to discharge, so it passes through (§8.5 rule 1)"
+  },
+  {
+    "id": "resolve-003",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "deny", "reason": "max_rows:violated", "unresolved": []},
+    "resolutions": [{"constraint": "varwof/constraint-v1:max_rows:10", "status": "satisfied"}],
+    "now": "2026-09-21T22:30:00Z",
+    "expect": {"verdict": "deny", "reason": "max_rows:violated", "unresolved": []},
+    "derivation": "even with a clock and a satisfied report, a terminal deny is never revived (§8.5 rule 1)"
+  },
+  {
+    "id": "resolve-004",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"}],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "the single obligation is reported satisfied → all satisfied → allow (§8.5 rule 6)"
+  },
+  {
+    "id": "resolve-005",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"},
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]", "status": "satisfied"}
+    ],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "same-(scheme,type) obligations form a conjunction (§8.4); satisfying both → allow"
+  },
+  {
+    "id": "resolve-006",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"}],
+    "expect": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "derivation": "partial evaluation: one satisfied, one absent (→ unknown) → allow_unresolved with the remainder (§8.5 rule 6)"
+  },
+  {
+    "id": "resolve-007",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [],
+    "expect": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "derivation": "no resolutions → every obligation unknown → unchanged allow_unresolved, obligations neither invented nor dropped (§8.5 rule 3/6)"
+  },
+  {
+    "id": "resolve-008",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "unknown"}],
+    "expect": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "derivation": "an explicit unknown is the same as absent — the obligation stays unresolved (§8.5 rule 6)"
+  },
+  {
+    "id": "resolve-009",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "violated"}],
+    "expect": {"verdict": "deny", "reason": "network:violated", "unresolved": []},
+    "derivation": "any violated → deny, reason = the offending constraint's {type}:violated (§8.5 rule 6)"
+  },
+  {
+    "id": "resolve-010",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "violated"},
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]", "status": "satisfied"}
+    ],
+    "expect": {"verdict": "deny", "reason": "network:violated", "unresolved": []},
+    "derivation": "a violated obligation dominates a satisfied one — conjunction, so any violation denies (§8.4/§8.5)"
+  },
+  {
+    "id": "resolve-011",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "violated"}],
+    "expect": {"verdict": "deny", "reason": "network:violated", "unresolved": []},
+    "derivation": "violated dominates unknown too — the deny is decided before the remainder (§8.5 rule 6)"
+  },
+  {
+    "id": "resolve-012",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"},
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "violated"}
+    ],
+    "expect": {"verdict": "deny", "reason": "network:violated", "unresolved": []},
+    "derivation": "repeated entries for one constraint combine most-restrictive-first (violated ≻ satisfied ≻ unknown) (§8.5 rule 4)"
+  },
+  {
+    "id": "resolve-013",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"198.51.100.0/24\"]", "status": "satisfied"}],
+    "expect": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "derivation": "a resolution outside the decision's obligation set is ignored — it cannot widen the result (§8.5 rule 5)"
+  },
+  {
+    "id": "resolve-014",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "now": "2026-09-21T02:00:00Z",
+    "resolutions": [],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "core clock: now (02:00 UTC) lies in the [00:00,06:00) segment → time:window satisfied without a consumer report (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-015",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "now": "2026-09-21T21:00:00Z",
+    "resolutions": [],
+    "expect": {"verdict": "deny", "reason": "time:violated", "unresolved": []},
+    "derivation": "core clock: 21:00 is outside [22:00,24:00) → time:violated (§8.5 rule 3/6)"
+  },
+  {
+    "id": "resolve-016",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "now": "2026-09-21T00:30:00Z",
+    "resolutions": [],
+    "expect": {"verdict": "deny", "reason": "time:violated", "unresolved": []},
+    "derivation": "core clock: 00:30 is outside [22:00,24:00) (the window is same-day, ending at midnight) → time:violated (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-017",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"},{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "now": "2026-09-21T02:00:00Z",
+    "resolutions": [],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "multi-segment window: 02:00 lies in the [00:00,06:00) segment → satisfied (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-018",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "now": "2026-09-22T00:00:00Z",
+    "resolutions": [{"constraint": "varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]", "status": "satisfied"}],
+    "expect": {"verdict": "deny", "reason": "time:violated", "unresolved": []},
+    "derivation": "TTL expiry: the segment is half-open [22:00,24:00), so at the end boundary 00:00 the core clock says violated and overrides the stale satisfied report (violated ≻ satisfied), so a cached allow does not outlive its window (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-019",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"22:00\",\"end\":\"00:00\"}]"]},
+    "now": "2026-09-21T22:00:00Z",
+    "resolutions": [],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "the segment start is inclusive (half-open [start,end)): at 22:00 the window is entered → satisfied (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-020",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]", "status": "satisfied"}],
+    "expect": {"verdict": "allow", "reason": null, "unresolved": []},
+    "derivation": "without now the core attaches no TTL: a consumer-reported satisfied time:window is accepted and discharges the obligation (§8.5 rule 3 and the no-now paragraph)"
+  },
+  {
+    "id": "resolve-021",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "resolutions": [],
+    "expect": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "derivation": "without now and without a report the time:window obligation stays unknown → allow_unresolved (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-022",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "now": "2026-09-21T02:00:00Z",
+    "resolutions": [{"constraint": "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]", "status": "violated"}],
+    "expect": {"verdict": "deny", "reason": "time:violated", "unresolved": []},
+    "derivation": "sources combine most-restrictive-first: a violated report is never overridden by the lenient core clock → deny (§8.5 rule 3)"
+  },
+  {
+    "id": "resolve-023",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]"]},
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "maybe"}],
+    "expect": {"verdict": "deny", "reason": "invalid_resolution", "unresolved": []},
+    "derivation": "malformed input fails closed: an unrecognized status → invalid_resolution before any discharge (§8.5 rule 2)"
+  },
+  {
+    "id": "resolve-024",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "now": "yesterday afternoon",
+    "resolutions": [],
+    "expect": {"verdict": "deny", "reason": "invalid_timestamp", "unresolved": []},
+    "derivation": "a malformed now is refused rather than ignored — otherwise the core clock would silently not run and a TTL-bound obligation could pass (§8.5 rule 2)"
+  },
+  {
+    "id": "resolve-025",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:network:cidr:[\"2001:db8::/32\"]"]},
+    "resolutions": [
+      {"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"},
+      {"constraint": "", "status": "satisfied"}
+    ],
+    "expect": {"verdict": "deny", "reason": "invalid_resolution", "unresolved": []},
+    "derivation": "malformed-input check precedes discharge: an empty constraint string in the list denies even though another entry is satisfied (§8.5 rule 2)"
+  },
+  {
+    "id": "resolve-026",
+    "kind": "resolve",
+    "spec_clause": "CLC-v1 §8.5",
+    "clc_revision": "CLC-1.11",
+    "conformance_class": "CLC-A",
+    "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "varwof/constraint-v1:time:window:[{\"start\":\"00:00\",\"end\":\"06:00\"}]"]},
+    "now": "2026-09-21T09:00:00Z",
+    "resolutions": [{"constraint": "varwof/constraint-v1:network:cidr:[\"192.0.2.0/24\"]", "status": "satisfied"}],
+    "expect": {"verdict": "deny", "reason": "time:violated", "unresolved": []},
+    "derivation": "mixed obligations: the network one is satisfied, the core clock places 09:00 outside [00:00,06:00) → deny on the time obligation (§8.5 rule 6)"
+  }
+]

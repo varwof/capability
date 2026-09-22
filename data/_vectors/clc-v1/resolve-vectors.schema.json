@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://varwof.com/schemas/clc-v1/resolve-vectors.schema.json",
+  "title": "CLC-v1 Resolve test vectors (rev CLC-1.11, §8.5)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "kind",
+      "spec_clause",
+      "clc_revision",
+      "conformance_class",
+      "decision",
+      "expect",
+      "derivation"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^resolve-[0-9]{3}$"
+      },
+      "kind": {
+        "type": "string",
+        "enum": ["resolve"]
+      },
+      "spec_clause": {"type": "string"},
+      "clc_revision": {
+        "type": "string",
+        "pattern": "^CLC-[0-9]+\\.[0-9]+$"
+      },
+      "conformance_class": {
+        "type": "string",
+        "enum": ["CLC-A"]
+      },
+      "decision": {
+        "type": "object",
+        "required": ["verdict"],
+        "properties": {
+          "verdict": {"type": "string", "enum": ["allow", "deny", "allow_unresolved"]},
+          "reason": {"type": ["string", "null"]},
+          "unresolved": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      },
+      "resolutions": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["constraint", "status"],
+          "properties": {
+            "constraint": {"type": "string"},
+            "status": {
+              "type": "string",
+              "description": "Grammar: satisfied|violated|unknown.  Negative vectors deliberately use a bad value to pin the invalid_resolution refusal, so the schema keeps this a free string."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "now": {"type": "string", "description": "RFC3339 UTC instant; optional"},
+      "expect": {
+        "type": "object",
+        "required": ["verdict"],
+        "properties": {
+          "verdict": {"type": "string", "enum": ["allow", "deny", "allow_unresolved"]},
+          "reason": {"type": ["string", "null"]},
+          "unresolved": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      },
+      "derivation": {"type": "string"}
+    },
+    "additionalProperties": false
+  }
+}
