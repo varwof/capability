@@ -40,7 +40,7 @@ stays inside a parent's declared boundary — the single question a delegation
 chain asks at every hop that the core's entailment and intersection do not
 answer.  It ships with the conformance class **CLC-D** and its own corpus, is
 strictly additive, and changes no CLC-A verdict, reason code, or vector.  It
-absorbs the previously separate experimental extension `draft-wei-clc-ext-00`,
+absorbs the previously separate experimental containment extension,
 which is retired.
 
 ### Revision History
@@ -57,7 +57,7 @@ which is retired.
 | CLC-1.6 | 2026-09-14 | §4.3, §6.2, §10, §12, Appendix B | **`jcs-sha256` is now a real RFC 8785 implementation.** The canonical serializer no longer uses `json.Marshal`'s HTML escaping (which wrote `&`, `<`, `>` as `\u0026`, `\u003c`, `\u003e`): it orders object members by UTF-16 code units (§3.2.3), escapes strings per §3.2.2.2 (only `"`, `\` and the control characters), renders numbers per ECMAScript `Number::toString` (§3.2.2.3), emits no insignificant whitespace, and fails on invalid UTF-8 or lone surrogates instead of substituting U+FFFD.  **The bytes change, so every `clc-action:` identifier and Decision Record input digest changes for material containing `&`, `<` or `>` — the old digests were not JCS and MUST NOT be compared against the new ones.**  Non-ASCII object keys are re-ordered where UTF-16 order differs from UTF-8 byte order.  Refusal of lone surrogates is enforced on the **raw params text** — a decoder would substitute U+FFFD first — and pinned by `params-031`/`params-032`.  CLC-A's verdicts are unchanged and CLC-1.4/1.5 inputs stay readable; the evidence corpus is 32 vectors (adds the RFC 8785 `&` action-id vector and a requirement vector asserting the exported §10 `Satisfaction` report).  **2026-09-15 review corrections**: the abstract no longer states that the independent-implementation bar is met for CLC-A — Section 12's honest scope governs (all three implementations share an author); the decoded-parameter paths of the three implementations now return the same stable denial for malformed Unicode, and Python's decoded size check measures the JCS serialization, matching Go and TypeScript. |
 | CLC-1.7 | 2026-09-15 | §6.2, §12, abstract | **Implementation alignment, not a semantic change.**  The decoded parameter paths of the three implementations now return the same stable denial for malformed Unicode (`invalid_params_number`) that the raw path already returned, and Python's decoded size check measures the JCS serialization instead of a serializer's re-encoding — both were implementations disagreeing with §6.2, not gaps in the language.  The abstract no longer states that the independent-implementation bar is met for CLC-A: Section 12's honest scope governs, since the three implementations share an author.  No change for well-formed inputs. |
 | CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  The same revision also states the input-boundary obligation: §6.2 item 7 requires steps 1-5 to run on the received text before any decoding and says an implementation that exposes only a decoded-value entry point MUST NOT be described as refusing malformed Unicode, and §11 states that a §6.2 refusal does not transfer to a decoded value.  The same revision ships six corpus pins alongside the boundary alignment, taking the corpus from 114 to 120 vectors: `entail-007/-008` (class-position wildcard is not a trailing action wildcard, §5.1/§9.3 layer 3), `decide-035` (multi-grant residual-obligation union across covering grants, §9.1/§8.4) and `nested-001/-002/-003` (key closure and presence recurse into nested objects, §6.2/§9.1 layer 7).  Text only - no verdict changes. |
-| CLC-1.9 | 2026-09-21 | §12.1, §12, §13(new), Appendix A, Appendix B, Appendix C(new), Security, abstract | **Additive: delegation containment folded in.**  Section 13 adds the relation `Contains(parent, child)` with the conformance class **CLC-D** — a four-layer decision (structural validity; identifier coverage under a profile; parameter narrowing with numeric-bound/enumeration/nested/symmetric-key-closure rules; profile-declared carrier checks), three stable reason codes (`child_exceeds_parent`, `params_not_narrower`, `delegation_mode_not_narrower`), a profile contract, and the consequence that a refused hop is a carrier failure and never a core deny (Section 11).  It carries its own corpus and is exercised by both cross-implementations and cross-vendor crosswalks against six adjacent drafts (Appendix C).  **`Contains` does not read, compare or validate constraints** — the constraint set of a chain is the union accumulated by chained `Intersect` (Section 7), not a containment of constraint sets; a null constraint check is not evidence of containment and MUST NOT be reported as one.  New Appendix C pins the carrier-vocabulary and reason-code mapping.  This revision absorbs and retires the standalone `draft-wei-clc-ext-00`.  **No CLC-A verdict, reason code or vector changes**, and CLC-1.8 inputs stay readable.  The corpus grows by 50 containment vectors, 784 containment property cases and 44 crosswalk vectors. |
+| CLC-1.9 | 2026-09-21 | §12.1, §12, §13(new), Appendix A, Appendix B, Appendix C(new), Security, abstract | **Additive: delegation containment folded in.**  Section 13 adds the relation `Contains(parent, child)` with the conformance class **CLC-D** — a four-layer decision (structural validity; identifier coverage under a profile; parameter narrowing with numeric-bound/enumeration/nested/symmetric-key-closure rules; profile-declared carrier checks), three stable reason codes (`child_exceeds_parent`, `params_not_narrower`, `delegation_mode_not_narrower`), a profile contract, and the consequence that a refused hop is a carrier failure and never a core deny (Section 11).  It carries its own corpus and is exercised by both cross-implementations and cross-vendor crosswalks against six adjacent drafts (Appendix C).  **`Contains` does not read, compare or validate constraints** — the constraint set of a chain is the union accumulated by chained `Intersect` (Section 7), not a containment of constraint sets; a null constraint check is not evidence of containment and MUST NOT be reported as one.  New Appendix C pins the carrier-vocabulary and reason-code mapping.  This revision absorbs and retires the standalone containment extension.  **No CLC-A verdict, reason code or vector changes**, and CLC-1.8 inputs stay readable.  The corpus grows by 50 containment vectors, 784 containment property cases and 44 crosswalk vectors. |
 | CLC-1.10 | 2026-09-21 | §6.3, §6.5(new), §9.1, §9.2, §12.1, §13.4.3, Appendix B | **Additive: extended parameter bounds.**  A new optional grant field `param_bounds` (§6.5) carries the bounds `params` cannot express — inclusive `min`/`max`, a `step` multiple rule, `enum` with `min_items`/`max_items` cardinality, an `optional` key marker, and `nested` recursion — without overloading `params` (a `{min,max}` object there would collide with object recursion), so **no existing grant changes meaning**.  A key MUST be declared in at most one of `params`/`param_bounds` (`invalid_params_binding`); four reason codes are added (`invalid_params_binding`, `params_cardinality`, `params_out_of_range`, `params_not_multiple`); the §6.3 scheme-default hook is given a grammar (`param_defaults`, precedence explicit > default > absent).  `param_bounds` is checked at layer 2 and its bounds at layers 7–9, so an implementation that does not implement it refuses a CLC-1.10 input through the minor gate instead of silently ignoring the field.  §13.4.3 gains the containment narrowing rules for the new bounds.  No CLC-A verdict is changed for inputs without `param_bounds`.  It adds 14 containment-narrowing vectors for the new bounds (CLC-D corpus 50 → 64) and 43 core bound vectors (`param-bounds-vectors.json`). |
 | CLC-1.11 | 2026-09-21 | §8.5(new), §9.1, §9.2, §12.1, §13.10.2, Appendix B | **Additive: the residual-obligation consumer loop.**  `Resolve(decision, resolutions, now?)` (§8.5) closes the §8.4 feedback loop: a consumer reports each `unresolved` obligation as `satisfied` / `violated` / `unknown`, the sources combine most-restrictive-first (`violated` ≻ `satisfied` ≻ `unknown`), and the verdict collapses to `allow` (all satisfied), `deny` (`{type}:violated` on any), or `allow_unresolved` (remainder) — terminal `deny`/`allow` inputs pass through untouched.  Supplying `now` makes the core clock evaluate a `time:window` obligation directly, giving it a **TTL**: its discharge horizon is the end of the segment containing `now`, so a cached `allow` expires with the window.  Two input-error codes are added (`invalid_resolution`, `invalid_timestamp`).  §13.10.2 is closed as folded in.  No `Authorize` verdict, reason code or vector changes; a CLC-1.10 implementation that does not implement `Resolve` remains CLC-A conformant.  It adds 26 `Resolve` vectors (`resolve-vectors.json`). |
 | CLC-1.12 | 2026-09-21 | §7.1(new), §12.1, §13.10.3, Appendix B | **Additive: `ConstraintUnion`, the derived chain-constraint projection.**  A consumer that has a verified delegation chain often needs the chain's whole constraint burden without an effective grant; §7.1 exposes the constraint projection of `Intersect` rule 3 as `ConstraintUnion(chain) → string[]` (normalized union, duplicates folded, deterministically ordered).  It is a **projection, not a meet**: no identifier/parameter comparison, no constraint reading/validation, no containment check, and an empty chain fails closed with `absent_source`.  This closes §13.10.3: `Contains` stays a pure subset over `(identifier, parameters)` (constraints outside the relation), and the union is a separate function rather than folded into `Contains`.  It adds 12 `ConstraintUnion` vectors (`constraint-union-vectors.json`). |
@@ -94,7 +94,8 @@ differs:
 
 The design principles behind this core — including what the language
 **deliberately refuses** (no control flow, no mutable state, no general-purpose
-policy language) — are stated in `capability-language-core-principles-v1.md`:
+policy language) — are stated in `capability-language-core-principles-v1.md`
+(in [CLC-CORPUS]):
 
 > P1 minimal core · P2 no control flow · P3 immutable values ·
 > P4 domains, not types · P5 deterministic and terminating ·
@@ -682,7 +683,7 @@ difference is a key-set difference).  A key that no source declares in
 
 ## 7. Intersection (∩)
 
-P_effective = P_principal ∩ C_agent ∩ P_gateway (ACA §4.2).
+P_effective = P_principal ∩ C_agent ∩ P_gateway.
 
 Rules:
 1. Each source provides a grant set.
@@ -1380,8 +1381,11 @@ An implementation that implements only CLC-A MUST NOT claim CLC-E.  CLC-E does
 not add a wire format: carriers that need one (e.g. an Action Evidence Envelope)
 profile §6.4/§10 themselves.
 
-**Conformance corpora.**  CLC-A conformance is exercised by two
-machine-readable reference suites shipped at
+**Conformance corpora.**  The suites below are published in the repository
+tree pinned as [CLC-CORPUS]; repository paths written as `capability/...`
+throughout this document are relative to that pinned tree, so the exact
+vectors named here are retrievable.  CLC-A conformance is exercised by two
+machine-readable reference suites at
 `capability/data/_vectors/clc-v1/`: `vectors.json` — 120 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
@@ -1534,7 +1538,7 @@ alongside entailment (§6.1) and intersection (§7), and the conformance class
 **CLC-D** that exercises it.  It is additive: it changes no CLC-A verdict,
 reason code or vector, and a CLC-A implementation that does not claim CLC-D is
 unaffected.  It was folded into this document from the formerly separate
-`draft-wei-clc-ext-00`, which is retired.
+containment extension, which is retired.
 
 ### 13.1 Motivation
 
@@ -1584,7 +1588,7 @@ Grant and Operation are as defined in §2/§5 (identifier per §3, parameters pe
   declares is within the parent's declared bounds, its key set is closed by the
   parent's, and its delegation mode does not widen the parent's.
 - **Mode lattice** — an abstract carrier-defined order over delegation modes;
-  the AIC-JWT/ACA ordering is pinned in §13.8.
+  the AIC-JWT ordering is pinned in §13.8.
 
 ### 13.3 Relation Signature
 
@@ -1719,7 +1723,7 @@ boundary, and constraints are enforced by the union, not by this relation.
 
 Where a carrier defines a delegation mode, the child's mode must not widen the
 parent's.  The lattice order is carrier-defined (CLC-D does not invent modes);
-the AIC-JWT/ACA order is `authorized < representative` — a child may be
+the AIC-JWT order is `authorized < representative` — a child may be
 `authorized` under a `representative` parent, never the reverse.  Failure yields
 `delegation_mode_not_narrower`.  A carrier without a mode concept SHALL treat
 this layer as passing.  As with constraints, mode is a carrier-level concept:
@@ -1786,7 +1790,7 @@ forward-closure property file
 vectors) that maps a carrier's native representation (AIC-JWT DA, OAuth RAR,
 UCAN, delegation chain, and the adjacent agent drafts ATN, AAT, AIP, AAE, AOA,
 AEGIS) to a grant on each side and asserts `Contains` (§13.9.3).  Rev CLC-1.13
-adds `capability/data/_vectors/clc-d/authorize-chain-vectors.json` (**14**
+adds `capability/data/_vectors/clc-d/authorize-chain-vectors.json` (**15**
 vectors) pinning the fused `AuthorizeWithChain` relation (§13.11).
 The vectors cover:
 
@@ -1840,7 +1844,7 @@ principal's authorization and the child grant from the
   (`Capability.SchemeId:CapabilityId`, `Parameters`), its `authorizationConstraints`,
   and its `DelegationMode`.
 - **Boundary result**: `P_effective = P_principal ∩ C_agent ∩ P_gateway`
-  (ACA §4.2) keeps its intersection meaning — intersection determines the
+  keeps its intersection meaning — intersection determines the
   *effective* set; containment (§13.4) is the *per-child* admission predicate
   that runs before the intersection is composed, on each
   (parent-capability, child-capability) pair.  The child's constraints are **not**
@@ -2008,13 +2012,13 @@ case plus cross-walk vectors, exactly as the pinned profiles did.
 | WIMSE AI Identity Management System (`draft-ietf-wimse-aims`) | Informational best-practice framework reusing WIMSE and OAuth; explicitly identifies gaps rather than defining a capability algebra | CLC is a candidate concrete evaluation language for the authorization step AIMS describes and a candidate answer to the "capability containment" gap it leaves open; the two are complementary, not competing |
 | W3C ZCAPs | Linked-Data-Proof signed capability documents with caveats and chaining | ZCAPs defines the document/carrier; CLC can define the containment relation over its capabilities |
 | UCAN | DID/IPLD authorization tokens with delegation and attenuation | Same split: UCAN is the carrier, CLC the semantics |
-| AEGIS capability registry and AIAM-1 delegation (`aegis-initiative/aegis-governance`) | Hierarchical dotted capability registry, per-grant `scope`/`constraints`, a deterministic decision algorithm with verdicts (allow/constrain/escalate/deny), and monotonic authority narrowing (`AIAM1-DEL-010`); composition is explicitly *not* closed under transitivity (`AIAM1-CAP-011`) | Closest in *goal* (capability declaration + deterministic evaluation + narrowing); differs in *form* — AEGIS is a governance architecture with a policy/registry layer, CLC a carrier-neutral decision function over grants.  `Contains` is the relation AEGIS's monotonic-narrowing check needs; AEGIS's non-transitive composition rule is compatible (CLC-D `Contains` is also non-transitive: it is a per-pair predicate, not a closure) |
-| Agent Identity Protocol (AIP, `draft-prakash-aip`) | Delegation-chain token with a Datalog policy layer and a structural attenuation walk (V4) over scope, budget, time, domains, principal | Overlaps CLC's entailment/intersection *functionally*, but pins a Datalog policy language.  AIP §4.4 makes the same distinction CLC-D does — attenuation is a property of capability content, not of the append-only container — so CLC can be the shared deterministic semantics such a checker is validated against |
-| Agent Trust Negotiation (ATN, `draft-somoza-dmsc-atn-agent-trust-negotiation`) | Capability Manifest JSON with schema binding, dimension semantics, and a Capability Intersection Algebra (§9) with per-dimension rules including `preconditions` union | Overlaps the capability-container target and defines an intersection; CLC-D supplies the *single-pair containment* predicate that runs before and alongside that intersection (§13.8).  ATN's ordered dimension lattices (`effects`, `external_calls`, …) are the carrier-level analogue of CLC-D's mode lattice (§13.4.5), which stays out of the language relation |
-| Agent Operation Authorization (AOA, `draft-liu-agent-operation-authorization`) | Operation-proposal/authorization JWTs with a `delegation_chain`; the AS validates that a sub-operation is "strictly narrower in scope" (§6.2) via policy templates, OPA, or scope-string containment | Same "no escalation beyond the original scope" goal; AOA's scope-string containment is exactly a carrier instance of `Contains`, and AOA's `delegation_chain` is the carrier for the chain CLC-D reasons over |
-| Attenuating Agent Tokens (AAT, `draft-niyikiza-oauth-attenuating-agent-tokens`) | Token chain with a capability lattice (`C(child) ⊆ C(parent)`, §4.1) and six attenuation invariants; I4 defines per-type constraint subsumption with Decidable/Sound/Deterministic requirements (§3.5.1) | The closest formal neighbour: `C(child) ⊆ C(parent)` is the property `Contains` decides, and AAT's naming of a constraint type `contains` is a caution that the *relation* and a *constraint value* must not be conflated |
-| Agent Authorization Envelope (AAE, `draft-kroehl-agentic-trust-aae`) | Verifiable Credential envelope with MANDATE/`CONSTRAINTS`/VALIDITY blocks and an explicit "equal to or more restrictive" definition per element (§3); warns of delegation amplification (§7.4) | AAE defines the carrier blocks and a closed, deterministic constraint language; CLC-D's `params_not_narrower` / `child_exceeds_parent` are the stable reason codes that make AAE's "strictly subordinate" check reportable |
-| External Verifier Contract (EVC, `draft-kondoju-evc`) | Standardizes *how* an external verifier is invoked and returns a verdict (allow/deny/denial codes, fail-closed exit semantics) | Orthogonal and complementary: EVC is the verdict *interface*, CLC-D is the decision *semantics* and its reason codes.  An EVC implementation can compute CLC-D's verdict and surface the same reason codes |
+| AEGIS capability registry and AIAM-1 delegation ([AEGIS], `aegis-initiative/aegis-governance`) | Hierarchical dotted capability registry, per-grant `scope`/`constraints`, a deterministic decision algorithm with verdicts (allow/constrain/escalate/deny), and monotonic authority narrowing (`AIAM1-DEL-010`); composition is explicitly *not* closed under transitivity (`AIAM1-CAP-011`) | Closest in *goal* (capability declaration + deterministic evaluation + narrowing); differs in *form* — AEGIS is a governance architecture with a policy/registry layer, CLC a carrier-neutral decision function over grants.  `Contains` is the relation AEGIS's monotonic-narrowing check needs; AEGIS's non-transitive composition rule is compatible (CLC-D `Contains` is also non-transitive: it is a per-pair predicate, not a closure) |
+| Agent Identity Protocol ([AIP], `draft-prakash-aip`) | Delegation-chain token with a Datalog policy layer and a structural attenuation walk (V4) over scope, budget, time, domains, principal | Overlaps CLC's entailment/intersection *functionally*, but pins a Datalog policy language.  AIP §4.4 makes the same distinction CLC-D does — attenuation is a property of capability content, not of the append-only container — so CLC can be the shared deterministic semantics such a checker is validated against |
+| Agent Trust Negotiation ([ATN], `draft-somoza-dmsc-atn-agent-trust-negotiation`) | Capability Manifest JSON with schema binding, dimension semantics, and a Capability Intersection Algebra (§9) with per-dimension rules including `preconditions` union | Overlaps the capability-container target and defines an intersection; CLC-D supplies the *single-pair containment* predicate that runs before and alongside that intersection (§13.8).  ATN's ordered dimension lattices (`effects`, `external_calls`, …) are the carrier-level analogue of CLC-D's mode lattice (§13.4.5), which stays out of the language relation |
+| Agent Operation Authorization ([AOA], `draft-liu-agent-operation-authorization`) | Operation-proposal/authorization JWTs with a `delegation_chain`; the AS validates that a sub-operation is "strictly narrower in scope" (§6.2) via policy templates, OPA, or scope-string containment | Same "no escalation beyond the original scope" goal; AOA's scope-string containment is exactly a carrier instance of `Contains`, and AOA's `delegation_chain` is the carrier for the chain CLC-D reasons over |
+| Attenuating Agent Tokens ([AAT], `draft-niyikiza-oauth-attenuating-agent-tokens`) | Token chain with a capability lattice (`C(child) ⊆ C(parent)`, §4.1) and six attenuation invariants; I4 defines per-type constraint subsumption with Decidable/Sound/Deterministic requirements (§3.5.1) | The closest formal neighbour: `C(child) ⊆ C(parent)` is the property `Contains` decides, and AAT's naming of a constraint type `contains` is a caution that the *relation* and a *constraint value* must not be conflated |
+| Agent Authorization Envelope ([AAE], `draft-kroehl-agentic-trust-aae`) | Verifiable Credential envelope with MANDATE/`CONSTRAINTS`/VALIDITY blocks and an explicit "equal to or more restrictive" definition per element (§3); warns of delegation amplification (§7.4) | AAE defines the carrier blocks and a closed, deterministic constraint language; CLC-D's `params_not_narrower` / `child_exceeds_parent` are the stable reason codes that make AAE's "strictly subordinate" check reportable |
+| External Verifier Contract ([EVC], `draft-kondoju-evc`) | Standardizes *how* an external verifier is invoked and returns a verdict (allow/deny/denial codes, fail-closed exit semantics) | Orthogonal and complementary: EVC is the verdict *interface*, CLC-D is the decision *semantics* and its reason codes.  An EVC implementation can compute CLC-D's verdict and surface the same reason codes |
 | Agent-auth architecture drafts (e.g. `draft-klrc-aiagent-auth`) | "Agent as workload", reusing existing mechanisms; notes that no single existing policy engine covers the full delegation-chain verification need | A natural consumer: CLC can be the evaluation language such a framework calls into |
 | Dual-identity / attenuating-token drafts (e.g. `draft-ni-wimse-ai-agent-identity`, AAT above) | Bind agent identity to owner identity; define how a holder derives and a verifier checks a narrower token | Answers *who delegated* and *how derivation is carried*; CLC answers *what was delegated and whether it narrowed* |
 | Agent interaction/delegation protocols (e.g. AIDP) | Interaction and delegation flow over capability systems | Capability-based sibling; CLC is the evaluation layer rather than the interaction flow |
@@ -2204,7 +2208,7 @@ first appeared in `CLC-1.9`, folded from `EXT-00 rev 0`).
 - CLC-D adoption is per-implementation: an implementation may claim CLC-A
   without claiming CLC-D.
 - The corpus (64 containment vectors, 784 property cases, 44 cross-walk
-  vectors, 14 `AuthorizeWithChain` vectors) is a draft snapshot; the README in
+  vectors, 15 `AuthorizeWithChain` vectors) is a draft snapshot; the README in
   `capability/data/_vectors/clc-d/` maintains the live count and the date the
   snapshot was generated.
 
@@ -2240,7 +2244,10 @@ sit under `kind=decide` (`params-028/-029/-034/-036`, all four also
 listed in B.3) and the three nested key-closure vectors
 (`nested-001/-002/-003`);
 `kind=intersect (14)` covers B.4 (10) plus the four combined vectors that
-call the intersect function (`combined-004/-005/-008/-011`).
+call the intersect function (`combined-004/-005/-008/-011`); `kind=syntax
+(9)` is exactly B.1.  These counts are reproducible from the corpus itself:
+every vector in `vectors.json` carries its `kind`, so the mapping is
+machine-checkable rather than maintained by hand.
 
 ### B.1 Syntax (9 vectors)
 
@@ -2405,7 +2412,7 @@ Shorthand: params shown compact; constraints use colon notation.
 > the grouping rules above (→ B.3 params semantics), and `payments-002`
 > additionally exercises §8 fail-closed `unknown_constraint` for a
 > scheme-scoped constraint type.  These vectors add no new normative rule;
-> the v2 requirements evidence they record lives in design-notes §18.
+> they exist to record the v2 requirements evidence, not to extend v1.
 > `undeclared-001/-002` (→ B.5 D13/D14) pin the §6.2 key-closure rule.
 > `params-006`/`params-013` (→ B.3 P6/P13) close two previously-unmapped
 > rows; `params-020/021` (→ P20/P21) are the positive boundary cases of
@@ -2457,7 +2464,7 @@ with `constraint-union-vectors.schema.json`.
 ### B.11 AuthorizeWithChain (external corpus)
 
 The §13.11 fused chain check is pinned by
-`capability/data/_vectors/clc-d/authorize-chain-vectors.json` (14 vectors:
+`capability/data/_vectors/clc-d/authorize-chain-vectors.json` (15 vectors:
 empty chain, broken identifier/parameter hop, a broken hop reported before op
 validation, the degenerate two-grant form, ancestor-constraint enforcement via
 the effective intersection, the `param_bounds` refusal, and pass-through of
@@ -2574,7 +2581,7 @@ Two of the §13.8.1 obligations are visible in the pinned vectors:
   `capability_not_authorized` (never `params_not_narrower`, §13.5).
 - **Mode lattice must be carrier-pinned**: an implementer that maps
   `authorized`/`representative` the wrong way round inverts the boundary; §13.8
-  pins the ACA ordering, and other carriers MUST pin theirs in the profile that
+  pins the AIC-JWT ordering, and other carriers MUST pin theirs in the profile that
   adopts CLC-D.
 - **Stable reason codes**: same input → same reason across implementations.
 - **Evidence binding is separate from native verification**: Match checks
@@ -2674,7 +2681,7 @@ paths that disagreed with the raw path on malformed Unicode, and the raw size
 checks that counted a number by its received spelling and a literal astral
 character by UTF-16 code unit.  Revision 1.9 folds the delegation-containment
 relation and the CLC-D class into this document (Section 13, Appendix C),
-retiring the formerly separate `draft-wei-clc-ext-00`, and pins it against six
+retiring the formerly separate containment extension, and pins it against six
 adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
 2026-09-21.
 
@@ -2703,8 +2710,6 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
 - [RFC9396] T. Lodderstedt, et al., "OAuth 2.0 Rich Authorization Requests",
   RFC 9396, DOI 10.17487/RFC9396, May 2023,
   <https://www.rfc-editor.org/info/rfc9396>.
-- [ACA] Agent Capability Authorization and Delegation Binding,
-  draft-wei-agent-capability-authorization-00, Work in Progress.
 - [AIC-JWT] J. Wei, "AI Agent Identity Certificate (AIC) JSON Web Token
   Profile", draft-wei-aic-jwt-01, Work in Progress, September 2026.
 - [CAID] "Canonical Action Identifier",
@@ -2729,9 +2734,9 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   draft-liu-agent-operation-authorization-02, Work in Progress.  §6.2 requires a
   sub-operation to be strictly narrower in scope.
 - [EVC] "External Verifier Contract", draft-kondoju-evc-02, Work in Progress.
-- [WIMSE-AIMS] "AI Identity Management System (AIMS)",
-  draft-ietf-wimse-aims-00, Work in Progress.  An informational gap analysis,
-  not a capability algebra.
+- [CLC-CORPUS] J. Wei, "Capability Language Core — conformance corpus,
+  schemas and working documents", commit c97fd93, September 2026.
+  <https://github.com/varwof/capability/tree/c97fd93e20446db39d5b57f76df2aea46ad48a25>
 - [AEGIS] AEGIS Governance, `aegis-initiative/aegis-governance`, repository
   (AIAM-1 v0.1).  `AIAM1-DEL-010` requires monotonic authority narrowing;
   `AIAM1-CAP-011` states composition is not closed under transitivity.

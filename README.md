@@ -154,7 +154,8 @@ minimal capability decision language):
   (normative), `docs/capability-language-core-principles-v1.md` (design
   principles), `docs/offline-capability-manifest-profile-v0.md` (disconnected
   deployments) and `docs/design-notes.md` (English decision record),
-  `docs/capability-language-core-design-notes-zh.md` (full Chinese history).
+  `archive/capability-language-core-design-notes-zh.md` (full Chinese history,
+  archived 2026-09-24).
 
 Design principle in one line: a **minimal decision language** — finite values,
 four relations (entailment, match, intersection, containment), two decision

@@ -86,7 +86,8 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 - 本仓内的规范文档：`docs/capability-language-core-v1.md`（规范正文）、
   `docs/capability-language-core-principles-v1.md`（设计原则声明）、
   `docs/offline-capability-manifest-profile-v0.md`（离线 profile）、
-  `docs/design-notes.md`（英文裁决记录）、`docs/capability-language-core-design-notes-zh.md`（完整中文设计说明）。
+  `docs/design-notes.md`（英文裁决记录）、
+  `archive/capability-language-core-design-notes-zh.md`（完整中文设计说明，2026-09-24 归档）。
 
 一句话设计原则：**极小的判定语言**——有限的值、三条关系（蕴含/匹配/交集）、两个判定函数、
 **没有控制流**、缺省即拒绝（fail-closed）、**未声明的参数不构成授予**。
