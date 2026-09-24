@@ -3,7 +3,8 @@
 Normative text: [`capability-language-core-v1.md`](capability-language-core-v1.md).
 Principles: [`capability-language-core-principles-v1.md`](capability-language-core-principles-v1.md).
 Full narrative history (Chinese, superset of this record):
-[`capability-language-core-design-notes-zh.md`](capability-language-core-design-notes-zh.md).
+[`capability-language-core-design-notes-zh.md`](../archive/capability-language-core-design-notes-zh.md)
+(archived 2026-09-24; this file is the decision record of record).
 
 This file is the English record of the **decisions** a reviewer is likely to ask
 about: what was chosen, what was rejected, and why.  Entries are dated.
@@ -260,3 +261,12 @@ entry point; and every artifact needs a gate (or it drifts).
 3. **Carrier citations**: no carrier document (AIC-JWT, gateway-core, types) cites
    CLC yet, and a second subset implementation exists in the WIT/WPT interop study
    whose wildcard surface is one v1 forbids.
+
+## Slim-down attempt (2026-09-21) — reverted 2026-09-24
+
+A slim-down of the published text was prepared on 2026-09-21 and reverted on
+2026-09-24.  It had removed material that the published text carries again, and
+part of what it removed was not recorded here at all.  The published text is the
+revision-1.14 text in full: **nothing is held back in these notes.**  The
+archive of that attempt is not kept here; it is preserved in the working
+back-up outside this repository.
