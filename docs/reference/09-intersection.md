@@ -25,7 +25,7 @@ A meet is empty (`no_overlap`) **only** when the denotations are genuinely disjo
 | 1 | Each source provides a grant set | — |
 | 2 | Effective grant MUST be covered by at least one grant from every source | [`intersect-010`](../../data/_vectors/clc-v1/vectors.json) |
 | 3 | Same-capability constraints merged by **union** (each kept — constraints are conjunctive, dropping a source's constraint drops its restriction) | [`cu-008`](../../data/_vectors/clc-v1/constraint-union-vectors.json) (reversed hop order, same union) |
-| 4 | Any source missing the capability → capability absent from the effective set | [`intersect-007`](../../data/_vectors/clc-v1/vectors.json) |
+| 4 | Any source missing the capability → capability absent from the effective set | no dedicated vector; nearest pin [`combined-008`](../../data/_vectors/clc-v1/vectors.json) |
 | 5 | **Zero / absent sources fail closed** → `deny("absent_source")` (a source that exists but carries no grant for the capability is rule 4, not 5) | [`intersect-007`](../../data/_vectors/clc-v1/vectors.json) |
 | 6 | **Empty params declares no constraint**: a present-but-empty `params` contributes no restriction; bounded-then-empty and empty-then-bounded give the same result — source order MUST NOT change the outcome | [`intersect-008`](../../data/_vectors/clc-v1/vectors.json) `{limit:50} ∩ {} = {limit:50}` |
 

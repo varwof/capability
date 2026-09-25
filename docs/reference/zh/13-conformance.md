@@ -12,7 +12,7 @@ CLC-v1 定义了**三个一致性类别**。**CLC-A**（授权侧）是基线；
 
 | 类别 | 包含内容 | 状态 |
 |-------|------------------|--------|
-| **CLC-A** | §3 文法、§6.1 entailment、§7 intersection、§9 decision、`unknown_constraint`/`invalid_constraint`、`allow_unresolved` + 增量式 `unresolved` 通道（§8.4）、多授权聚合（§9.1）、稳定原因代码（§9.2）；必须通过 `vectors.json`（120）和 `property-cases.json`（1184） | **已声明 — v1 基线** |
+| **CLC-A** | §3 文法、§6.1 entailment、§7 intersection、§9 decision、`unknown_constraint`/`invalid_constraint`、`allow_unresolved` + 增量式 `unresolved` 通道（§8.4）、多授权聚合（§9.1）、稳定原因代码（§9.2）；必须通过 `vectors.json`（123）和 `property-cases.json`（1184） | **已声明 — v1 基线** |
 | **CLC-D** | 带有序各层的 `Contains(parent, child)`、两个稳定关系代码（`child_exceeds_parent`、`params_not_narrower`）、配置契约（§13.8.1）、`AuthorizeWithChain`（修订 CLC-1.13）；必须通过 `containment-vectors.json`（64）和 `authorize-chain-vectors.json`（15）。第三个代码 `delegation_mode_not_narrower` 属于绑定配置预检，绝不属于 `Contains` | **已声明** |
 | **CLC-E** | §6.4 match、§10 satisfaction、证据侧约束文法、`evidence-vectors.json`（32） | **已实现，未声明** |
 
@@ -24,7 +24,7 @@ CLC-v1 定义了**三个一致性类别**。**CLC-A**（授权侧）是基线；
 
 位于 `capability/data/_vectors/clc-v1/` 的两个机器可读测试套件用于检验 CLC-A：
 
-- **`vectors.json`** — 120 个向量，对应附录 B（机器可读的 `kind` 分组不同于附录的语义 B.1–B.6 分组；两种计数都可从语料库复现）：`kind=entail`（47）、`kind=decide`（50）、`kind=intersect`（14）、`kind=syntax`（9）。
+- **`vectors.json`** — 123 个向量，对应附录 B（机器可读的 `kind` 分组不同于附录的语义 B.1–B.6 分组；两种计数都可从语料库复现）：`kind=entail`（47）、`kind=decide`（50）、`kind=intersect`（17）、`kind=syntax`（9）。CLC-1.15 的三个跨型审计向量（`intersect-011/-012/-013`）是 B.4 表之外对 intersect 组的增量。
 - **`property-cases.json`** — 1184 个用例，锁定 §7 meet 定律、标识符收窄和来源顺序无关性。
 
 CLC-D 增加 `capability/data/_vectors/clc-d/containment-vectors.json`（64）、`containment-property-cases.json`（784 个用例 × 39 个共享操作，前向闭包：`Contains(P,C) ∧ Entails(C,o) ⟹ Entails(P,o)`）、`containment-crosswalk-vectors.json`（44）和 `authorize-chain-vectors.json`（15）。证据侧提供 `evidence-vectors.json`（32）。
@@ -65,7 +65,7 @@ CLC-D 增加 `capability/data/_vectors/clc-d/containment-vectors.json`（64）�
 
 ## 总结：一致性审查检查什么
 
-- [ ] CLC-A：`vectors.json`（120）+ `property-cases.json`（1184）通过；不得丢弃 §8.4 的 `allow_unresolved`/`unresolved`。
+- [ ] CLC-A：`vectors.json`（123）+ `property-cases.json`（1184）通过；不得丢弃 §8.4 的 `allow_unresolved`/`unresolved`。
 - [ ] CLC-D：`containment-vectors.json`（64）+ `authorize-chain-vectors.json`（15）通过；`Contains` 始终只比较声明集合。
 - [ ] CLC-E：未声明（未达到独立性门槛，等待 EMILIA 审查）。
 - [ ] minor 门禁：不静默降级；输入不兼容时，在任何层之前报告 `unsupported_language_revision`。
@@ -73,7 +73,7 @@ CLC-D 增加 `capability/data/_vectors/clc-d/containment-vectors.json`（64）�
 
 ## 常见误区
 
-- **混用 120/123 两个计数**——附录 B 总数为 120；当前工作树语料库有 123 个向量（额外的修订锁定向量），README 尚未同步实时计数。
+- **沿用 1.15 之前的旧计数**——CLC-1.15 跨型审计之前的文本写 120 个向量 / `kind=intersect`（14）；审计新增 `intersect-011/-012/-013` 后为 123 /（17）。修订历史 CLC-1.8 行的"114 to 120"是当时事实，保留不改。
 - **声明 CLC-E**——语料库已经存在，但该类别出于原则暂不声明（§12、P12）。
 - **假设各 minor 的 `param_bounds` meet 输入判定稳定**——规范明确不保证（§12.1）。
 

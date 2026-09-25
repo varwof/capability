@@ -25,7 +25,7 @@
 | 1 | 每个来源提供一个 grant 集合 | — |
 | 2 | 有效 grant MUST 被每个来源中的至少一个 grant 覆盖 | [`intersect-010`](../../../data/_vectors/clc-v1/vectors.json) |
 | 3 | 同一 capability 的约束通过**并集**合并（每个约束都保留——约束是合取的，丢弃某个来源的约束就丢弃了它的限制） | [`cu-008`](../../../data/_vectors/clc-v1/constraint-union-vectors.json)（反转 hop 顺序，并集不变） |
-| 4 | 任一来源缺少该 capability → 有效集合中不含该 capability | [`intersect-007`](../../../data/_vectors/clc-v1/vectors.json) |
+| 4 | 任一来源缺少该 capability → 有效集合中不含该 capability | 无专属向量；最接近的钉桩 [`combined-008`](../../../data/_vectors/clc-v1/vectors.json) |
 | 5 | **零个/缺失来源按 fail-closed 处理** → `deny("absent_source")`（存在但没有该 capability 的 grant 的来源属于 rule 4，不是 rule 5） | [`intersect-007`](../../../data/_vectors/clc-v1/vectors.json) |
 | 6 | **空 params 不声明约束**：存在但为空的 `params` 不贡献限制；先有界后为空与先空后有界的结果相同——来源顺序 MUST NOT 改变结果 | [`intersect-008`](../../../data/_vectors/clc-v1/vectors.json) `{limit:50} ∩ {} = {limit:50}` |
 

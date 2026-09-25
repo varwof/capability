@@ -12,7 +12,7 @@ CLC-v1 defines **three conformance classes**. **CLC-A** (authorization side) is 
 
 | Class | What it includes | Status |
 |-------|------------------|--------|
-| **CLC-A** | §3 grammar, §6.1 entailment, §7 intersection, §9 decision, `unknown_constraint`/`invalid_constraint`, the `allow_unresolved` + additive `unresolved` channel (§8.4), multi-grant aggregation (§9.1), stable reason codes (§9.2); MUST pass `vectors.json` (120) and `property-cases.json` (1184) | **claimed — the v1 baseline** |
+| **CLC-A** | §3 grammar, §6.1 entailment, §7 intersection, §9 decision, `unknown_constraint`/`invalid_constraint`, the `allow_unresolved` + additive `unresolved` channel (§8.4), multi-grant aggregation (§9.1), stable reason codes (§9.2); MUST pass `vectors.json` (123) and `property-cases.json` (1184) | **claimed — the v1 baseline** |
 | **CLC-D** | `Contains(parent, child)` with its ordered layers, two stable relation codes (`child_exceeds_parent`, `params_not_narrower`), the profile contract (§13.8.1), `AuthorizeWithChain` (rev CLC-1.13); MUST pass `containment-vectors.json` (64) + `authorize-chain-vectors.json` (15). The third code `delegation_mode_not_narrower` belongs to the binding-profile pre-check, never `Contains` | **claimed** |
 | **CLC-E** | §6.4 match, §10 satisfaction, the evidence-side constraint grammar, `evidence-vectors.json` (32) | **implemented, NOT claimed** |
 
@@ -24,7 +24,7 @@ An implementation that implements only CLC-A MUST NOT claim CLC-E.
 
 CLC-A conformance is exercised by two machine-readable suites in `capability/data/_vectors/clc-v1/`:
 
-- **`vectors.json`** — 120 vectors mapped to Appendix B (the machine-readable `kind` grouping differs from the appendix's semantic B.1–B.6 grouping; both counts are reproducible from the corpus): `kind=entail` (47), `kind=decide` (50), `kind=intersect` (14), `kind=syntax` (9).
+- **`vectors.json`** — 123 vectors mapped to Appendix B (the machine-readable `kind` grouping differs from the appendix's semantic B.1–B.6 grouping; both counts are reproducible from the corpus): `kind=entail` (47), `kind=decide` (50), `kind=intersect` (17), `kind=syntax` (9). The three CLC-1.15 cross-type audit vectors (`intersect-011/-012/-013`) extend the intersect group beyond the B.4 table.
 - **`property-cases.json`** — 1184 cases pinning the §7 meet-law, identifier narrowing, and source-order independence.
 
 CLC-D adds `capability/data/_vectors/clc-d/containment-vectors.json` (64), `containment-property-cases.json` (784 cases × 39 shared operations, forward-closure: `Contains(P,C) ∧ Entails(C,o) ⟹ Entails(P,o)`), `containment-crosswalk-vectors.json` (44), and `authorize-chain-vectors.json` (15). The evidence side ships `evidence-vectors.json` (32).
@@ -65,7 +65,7 @@ Every implementation declares a language revision `CLC-<major>.<minor>`; **this 
 
 ## Summary: what a conformance review checks
 
-- [ ] CLC-A: `vectors.json` (120) + `property-cases.json` (1184) pass; §8.4 `allow_unresolved`/`unresolved` not dropped.
+- [ ] CLC-A: `vectors.json` (123) + `property-cases.json` (1184) pass; §8.4 `allow_unresolved`/`unresolved` not dropped.
 - [ ] CLC-D: `containment-vectors.json` (64) + `authorize-chain-vectors.json` (15) pass; `Contains` stays declared-set-only.
 - [ ] CLC-E: NOT claimed (independence bar unmet, EMILIA review pending).
 - [ ] Minor gate: no silent downgrade; `unsupported_language_revision` before any layer on incompatible input.
@@ -73,7 +73,7 @@ Every implementation declares a language revision `CLC-<major>.<minor>`; **this 
 
 ## Common pitfalls
 
-- **Reading the 120/123 counts interchangeably** — Appendix B totals 120; the working-tree corpus currently holds 123 vectors (extra revision-pinned vectors) with the README lagging the live count.
+- **Trusting pre-1.15 printed counts** — text predating the CLC-1.15 cross-type audit says 120 vectors / `kind=intersect` (14); the audit added `intersect-011/-012/-013`, making 123 / (17). The CLC-1.8 history row's "114 to 120" is correct for its time and stays.
 - **Claiming CLC-E** — the corpus exists, but the class is withheld on principle (§12, P12).
 - **Assuming verdict stability on `param_bounds`-meet inputs across minors** — explicitly not guaranteed (§12.1).
 
