@@ -702,8 +702,11 @@ CLC-v1 **不**定义：
   拒绝、或要把 permit 施加到未经自己求值的请求上的部署，**必须**把裁决锚定在**收到的八位组**或其摘要
   （§4.3）上 —— 绝不能锚定在解码器已经规范化过的值上。能把 permit 施加到"文本从未被校验过"的请求上的
   管线，已经离开了 CLC 边界
-- CLC-A 保持**范围语言**的位置：素材动作身份引用 CAID、证据满足引用 AEC、边界生命周期引用 AEB；
-  它们之间的**窄 crosswalk** 即组合点
+- CLC-A 保持**范围语言**的位置：素材动作身份引用 CAID [CAID]、异质证据求值引用 AEC [AEC]、
+  边界生命周期引用 AEB [EMILIA-AEB]、持久消费与记账引用 BCR [BCR]；它们之间的**窄 crosswalk**
+  即组合点
+- principal/agent 委托与 token 衰减仍归 PAP [PAP] 和 AAT [AAT]；CLC 消费它们的授权结果，
+  不重新定义
 
 ---
 
@@ -902,4 +905,10 @@ Iman Schrock（EMILIA Protocol）对照 1.1 版语料审阅了交集与约束语
   draft-schrock-canonical-action-identifier-02, Work in Progress.  §4.5 定义可选的
   `occurrence_id`；§7 把「发生的分配」与「一次性消费」留在标识符之外。
 - [EMILIA-AEB] "Action Evidence Boundary",
-  draft-schrock-action-evidence-boundary-05, Work in Progress.
+  draft-schrock-action-evidence-boundary-06, Work in Progress.
+- [AEC] "Authorization Evidence Chains: Composing Heterogeneous Agent-Action
+  Evidence (EP-AEC)", draft-schrock-ep-authorization-evidence-chain-06, Work in
+  Progress.
+- [BCR] "Bounded Capability Receipts and Durable Spend Control for Agent
+  Actions", draft-schrock-ep-bounded-capability-receipts-06, Work in Progress.
+- [PAP] "Principal Agent Protocol (PAP)", draft-baur-pap-02, Work in Progress.

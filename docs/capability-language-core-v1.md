@@ -1370,8 +1370,11 @@ The boundary is:
   pipeline that can apply a permit to a request whose text was never checked has
   left the CLC boundary
 - CLC-A stays the **scope language**: material-action identity is referenced from
-  CAID, evidence satisfaction from AEC, and the boundary lifecycle from AEB; the
-  narrow crosswalk between them is the composition point
+  CAID [CAID], heterogeneous evidence evaluation from AEC [AEC], the boundary
+  lifecycle from AEB [EMILIA-AEB], and durable consumption/accounting from BCR
+  [BCR]; the narrow crosswalk between them is the composition point
+- Principal/agent delegation and token attenuation stay with PAP [PAP] and AAT
+  [AAT]; CLC consumes their authorization outcome rather than redefining it
 
 ---
 
@@ -2884,7 +2887,13 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   defines the optional `occurrence_id`; Section 7 keeps occurrence allocation and
   one-time consumption outside the identifier.
 - [EMILIA-AEB] "Action Evidence Boundary",
-  draft-schrock-action-evidence-boundary-05, Work in Progress.
+  draft-schrock-action-evidence-boundary-06, Work in Progress.
+- [AEC] "Authorization Evidence Chains: Composing Heterogeneous Agent-Action
+  Evidence (EP-AEC)", draft-schrock-ep-authorization-evidence-chain-06, Work in
+  Progress.
+- [BCR] "Bounded Capability Receipts and Durable Spend Control for Agent
+  Actions", draft-schrock-ep-bounded-capability-receipts-06, Work in Progress.
+- [PAP] "Principal Agent Protocol (PAP)", draft-baur-pap-02, Work in Progress.
 - [ATN] "Agent Trust Negotiation", draft-somoza-dmsc-atn-agent-trust-negotiation-00,
   Work in Progress.  §9 defines a capability intersection algebra; §5.1/§9.1 an
   identity rule over `id` and `schema.digest`.
