@@ -177,7 +177,7 @@ four relations (entailment, match, intersection, containment), two decision
 functions, **no control flow**, fail-closed by default, and **an undeclared
 parameter does not constitute a grant**.
 
-The principles statement (rev 2) carries P1–P12 plus four properties that can be
+The principles statement (rev 4) carries P1–P12 plus four properties that can be
 run: **local decidability** (no core rule may need the network), **bounded
 work** (params ≤ 512 bytes, nesting ≤ 32 levels, over the limit → deny),
 **composition narrows only** (an intersection must be covered by every source

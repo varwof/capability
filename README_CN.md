@@ -73,7 +73,7 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 
 本仓同时承载 **CLC-v1**（极小能力判定语言）的机器可读部分：
 
-- `data/_vectors/clc-v1/` —— **120 条一致性向量**、
+- `data/_vectors/clc-v1/` —— **123 条一致性向量**、
   `vectors.schema.json`、`clc-v1-ambiguities.md`（裁决记录）、**1184 条 P11 属性用例**
   （`property-cases.json`，由 `scripts/gen-property-cases.py` 确定性生成）与
   **12 条 OCMP 离线用例**（`offline-vectors.json`）。消费方实现：
@@ -81,6 +81,12 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
   三方断言 **verdict、规范码 reason 与交集结果（`result_params` / `result_constraints`）**，
   并覆盖 CLC-1.3 的 `allow_unresolved` 独立 verdict 与 §9.1 多 grant 聚合；
   属性测试（收窄性 + 顺序无关）与 offline 用例的覆盖/词表门禁均由 `scripts/` 校验并进 CI。
+- 扩展语料（均带 schema，CI 逐一校验）：`data/_vectors/clc-v1/` 下的 §6.5 参数界（43）、
+  §6.6 `BoundMeet`（27，rev CLC-1.14/1.15）、类型敏感枚举相等（11）、UTF-8 排序（2）、
+  meet 性质用例（500，`scripts/gen-param-bounds-meet-property-cases.py` 确定性生成）、
+  §8.5 `Resolve`（26）与 §7.1 `ConstraintUnion`（12）；`data/_vectors/clc-d/` 下的
+  CLC-D 委派包含（64）、前向闭包性质用例（784）、跨厂商 crosswalk（44）与
+  `AuthorizeWithChain`（15）。
 - `data/std/robot-line-v1/v1.json` —— 工业机器人产线能力（10 项）；工位等分类值按
   CLC-v1 的枚举规则用数组表示（`"station": [1,2,3]`）。
 - 本仓内的规范文档：`docs/capability-language-core-v1.md`（规范正文）、
@@ -92,7 +98,7 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 一句话设计原则：**极小的判定语言**——有限的值、三条关系（蕴含/匹配/交集）、两个判定函数、
 **没有控制流**、缺省即拒绝（fail-closed）、**未声明的参数不构成授予**。
 
-原则声明（rev 2）共 P1–P12，另有四条"可被跑"的性质：**本地可判**（核心规则不得联网）、
+原则声明（rev 4）共 P1–P12，另有四条"可被跑"的性质：**本地可判**（核心规则不得联网）、
 **有界工作量**（参数 ≤512 字节、嵌套 ≤32 层，超限即拒）、**组合只收窄**（交集必须被每个源覆盖且与顺序无关）、
 **一致即门槛**（≥2 个独立实现 verdict 与规范码一致才算完成）。每条原则绑定规范条文 + 向量/测试，
 台账与已记录的缺口见 `docs/capability-language-core-principles-v1.md` §7–§9。
