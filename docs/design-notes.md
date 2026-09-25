@@ -237,6 +237,47 @@ also aligns `Authorize`'s params-level reason propagation with the four bound
 codes, so a bound violation reports `params_out_of_range` rather than collapsing
 to `capability_not_authorized`.
 
+## D12 — Cross-family `BoundMeet` is refused (2026-09-25; decided and applied in CLC-1.15).
+
+Iman Schrock's review of revision 1.14 found the numeric ∩ enum meet in §6.6
+unsound: with numeric `{min:2,max:4}` and enum `{1,3,5}` the meet is `enum{3}`,
+which **accepts the array `[3]`** — an operation the numeric source rejects
+(`params_exceed_grant`, §6.5 layer 9) while the enum source admits it (§6.5
+layer 8).  The meet is therefore broader than either source, and §6.6's claim
+that "the enumerated members fully denote the meet" does not hold.
+
+**Decision: remove the exception rather than repair it.**  §6.5 already states
+that "mixing families (e.g. `enum` with `max` ...) is rejected
+(`invalid_params_binding`)", and §6.6 already fails the cardinality-only
+sub-case closed for the same reason ("two families, which the closed grammar
+cannot express").  The numeric ∩ enum bullet is the one place the grammar tried
+to combine instead of refuse; it goes, and every cross-family combination fails
+closed with `invalid_params_binding`.
+
+**Why removal and not repair.**  A sound cross-family meet would have to carry
+both the numeric shape constraint and the enum member set — two families in one
+Bound, which the closed grammar deliberately does not express.  Repairing it
+would add algebra; removing it deletes a rule.  If a real need for cross-family
+narrowing appears, a rule can be added then, with a sound definition.  Precedent
+for adding it later is CLC-1.14 itself: it turned "a `param_bounds` chain can
+never be fused-authorized" into "it can" without changing any existing
+successful result.
+
+**Companion changes.**  §6.5's enum equality is defined as JSON type-sensitive
+(the same review's second finding: Python treats `true` and `1` as equal, so it
+allows where TypeScript denies), and the property suite gains the invariant the
+review asked for — every successful meet authorizes only operations that each
+source authorizes — plus `param_bounds` cases, which the 1,184 and 784 suites
+currently lack.
+
+**Confirmed when recording it.**  §13.4.3 containment already refuses
+cross-family comparison — "a numeric family bound must [be within it]", "an
+`enum` family must be a subset", and "a child Bound that **adds a family the
+parent does not declare** ... is `params_not_narrower`".  So of the three places
+a bound is compared, two (`§6.5` grammar, `§13.4.3` containment) already refuse
+cross-family and only `Intersect` combined; removing the exception makes all
+three agree.
+
 ## Corpus and tooling state
 
 | Item | State |

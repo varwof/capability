@@ -4,7 +4,7 @@
 
 > **Preview** — Not for production use. APIs and features may change before official release.
 
-**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-09-13
+**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-09-25
 
 ## Abstract
 
@@ -18,7 +18,7 @@ three-valued verdict (`allow`, `deny`, `allow_unresolved`).
 The language is carrier-neutral: it defines what is evaluated, not how it is
 carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
-exercised by a published corpus of 120 vectors and 1184 property cases; three
+exercised by a published corpus of 123 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.
 **Implementation conformance and this document's claim of a conformance class
 are separate.**  An implementation conforms to CLC-A when it meets the
@@ -56,13 +56,14 @@ which is retired.
 | CLC-1.5 | 2026-09-14 | §4.2, §4.3, §6.4, §10, §11, §12, consumer table, Security | **Instance identity stops claiming CAID.**  The projection identity is the language's own (`clc-action:1:<type>:<suite>:<b64url>`), the v1 suite set is `jcs-sha256` only (the invented `jcs-sha384` is gone), and the text now says what a CAID is not: it covers the **complete** Action Object and identifies no occurrence, while this projection covers the declared material set and occurrence binding consumes a discriminator from the effect boundary.  §10 states the tri-state evaluation → binary report collapse (a top-level `unknown` MUST yield `UNSATISFIED`); §11 states that `allow_unresolved` is an authorization result and not evidence, and fixes the layering (CAID for material-action identity, AEC for evidence satisfaction, AEB for the boundary lifecycle); §12, the consumer table and Security Considerations no longer read a delegation chain as containment.  CLC-A's normative algorithm is unchanged and CLC-1.4 inputs stay readable.  **2026-09-14 review corrections to this revision** (text only): the acknowledgement now states which suites were re-run, for which revision; §12.1 declares CLC-1.5; the reason-ordering and reason-code sections are referenced as §9.1/§9.2 to match the rendered numbering; §9 states the grant-side pre-check precedence that Appendix D15 already pins; the abstract separates implementation conformance from this document's claim of a class; and the occurrence sentence names CAID-02 §4.5/§7. |
 | CLC-1.6 | 2026-09-14 | §4.3, §6.2, §10, §12, Appendix B | **`jcs-sha256` is now a real RFC 8785 implementation.** The canonical serializer no longer uses `json.Marshal`'s HTML escaping (which wrote `&`, `<`, `>` as `\u0026`, `\u003c`, `\u003e`): it orders object members by UTF-16 code units (§3.2.3), escapes strings per §3.2.2.2 (only `"`, `\` and the control characters), renders numbers per ECMAScript `Number::toString` (§3.2.2.3), emits no insignificant whitespace, and fails on invalid UTF-8 or lone surrogates instead of substituting U+FFFD.  **The bytes change, so every `clc-action:` identifier and Decision Record input digest changes for material containing `&`, `<` or `>` — the old digests were not JCS and MUST NOT be compared against the new ones.**  Non-ASCII object keys are re-ordered where UTF-16 order differs from UTF-8 byte order.  Refusal of lone surrogates is enforced on the **raw params text** — a decoder would substitute U+FFFD first — and pinned by `params-031`/`params-032`.  CLC-A's verdicts are unchanged and CLC-1.4/1.5 inputs stay readable; the evidence corpus is 32 vectors (adds the RFC 8785 `&` action-id vector and a requirement vector asserting the exported §10 `Satisfaction` report).  **2026-09-15 review corrections**: the abstract no longer states that the independent-implementation bar is met for CLC-A — Section 12's honest scope governs (all three implementations share an author); the decoded-parameter paths of the three implementations now return the same stable denial for malformed Unicode, and Python's decoded size check measures the JCS serialization, matching Go and TypeScript. |
 | CLC-1.7 | 2026-09-15 | §6.2, §12, abstract | **Implementation alignment, not a semantic change.**  The decoded parameter paths of the three implementations now return the same stable denial for malformed Unicode (`invalid_params_number`) that the raw path already returned, and Python's decoded size check measures the JCS serialization instead of a serializer's re-encoding — both were implementations disagreeing with §6.2, not gaps in the language.  The abstract no longer states that the independent-implementation bar is met for CLC-A: Section 12's honest scope governs, since the three implementations share an author.  No change for well-formed inputs. |
-| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  The same revision also states the input-boundary obligation: §6.2 item 7 requires steps 1-5 to run on the received text before any decoding and says an implementation that exposes only a decoded-value entry point MUST NOT be described as refusing malformed Unicode, and §11 states that a §6.2 refusal does not transfer to a decoded value.  The same revision ships six corpus pins alongside the boundary alignment, taking the corpus from 114 to 120 vectors: `entail-007/-008` (class-position wildcard is not a trailing action wildcard, §5.1/§9.3 layer 3), `decide-035` (multi-grant residual-obligation union across covering grants, §9.1/§8.4) and `nested-001/-002/-003` (key closure and presence recurse into nested objects, §6.2/§9.1 layer 7).  Text only - no verdict changes. |
+| CLC-1.8 | 2026-09-15 | §6.2, §12.1, Appendix B | **Implementation alignment, not a semantic change.**  The three raw parameter validators now measure the §6.2 step 4 size on the **JCS form of a number** instead of the received spelling: `1e-6` counts as `0.000001` (four octets more than the token) and `1.0` counts as `1` (two fewer), so the raw boundary no longer accepts an input the decoded boundary refuses or refuses one it accepts — `params-033`–`params-036` pin both directions at the cap.  TypeScript also counts a literal astral character by Unicode scalar value instead of UTF-16 code unit and refuses a literal control character or lone surrogate, matching Go and Python (`params-037`/`params-038`, the literal and escaped spellings of the same string, and `params-039` for the literal control character).  The same revision also states the input-boundary obligation: §6.2 item 7 requires steps 1-5 to run on the received text before any decoding and says an implementation that exposes only a decoded-value entry point MUST NOT be described as refusing malformed Unicode, and §11 states that a §6.2 refusal does not transfer to a decoded value.  The same revision ships six corpus pins alongside the boundary alignment, taking the corpus from 114 to 120 vectors: `entail-007/-008` (class-position wildcard is not a trailing action wildcard, §3; §9.1 layer 3), `decide-035` (multi-grant residual-obligation union across covering grants, §9.1/§8.4) and `nested-001/-002/-003` (key closure and presence recurse into nested objects, §6.2/§9.1 layer 7).  Text only - no verdict changes. |
 | CLC-1.9 | 2026-09-21 | §12.1, §12, §13(new), Appendix A, Appendix B, Appendix C(new), Security, abstract | **Additive: delegation containment folded in.**  Section 13 adds the relation `Contains(parent, child)` with the conformance class **CLC-D** — a four-layer decision (structural validity; identifier coverage under a profile; parameter narrowing with numeric-bound/enumeration/nested/symmetric-key-closure rules; profile-declared carrier checks), three stable reason codes (`child_exceeds_parent`, `params_not_narrower`, `delegation_mode_not_narrower`), a profile contract, and the consequence that a refused hop is a carrier failure and never a core deny (Section 11).  It carries its own corpus and is exercised by both cross-implementations and cross-vendor crosswalks against six adjacent drafts (Appendix C).  **`Contains` does not read, compare or validate constraints** — the constraint set of a chain is the union accumulated by chained `Intersect` (Section 7), not a containment of constraint sets; a null constraint check is not evidence of containment and MUST NOT be reported as one.  New Appendix C pins the carrier-vocabulary and reason-code mapping.  This revision absorbs and retires the standalone containment extension.  **No CLC-A verdict, reason code or vector changes**, and CLC-1.8 inputs stay readable.  The corpus grows by 50 containment vectors, 784 containment property cases and 44 crosswalk vectors. |
 | CLC-1.10 | 2026-09-21 | §6.3, §6.5(new), §9.1, §9.2, §12.1, §13.4.3, Appendix B | **Additive: extended parameter bounds.**  A new optional grant field `param_bounds` (§6.5) carries the bounds `params` cannot express — inclusive `min`/`max`, a `step` multiple rule, `enum` with `min_items`/`max_items` cardinality, an `optional` key marker, and `nested` recursion — without overloading `params` (a `{min,max}` object there would collide with object recursion), so **no existing grant changes meaning**.  A key MUST be declared in at most one of `params`/`param_bounds` (`invalid_params_binding`); four reason codes are added (`invalid_params_binding`, `params_cardinality`, `params_out_of_range`, `params_not_multiple`); the §6.3 scheme-default hook is given a grammar (`param_defaults`, precedence explicit > default > absent).  `param_bounds` is checked at layer 2 and its bounds at layers 7–9, so an implementation that does not implement it refuses a CLC-1.10 input through the minor gate instead of silently ignoring the field.  §13.4.3 gains the containment narrowing rules for the new bounds.  No CLC-A verdict is changed for inputs without `param_bounds`.  It adds 14 containment-narrowing vectors for the new bounds (CLC-D corpus 50 → 64) and 43 core bound vectors (`param-bounds-vectors.json`). |
 | CLC-1.11 | 2026-09-21 | §8.5(new), §9.1, §9.2, §12.1, §13.10.2, Appendix B | **Additive: the residual-obligation consumer loop.**  `Resolve(decision, resolutions, now?)` (§8.5) closes the §8.4 feedback loop: a consumer reports each `unresolved` obligation as `satisfied` / `violated` / `unknown`, the sources combine most-restrictive-first (`violated` ≻ `satisfied` ≻ `unknown`), and the verdict collapses to `allow` (all satisfied), `deny` (`{type}:violated` on any), or `allow_unresolved` (remainder) — terminal `deny`/`allow` inputs pass through untouched.  Supplying `now` makes the core clock evaluate a `time:window` obligation directly, giving it a **TTL**: its discharge horizon is the end of the segment containing `now`, so a cached `allow` expires with the window.  Two input-error codes are added (`invalid_resolution`, `invalid_timestamp`).  §13.10.2 is closed as folded in.  No `Authorize` verdict, reason code or vector changes; a CLC-1.10 implementation that does not implement `Resolve` remains CLC-A conformant.  It adds 26 `Resolve` vectors (`resolve-vectors.json`). |
 | CLC-1.12 | 2026-09-21 | §7.1(new), §12.1, §13.10.3, Appendix B | **Additive: `ConstraintUnion`, the derived chain-constraint projection.**  A consumer that has a verified delegation chain often needs the chain's whole constraint burden without an effective grant; §7.1 exposes the constraint projection of `Intersect` rule 3 as `ConstraintUnion(chain) → string[]` (normalized union, duplicates folded, deterministically ordered).  It is a **projection, not a meet**: no identifier/parameter comparison, no constraint reading/validation, no containment check, and an empty chain fails closed with `absent_source`.  This closes §13.10.3: `Contains` stays a pure subset over `(identifier, parameters)` (constraints outside the relation), and the union is a separate function rather than folded into `Contains`.  It adds 12 `ConstraintUnion` vectors (`constraint-union-vectors.json`). |
 | CLC-1.13 | 2026-09-21 | §13.6, §13.10.4, §13.11(new), §13.12(renumbered), §12.1, Appendix B | **Additive, CLC-D-scoped: `AuthorizeWithChain`, the fused chain check.**  §13.11 adds `AuthorizeWithChain(chain, op)`: an empty chain denies `absent_source`; each adjacent hop is checked with `Contains` and the first failure denies with that hop's §13.5 code (before op validation); otherwise the operation is authorized against `Intersect(chain...)`, which is what brings every ancestor's params **and** constraints (a union axis, outside containment) into force.  Authorizing against the leaf alone was rejected as unsound.  It closes §13.10.4: the fourth relation is now defined, as a CLC-D function, not a core change.  CLC-D conformance now also requires it.  It adds 14 `authorize-chain-vectors.json` vectors; no CLC-A verdict changes.  **Editorial review corrections to this revision (text only, no verdict or corpus change):** §6.3 `Entails` now shows the §6.5 `param_bounds` step and reads the declared key set; §6.5 states that intersecting `param_bounds` is undefined and fails closed (`invalid_params_binding`) and renders the Bound grammar as JSON; §9.2 widens `invalid_params_number` to "no canonical form" (matching §6.2 step 7); §7's object example now intersects numeric leaves to their minimum (`{"a":1}`∩`{"a":2}`→`{"a":1}`) instead of denying; §8.1's `time:window` rule is stated in seconds-of-day, defining the reserved `end:"00:00"` as 86400; §8.5/§11 add the caching horizon for a core-clock discharge; §9 runs the grant-side pre-check before op validation and unions residuals only across covering-*and-allowing* grants; §10 says a top-level `unknown` yields `UNSATISFIED` (no evidence-side `allow_unresolved`); §13.2's `ContainmentResult` is rendered as JSON; the BCP 14 / RFC 3339 / JCS / I-JSON conventions and references are added; and stale cross-references (Appendix D15, §5.1/§9.3, "four foreign representations") are corrected.  **Second editorial pass (text only):** §7 rule 3 states the constraint merge as a **union** (constraints are conjunctive; a tighter same-type bound binds by construction, nothing is dropped as a "meet"); §6.5 closes the `optional` × `param_defaults` precedence (presence is decided first, `optional` wins over a default, no "is the default needed?" recursion) and states that a default is not part of the declared set nor the containment lattice; §6.5 adds the four-layer presence/declaration/constraint/value model that keeps the three senses of `{}` distinct; and §7 makes the **value → authorization-set denotation** explicit (numbers denote `(-∞,v]`, so `{"a":1}∩{"a":2}={"a":1}` is a minimum, and an empty meet needs genuinely disjoint denotations). |
 | CLC-1.14 | 2026-09-21 | §6.6(new), §7, §13.11, §12.1, Appendix B | **Additive: `Intersect` now meets `param_bounds` (`BoundMeet`).**  CLC-1.10 grafted the extended bounds onto the grant but left their intersection undefined, so `Intersect` refused any source carrying `param_bounds` (`invalid_params_binding`) and a delegation chain that used `param_bounds` could never be fused-authorized (`AuthorizeWithChain` denies at its `Intersect` step).  §6.6 defines the meet per family: numeric `min`=greatest, `max`=least, `step`=the coarser grid when one exactly divides the other (else fail-closed); enum member intersection and tightened cardinality; `nested` recursion over identical key sets; `optional` by conjunction; numeric∩enum reduces to the filtered enum; scalar∩nested and `min>max` are an empty meet (`no_overlap`).  A key must keep one declaration site across sources (§13.4.3 already guarantees this for a valid chain).  It adds no reason code and is strictly additive: a chain without `param_bounds` is byte-for-byte unchanged, so every existing verdict, reason code and vector is untouched.  It adds `param-bounds-meet-vectors.json`, and updates `authorize-chain-vectors.json` (`ac-012` now allows — a `param_bounds` chain fuses — and `ac-015` denies with `params_out_of_range` at a meet that is empty). |
+| CLC-1.15 | 2026-09-25 | §6.5, §6.6, §7, §7.1, §12.1, §13.2, §13.3, §13.4.5, §13.5, §13.6, §13.11, §13.12, Appendix B.12, IANA | **Corrective: the Iman Schrock review of CLC-1.14 landed.**  The §6.6 `numeric ∩ enum` exception is **removed** — the filtered-enum meet was broader than either source (numeric `{min:2,max:4}` ∩ enum `{1,3,5}` filtered to `enum{3}`, which accepts the array `[3]` while the numeric source fail-closes it at §6.5 layer 9), so every cross-family numeric × enum meet now refuses with `invalid_params_binding` in either order, agreeing with §6.5's mixed-family rejection and §13.4.3's added-family refusal.  §6.5 layer 8 gains the missing definition of enum `equal`: **JSON type-sensitive equality** (`true ≠ 1`, `"1" ≠ 1`; numbers compare after §6.2 canonicalization, so `1 = 1.0`), fixing the implementation divergence where Python's `True == 1` allowed what Go/TypeScript denied.  §6.6's step-grid rationale is corrected: incommensurable steps (5, 7) *do* share a common grid (multiples of 35) — the meet fails closed not because no grid exists but because the meet's `step` must be one of the two declared steps and the language does not synthesize an undeclared grid (behavior unchanged).  §7.1 pins `ConstraintUnion`'s ordering to **UTF-8 byte order** (UTF-16 code-unit order placed an emoji before U+E000–U+FFFF characters).  `delegation_mode_not_narrower` is attributed to the **binding-profile pre-check** (§13.4.5) and removed from the core's reason commitments (§12, §13.5, §13.6, §13.11, IANA) — the relation never took a mode argument.  §13.3 states `Contains` antisymmetry on **semantic equivalence classes**, and §13.11 adds the caller's complete-authenticated-root-first-chain obligation (no decision rule changes).  §12.1 records the honest verdict-stability scope of the CLC-1.10→1.14 `param_bounds`-meet change (deny→allow on that subset) and of this revision (allow→deny for the cross-family sub-case).  No input without `param_bounds` changes verdict; on the §6.6 meet subset the cross-family direction reverses CLC-1.14.  Corpus: adds `bm-026`/`bm-027` (cross-family refusal, both orders), `param-bounds-equality-vectors.json` (type-sensitive equality), `constraint-union-collation-vectors.json` (UTF-8 order), and `param-bounds-meet-property-cases.json` (the meet invariant: every successful meet authorizes only what **every** source authorizes), and `intersect-011/-012/-013` in `vectors.json` (the 2026-09-25 cross-type audit of §7 rule 6: string × number merge refusal, type-sensitive enum-member equality, `1.0` ≡ `1` — corpus 120 → 123 vectors).  **Review follow-up (same date):** the scalar ∩ `nested` pair (numeric or enum vs. object, either order) is adjudicated from the CLC-1.14 empty-meet reading to the cross-family refusal `invalid_params_binding` — design-notes D12, so the empty-meet code stays reserved for genuinely empty meets *within one value family* (§6.6, §7, Appendix B.12); `bm-012`/`bm-013` (numeric × enum, with and without an in-range member) are re-adjudicated to a single refusal reason for every cross-family pair (a baseline-impacting change: allow→deny on that subset, recorded in §12.1); and the §8.4 residual-obligation collation is pinned to the §7.1 UTF-8 byte order (the TS implementation sorted by default UTF-16 code-unit order, silently diverging from Go and Python) — the corpus runners now assert the exact manifest order instead of pre-sorting both sides. |
 
 ---
 
@@ -569,10 +570,21 @@ keys, number shape, size (512 octets) and depth (32), checked at layer 2.
   `param_bounds`, where every declared key is required.)
 - **Enum family (layer 8).**  If `enum` is declared, the request value must be a
   member (`not_in_enum`, unchanged rule): a scalar request must equal a member;
-  an array request must have every element equal to a member.  If `min_items` /
-  `max_items` are declared, the **request cardinality** (an array's length; a
-  scalar counts as 1) must satisfy `min_items ≤ n ≤ max_items`, else
-  `params_cardinality`.
+  an array request must have every element equal to a member.  `Equal` here is
+  **JSON type-sensitive equality**: two values are equal only when they have the
+  same JSON type *and* the same value — `true` equals neither `1` nor `0` (the
+  §6.2 rule that booleans are never numbers applies to set membership as well),
+  and the string `"1"` equals neither the number `1` nor `true`.  Numbers are
+  compared after the §6.2 canonicalization of the input boundary (one IEEE-754
+  binary64 value, rendered per ECMAScript `Number::toString` under JCS
+  [RFC8785]), so `1` and `1.0` — the same value in two spellings — **are**
+  equal.  The same equality is used by §6.2 array membership, by the §6.6 enum
+  intersection, and by §13.4.3 enum narrowing; implementations MUST NOT
+  substitute a host-language equality that coerces across JSON types (e.g. a
+   language where `true == 1`).  If `min_items` / `max_items` are declared,
+   the **request cardinality** (an array's length; a
+   scalar counts as 1) must satisfy `min_items ≤ n ≤ max_items`, else
+   `params_cardinality`.
 - **Numeric family (layer 9).**  `min`/`max` are **inclusive**: a numeric
   request value must satisfy `min ≤ v ≤ max` (each bound, when declared), else
   `params_out_of_range`.  `step` requires the request value to be an integer
@@ -642,34 +654,67 @@ families are those of §6.5; the meet is defined per key declared in
   minimum, `max` the **least** declared maximum (undeclared means unbounded).
   `step`: if both declare one and one is an exact multiple of the other (the
   §6.5 multiple predicate), the meet's `step` is the **coarser** (larger) of the
-  two — the coarser grid is a subset of the finer, so it is the meet; if neither
-  divides the other, no single binary64 `step` denotes both grids and the meet
-  **fails closed** (`invalid_params_binding`).  One declared `step` is carried
-  through.  `min > max` after combining → the meet is **empty** → `no_overlap`.
+  two — the coarser grid is a subset of the finer, so it is the meet.  If
+  neither declared step is an exact integer multiple of the other, the meet
+  **fails closed** (`invalid_params_binding`).  The two grids may still share
+  values — the common grid of `step:5` and `step:7` is the set of multiples of
+  35, so the intersection is not empty — but the meet's `step` must be one of
+  the two **declared** steps: neither 5 nor 7 is an integer multiple of the
+  other, so neither declared grid is a subset of the other, and the language
+  does not synthesize an undeclared grid (such as the least common multiple) —
+  no single `step` member of the two Bounds denotes both grids.  One declared
+  `step` is carried through.  `min > max` after combining → the meet is
+  **empty** → `no_overlap`.
 - **enum family** (`enum`/`min_items`/`max_items`): the `enum` member sets
-  intersect (exact equality); if both sources declare `enum` and the intersection
-  is empty → `no_overlap`; `min_items` is the **greatest** declared value,
-  `max_items` the **least**; `max_items < min_items` → `no_overlap`.
+  intersect (exact equality — the JSON type-sensitive equality §6.5 layer 8
+  defines, so `1`, `true` and `"1"` are three distinct members); if both
+  sources declare `enum` and the intersection is empty → `no_overlap`;
+  `min_items` is the **greatest** declared value, `max_items` the **least**;
+  `max_items < min_items` → `no_overlap`.
 - **nested family** (`nested`): the two objects MUST have the **same key set**,
   else `no_overlap` (exactly as object-valued `params`, §7); the result recurses
   `BoundMeet` per key, with `optional` combining as above at every depth.
-- **numeric ∩ enum**: the enum member list is filtered to members that satisfy
-  the numeric bound (`min`/`max`/`step`); the result is an **enum**-family bound
-  (the enumerated members fully denote the meet) carrying the enum side's
-  cardinality.  An empty filtered list → `no_overlap`.  If the enum side has
-  **no member list** (only `min_items`/`max_items`), the meet would require a
-  numeric scalar bound **and** a cardinality bound at once — two families, which
-  the closed grammar cannot express — and **fails closed**
-  (`invalid_params_binding`).
-- **scalar ∩ nested** (numeric or enum vs. `nested`): a scalar value and an
-  object value have no common value → `no_overlap`.
+- **numeric ∩ enum (either source order)**: **refused — fails closed**
+  (`invalid_params_binding`).  A sound meet would have to carry both the
+  numeric side's shape constraint (`min`/`max`/`step`, which §6.5 layer 9
+  applies to numeric scalar request values only) and the enum side's member
+  set (which §6.5 layer 8 applies to scalars **and** to arrays whose elements
+  are all members) in one Bound — two families, which the closed §6.5 grammar
+  deliberately does not express.  Filtering the member list by the numeric
+  bound (the rev CLC-1.14 rule, removed here) was **broader than either
+  source**: for numeric `{min:2,max:4}` ∩ enum `{enum:[1,3,5]}` the filtered
+  result `enum{3}` accepts the array `[3]` (§6.5 layer 8: every element is a
+  member), while the numeric source fail-closes that same request (§6.5 layer
+  9: a numeric-family bound applied to a non-number request value is
+  `params_exceed_grant`).  Refusing the whole combination agrees with the rest
+  of the language: §6.5 rejects *declaring* two families in one Bound
+  ("Mixing families … is rejected (`invalid_params_binding`)"), and §13.4.3
+  rejects *narrowing* into a family the other side does not declare ("a child
+  Bound that **adds a family the parent does not declare** … is
+  `params_not_narrower`").  The refusal covers every numeric × enum pair —
+  with or without a member list on the enum side (a cardinality-only enum is
+  the same cross-family clash), and regardless of whether any member happens
+  to fall inside the numeric range: the family clash is decided **before** any
+  member or range math, and it is symmetric in the two sources.
+- **scalar ∩ nested** (numeric or enum vs. `nested`), in either order: a
+  cross-family meet, refused with `invalid_params_binding` **before** any
+  value math — no single-family Bound can carry both a scalar shape (a value
+  presence) and the object recursion; the refusal is symmetric in the sources
+  and holds regardless of the nested side's contents, exactly like the
+  numeric × enum case (design-notes D12).  A CLC-1.14 draft read this pair as
+  an empty meet (`no_overlap`, since no request value is both a scalar and an
+  object); rev CLC-1.15 adjudicates it to the unrepresentable-meet code so
+  that the empty-meet code stays reserved for genuinely empty meets *within
+  one value family*.
 - **empty Bound** `{}` is the identity for the value families (`{} ∩ X = X`);
   its `optional` still participates.
 
 The result always carries **at most one** value family, so it is a valid §6.5
 Bound.  All failure modes are the §9.2 codes already associated with `Intersect`
-(`no_overlap` for an empty meet, `invalid_params_binding` for an unrepresentable
-one); no new reason code is introduced.
+(`no_overlap` for an empty meet *within one value family*, such as `min > max`
+or disjoint enums; `invalid_params_binding` for an unrepresentable one — every
+cross-family pair in either order, including scalar ∩ nested, and
+incommensurable step grids); no new reason code is introduced.
 
 **Key site.**  A key's **declaration site** (`params` vs `param_bounds`) must
 agree across the sources of one `Intersect`.  A key declared in `params` by one
@@ -765,11 +810,14 @@ under the §6.2 rules, so a numeric leaf intersects to its **minimum**
 declared in `param_bounds` with the meet of §6.6: numeric `min`/`max`/`step`,
 enum member intersection and cardinality, and `nested` recursion, with
 `optional` combined by conjunction.  An empty meet is `no_overlap`; an
-unrepresentable one (two step grids with no common multiple, or a numeric
-bound met with a cardinality-only enum) is `invalid_params_binding`.  A key
-declared in `params` by one source and `param_bounds` by another is refused
-(`invalid_params_binding`, §6.6 "Key site").  The §7.1 `ConstraintUnion`
-projection is separate and unaffected.
+unrepresentable one is `invalid_params_binding` — any cross-family pair in
+either order (numeric × enum, including a cardinality-only enum and
+regardless of whether any member falls inside the numeric range; and scalar ×
+`nested`), or two step grids where neither declared step is an exact integer
+multiple of the other (§6.6).  A key declared in `params` by one source and
+`param_bounds` by another is refused (`invalid_params_binding`, §6.6 "Key
+site").  The §7.1
+`ConstraintUnion` projection is separate and unaffected.
 
 ### 7.1 ConstraintUnion (derived projection)
 
@@ -783,9 +831,23 @@ ConstraintUnion(chain) → string[]        // chain = ordered Grant[]
 ```
 
 It returns the **normalized union** of every constraint string carried by the
-grants in `chain` — duplicates folded, result deterministically ordered
-(lexically sorted) — the same normalization `Intersect` applies, so the two
-never disagree.
+grants in `chain` — duplicates folded, result deterministically ordered.
+"Lexically sorted" is pinned to **UTF-8 byte order**: the normalized strings
+are compared octet by octet over their UTF-8 encodings.  For well-formed
+Unicode text this equals code-point order, and it is identical in every
+implementation whatever the host language's native string representation is —
+notably it is **not** UTF-16 code-unit order, which places supplementary-plane
+characters (encoded as surrogate pairs, first unit `U+D800`–`U+DBFF`) before
+characters in `U+E000`–`U+FFFF`, so an emoji would sort before a
+private-use-area character although its code point is higher.  This collation
+sits *after* §6.2 canonicalization, not instead of it: JCS [RFC8785] §3.2.3's
+UTF-16 code-unit order governs object **member** order inside a canonical
+serialization, while this section's UTF-8 byte order governs the emitted
+constraint-string **list**; the two artefacts keep their own pinned collations
+and neither re-orders the other.  The union is the same normalization
+`Intersect` applies, so the two never disagree.  The residual-obligation list
+of §8.4 (and the ordered `Resolve` output of §8.5) re-uses this same collation;
+the collation is defined here once, not restated there.
 
 `ConstraintUnion` is a **projection, not a meet**: it does not compare
 identifiers or parameters, does not read or validate constraint values, and
@@ -925,9 +987,14 @@ obligations unconfirmed must explicitly handle `allow_unresolved` to pass.
 the verdict itself must refuse the two-value short-circuit.
 
 `unresolved` semantics and ordering: `[]` for `deny` and for fully evaluated
-`allow`; for `allow_unresolved` the normalized + sorted constraint strings
-(duplicates folded, result ordered) — the order is deterministic: the same
-input yields the same sequence in any implementation.
+`allow`; for `allow_unresolved` the normalized constraint strings with
+duplicates folded — **the conditional collation order of §7.1
+(`#`-separated, then by UTF-8 byte sequence), the same comparison the
+`ConstraintUnion` payload uses** (rev CLC-1.15).  The order is deterministic:
+the same input yields the same byte sequence in any implementation — in
+particular NOT the ECMAScript default string order (UTF-16 code-unit order);
+join the residual obligations across all sources and sort exactly once,
+before emitting the decision.
 
 **Combined obligations (consumer side)**: multiple `unresolved` constraints
 of the same `(scheme,type)` form a conjunction (AND) — satisfying A and B
@@ -1324,10 +1391,13 @@ reason codes (§9.2).
 
 **CLC-D (delegation side)** — the containment relation, defined in
 **Section 13**.  A conforming implementation MUST implement
-`Contains(parent, child)` with its four ordered layers, its three stable
-reason codes (`child_exceeds_parent`, `params_not_narrower`,
-`delegation_mode_not_narrower`) and its profile contract (§13.8.1), and MUST
-pass `containment-vectors.json`.  A delegation policy that requires each hop
+`Contains(parent, child)` with its ordered layers, the relation's two stable
+reason codes (`child_exceeds_parent`, `params_not_narrower`) and its profile
+contract (§13.8.1), and MUST pass `containment-vectors.json`.  The third
+CLC-D code, `delegation_mode_not_narrower`, is produced by the binding
+profile's delegation-mode pre-check (§13.4.5) — never by `Contains`, which
+takes no mode argument — and belongs to the profile's obligations.  A
+delegation policy that requires each hop
 to stay inside the previous hop's boundary reads `Contains`, not §7:
 entailment and intersection over the **declared** sets are necessary but not
 sufficient, because they do not compare a child's boundary against a parent's.
@@ -1386,7 +1456,7 @@ tree pinned as [CLC-CORPUS]; repository paths written as `capability/...`
 throughout this document are relative to that pinned tree, so the exact
 vectors named here are retrievable.  CLC-A conformance is exercised by two
 machine-readable reference suites at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 120 vectors mapped
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 123 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
@@ -1440,7 +1510,7 @@ provisioning and carries its own EXPERIMENTAL banner.
 ### 12.1 Language Revision
 
 Every implementation declares a language revision `CLC-<major>.<minor>` —
-this document declares **`CLC-1.14`**.  A capability input (grant,
+this document declares **`CLC-1.15`**.  A capability input (grant,
 operation, or OCM) SHOULD carry the revision it was authored against; an
 input without a declared revision is treated as `CLC-1.0`.
 
@@ -1506,11 +1576,55 @@ input without a declared revision is treated as `CLC-1.0`.
   `param_bounds` from `invalid_params_binding` to the correct meet or empty-meet
   result.  An implementation that does not implement §6.6 MUST refuse a
   `param_bounds` input through the minor gate rather than intersect it wrongly.
+  **Honest scope of that change (noted in rev CLC-1.15).**  One subset of
+  inputs does **not** evaluate identically across the CLC-1.10→1.14 minor
+  range: the inputs that declare `param_bounds` *and* reach a relation that
+  meets them — `Intersect` (§7) or `AuthorizeWithChain` step 3 (§13.11) —
+  with two or more sources declaring a Bound for the same key.  On that
+  subset the direction of the change is **deny → allow**: what CLC-1.10–1.13
+  uniformly refused (`invalid_params_binding`) becomes the correct meet
+  result (usually an allow-side effective grant); where the meet is empty,
+  the denial's reason changes from `invalid_params_binding` to `no_overlap`.
+  Entailment against a single grant (`Entails`/`Authorize`), containment, and
+  every input without `param_bounds` are verdict-stable across the whole 1.x
+  range.  The compatible-reading rule above is therefore intact — it governs
+  *readability*, not verdict stability — but verdict stability across minor
+  revisions does not hold for that one subset, and a consumer MUST NOT assume
+  it.  (Rev CLC-1.15 moves the same subset again, in the opposite direction,
+  for cross-family meets only; see its entry below.)
+
+- **CLC-1.15 is a corrective revision** (review-driven; see the Revision
+  History): the cross-family `numeric ∩ enum` meet exception of CLC-1.14 is
+  removed, so every numeric × enum meet refuses with
+  `invalid_params_binding` in either source order (§6.6); enum membership
+  `equal` is defined as JSON type-sensitive equality (§6.5 layer 8);
+  `ConstraintUnion`'s deterministic ordering is pinned to UTF-8 byte order
+  (§7.1); `delegation_mode_not_narrower` is attributed to the binding
+  profile's mode pre-check and moved out of the core reason commitments
+  (§13.4.5, §13.5, §13.6, §13.11); `Contains` antisymmetry is stated on
+  semantic equivalence classes (§13.3); and `AuthorizeWithChain` states the
+  caller's complete-authenticated-root-first-chain obligation (§13.11).  It
+  changes no verdict, reason code or vector for an input without
+  `param_bounds`.  On the §6.6 meet subset the direction **partly reverses**
+  CLC-1.14: a cross-family `numeric × enum` intersection that CLC-1.14
+  reduced to a filtered enum — an allow-side effective grant — now refuses
+  (**allow → deny**, `invalid_params_binding`), because the filtered enum was
+  broader than either source (§6.6); same-family meets are unchanged.  The
+  same review adjudicated the scalar × `nested` pair (numeric or enum vs.
+  object, either order) to the same cross-family refusal: that pair was
+  already denied in CLC-1.14 (as `no_overlap`), so the direction there
+  changes the **reason code only** (`→ invalid_params_binding`), not the
+  verdict (§6.6, design-notes D12).  The §8.4 residual-obligation list and
+  the `Resolve` output re-use the §7.1 UTF-8 byte-order collation; an
+  implementation whose native default ordering is UTF-16 code-unit order MUST
+  apply the pinned comparison explicitly.  An implementation that does not
+  apply this revision MUST declare CLC-1.14 or earlier and let the minor gate
+  (§12.1) resolve any input that relies on the corrected behavior.
 
 - **CLC-A conformance and the minor gate are the two sides of one rule.**
   Claiming CLC-A (this section) means implementing the CLC-A-relevant
   semantics of the revision claimed — so an implementation that advertises
-  `CLC-1.14` MUST implement `param_bounds` (grammar and the §6.6 meet), `Resolve`, `ConstraintUnion` and
+  `CLC-1.15` MUST implement `param_bounds` (grammar and the §6.6 meet), `Resolve`, `ConstraintUnion` and
   the §6.2 canonicalization, not merely tolerate their inputs.  The minor gate
   is the complement for an implementation that **lags**: it declares an older
   revision and refuses any input that uses a field or function introduced
@@ -1585,9 +1699,12 @@ Grant and Operation are as defined in §2/§5 (identifier per §3, parameters pe
 - **Bound** — a declared constraint value as interpreted by §6.2/§8.1 value
   semantics.
 - **Narrower** — a child grant is narrower than its parent when every value it
-  declares is within the parent's declared bounds, its key set is closed by the
-  parent's, and its delegation mode does not widen the parent's.
-- **Mode lattice** — an abstract carrier-defined order over delegation modes;
+  declares is within the parent's declared bounds and its key set is closed by
+  the parent's.  Where the carrier defines a delegation mode, the child's mode
+  must not widen the parent's either — that half is the binding profile's
+  pre-check, not part of the language relation (§13.4.5).
+- **Mode lattice** — an abstract carrier-defined order over delegation modes,
+  exercised by the binding profile's pre-check (§13.4.5), never by `Contains`;
   the AIC-JWT ordering is pinned in §13.8.
 
 ### 13.3 Relation Signature
@@ -1596,7 +1713,7 @@ Grant and Operation are as defined in §2/§5 (identifier per §3, parameters pe
 Contains(GP: Grant, GC: Grant) -> ContainmentResult
 
 ContainmentResult = {        // JSON object (not ASN.1)
-  "contains": <boolean>,     // false <=> one of the layers 2-4 failed
+  "contains": <boolean>,     // false <=> one of the §13.4 layers failed
   "reason":   <string>       // resolved reason code (core §9.2 code)
 }
 ```
@@ -1605,10 +1722,18 @@ ContainmentResult = {        // JSON object (not ASN.1)
 - `reason` on success is empty; on failure it carries the **first failing
   layer's** reason code, per §13.4 layer order (deterministic: input order of the
   two grants never influences which layer reports first).
-- The relation is **antisymmetric**: `Contains(A,B)` and `Contains(B,A)` both
-  hold only when A and B denote identical declared sets and identical bounds
-  (and equal modes); containment of two *distinct* grants in both directions is
-  a contradiction and MUST NOT be reported.
+- The relation is **antisymmetric on semantic equivalence classes**, not on
+  Grant objects: `Contains(A,B)` and `Contains(B,A)` both hold exactly when A
+  and B fall in the same class — they denote the same identifier coverage,
+  the same declared parameter key set and the same bounds under the §6.2/§6.5
+  value semantics, with surface-equivalent spellings identified (`params:{}`
+  ≡ absent, §6.2).  Two syntactically different Grant objects in one class
+  (an equivalence, not an identity of JSON text) therefore contain each other;
+  containment of grants in two *distinct* classes in both directions is a
+  contradiction and MUST NOT be reported.  Delegation modes are not part of
+  the relation (§13.4.5), so mode equality is neither required nor observable
+  here — where a carrier binds modes, the profile's pre-check owns that
+  comparison.
 
 ### 13.4 Containment Algorithm
 
@@ -1719,29 +1844,41 @@ compose the chain's intersections as well (§13.8).  This is the honest reading:
 containment is a relation over the declared **identifier and parameter**
 boundary, and constraints are enforced by the union, not by this relation.
 
-#### 13.4.5 Delegation-mode lattice
+#### 13.4.5 Delegation-mode lattice (binding-profile pre-check)
 
 Where a carrier defines a delegation mode, the child's mode must not widen the
-parent's.  The lattice order is carrier-defined (CLC-D does not invent modes);
-the AIC-JWT order is `authorized < representative` — a child may be
-`authorized` under a `representative` parent, never the reverse.  Failure yields
-`delegation_mode_not_narrower`.  A carrier without a mode concept SHALL treat
-this layer as passing.  As with constraints, mode is a carrier-level concept:
-the language relation `Contains(GP, GC)` takes no mode argument.
+parent's.  This check is a **required binding-profile pre-check**, not a layer
+of the language relation: as with constraints (§13.4.4), mode is a
+carrier-level concept — Grant values carry no mode, and the relation
+`Contains(GP, GC)` takes no mode argument, so a core `Contains` verdict can
+never express a mode decision.  A binding profile (§13.8.1) that maps a
+mode-carrying carrier MUST run the mode-lattice check itself, before or
+alongside each `Contains` call, and MUST report
+`delegation_mode_not_narrower` **from the profile** when the child's mode
+widens the parent's; it MUST NOT rely on `Contains` for that check and MUST
+NOT present a `Contains` verdict as evidence that the mode narrowed.  The
+lattice order is carrier-defined (CLC-D does not invent modes); the AIC-JWT
+order is `authorized < representative` — a child may be `authorized` under a
+`representative` parent, never the reverse.  A carrier without a mode concept
+has no pre-check to run.
 
 ### 13.5 Reason Codes
 
-CLC-D adds exactly three child-level reason codes to the core's registry.
-Everything else reuses CLC-A codes.  An implementation MAY collapse
-`child_exceeds_parent` for identifier failures into the core's
-`capability_not_authorized` at a boundary that must not reveal policy shape
-(§11), but MUST NOT collapse the other two.
+CLC-D registers exactly three child-level reason codes; **two of them are
+returned by the relation**, and everything else a `Contains` result carries
+reuses CLC-A codes.  The third is produced only by the binding-profile
+delegation-mode pre-check (§13.4.5): the relation takes no mode argument and
+MUST NOT return it.  An implementation MAY collapse `child_exceeds_parent`
+for identifier failures into the core's `capability_not_authorized` at a
+boundary that must not reveal policy shape (§11), but MUST NOT collapse
+`params_not_narrower`; a profile that maps a mode-carrying carrier MUST NOT
+collapse `delegation_mode_not_narrower` either.
 
-| Code | Layer | Meaning |
-|------|-------|---------|
-| `child_exceeds_parent` | 2 | child identifier not covered by parent identifier |
-| `params_not_narrower` | 3 | a child parameter is not within the parent's declared bounds / key set |
-| `delegation_mode_not_narrower` | carrier | child delegation mode widens the parent's |
+| Code | Produced by | Meaning |
+|------|-------------|---------|
+| `child_exceeds_parent` | `Contains`, layer 2 (§13.4.2) | child identifier not covered by parent identifier |
+| `params_not_narrower` | `Contains`, layer 3 (§13.4.3) | a child parameter is not within the parent's declared bounds / key set |
+| `delegation_mode_not_narrower` | binding-profile pre-check (§13.4.5) — never by `Contains` | child delegation mode (a carrier concept) widens the parent's |
 
 There is deliberately no constraint reason code: constraints are not part of the
 relation (§13.4.4).
@@ -1751,8 +1888,10 @@ relation (§13.4.4).
 **CLC-D** is an optional conformance class stacked on CLC-A.  A conforming
 implementation:
 
-- MUST implement `Contains` (§13.4) and the three §13.5 reason codes, and pass
-  the CLC-D corpus (§13.7);
+- MUST implement `Contains` (§13.4) and the relation's two §13.5 reason codes,
+  and pass the CLC-D corpus (§13.7); where the implementation also ships a
+  binding profile for a mode-carrying carrier, that profile owns the
+  `delegation_mode_not_narrower` pre-check (§13.4.5);
 - MUST (rev CLC-1.13) implement `AuthorizeWithChain` (§13.11) and pass the
   `authorize-chain-vectors.json` corpus, so the one-call chain check is exercised
   by the same class that owns containment;
@@ -2170,9 +2309,11 @@ AuthorizeWithChain(chain, op) → Decision      // chain = ordered Grant[], root
 1. An **empty chain fails closed**: `deny("absent_source")` (§7 rule 5).
 2. For each adjacent pair `(chain[i], chain[i+1])`, evaluate `Contains`
    (§13.4).  The first hop that is not contained ends the call with
-   `deny(reason)`, where `reason` is that hop's §13.5 code
-   (`child_exceeds_parent`, `params_not_narrower`,
-   `delegation_mode_not_narrower`).  This chain gate runs **before** op
+   `deny(reason)`, where `reason` is that hop's §13.5 code —
+   `child_exceeds_parent` or `params_not_narrower`, the two codes the
+   relation can return; `delegation_mode_not_narrower` never appears here,
+   because the chain gate calls `Contains`, which takes no mode argument
+   (§13.4.5).  This chain gate runs **before** op
    validation: a broken chain is reported even when the operation is also
    absent, because the chain is the subject of this function.
 3. Otherwise compute the effective chain grant `G = Intersect(chain...)`
@@ -2184,6 +2325,15 @@ AuthorizeWithChain(chain, op) → Decision      // chain = ordered Grant[], root
    `invalid_params_binding`) is returned as `deny(reason)`.
 4. Return `Authorize(G, op)` (§9) unchanged — `allow` / `allow_unresolved` /
    `deny` with its own §9 reason codes.
+
+**Caller obligation.**  `AuthorizeWithChain` evaluates the chain **as
+presented**: the caller MUST supply the complete, authenticated, root-first
+chain.  The function fetches no missing link, verifies no signature or trust
+anchor, and detects no truncation or reordering — a verdict over a truncated,
+reordered or unauthenticated chain is a verdict about the presented sequence,
+not about the delegation it does not carry (authentication is the carrier's
+concern, §11).  This obligation adds no decision rule: the steps above are
+unchanged by it.
 
 `AuthorizeWithChain` is a **CLC-D function**: it is not part of CLC-A, and an
 implementation claiming only CLC-A is unaffected.  It introduces no new core
@@ -2200,7 +2350,7 @@ refuses.  The two-grant form `AuthorizeWithChain(parent, child, op)` named in
 
 Containment is folded into this document's revision stream: its changes are
 recorded in the Revision History and its conformance class CLC-D is declared in
-§12.1 in step with the language revision (this revision is `CLC-1.14`; CLC-D
+§12.1 in step with the language revision (this revision is `CLC-1.15`; CLC-D
 first appeared in `CLC-1.9`, folded from `EXT-00 rev 0`).
 
 - A CLC-A input is unaffected by the addition of CLC-D; compatible reading of
@@ -2243,9 +2393,10 @@ covers the B.5 rows below (34), the seven combined decision vectors,
 sit under `kind=decide` (`params-028/-029/-034/-036`, all four also
 listed in B.3) and the three nested key-closure vectors
 (`nested-001/-002/-003`);
-`kind=intersect (14)` covers B.4 (10) plus the four combined vectors that
-call the intersect function (`combined-004/-005/-008/-011`); `kind=syntax
-(9)` is exactly B.1.  These counts are reproducible from the corpus itself:
+`kind=intersect (17)` covers B.4 (10), the four combined vectors that
+call the intersect function (`combined-004/-005/-008/-011`) and the three
+CLC-1.15 cross-type audit vectors (`intersect-011/-012/-013`, outside the
+B.1–B.6 tables); `kind=syntax (9)` is exactly B.1.  These counts are reproducible from the corpus itself:
 every vector in `vectors.json` carries its `kind`, so the mapping is
 machine-checkable rather than maintained by hand.
 
@@ -2392,7 +2543,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 120 vectors**
+**Total: 123 vectors**
 
 > Decisions D17–D28 are the corpus pin for the
 > residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1
@@ -2419,7 +2570,14 @@ Shorthand: params shown compact; constraints use colon notation.
 > `params-018/019`; `decide-016/017` (→ D15/D16) pin the §9.1 pre-check and
 > layer-1 paths for absent/empty grant and id-less operation;
 > `intersect-007..010` (→ I7..I10) pin §7 rules 5–6 including empty-params
-> sources, order independence, and a params-free identifier comparison.
+> sources, order independence, and a params-free identifier comparison;
+> `intersect-011/-012/-013` (rev CLC-1.15) are the cross-type audit pins of
+> §7 rule 6 (string × number merge refusal, type-sensitive enum-member
+> equality, `1.0` ≡ `1`) and sit outside the B.1–B.6 tables, taking the
+> corpus total to 123.  B.5 row labels `Dn` are semantic row numbers, not
+> corpus ids (D15/D16 ↔ `decide-016/-017`, D29 ↔ `decide-035`); D10
+> (absent/empty grant, operation present) has no dedicated vector — the
+> pre-check path is pinned by `decide-016` (D15).
 
 ### B.7 Containment (external corpus)
 
@@ -2440,7 +2598,9 @@ groups: numeric interval/step, enum cardinality, optional keys, nested
 recursion, the binding rule, malformed bounds, scheme defaults), with
 `param-bounds-vectors.schema.json`.  It is not re-tabulated here.  These
 vectors exercise a CLC-1.10 field; a CLC-1.9 or earlier implementation refuses
-them through the §12.1 minor gate rather than ignoring the bounds.
+them through the §12.1 minor gate rather than ignoring the bounds.  The JSON
+type-sensitive enum equality of §6.5 layer 8 (rev CLC-1.15) is pinned by the
+companion file `param-bounds-equality-vectors.json` in the same directory.
 
 ### B.9 Resolve (external corpus)
 
@@ -2459,7 +2619,10 @@ The §7.1 derived `ConstraintUnion` projection is pinned by
 `capability/data/_vectors/clc-v1/constraint-union-vectors.json` (12 vectors:
 union over one/many grants, duplicate folding across sources, deterministic
 ordering, empty constraints, and the empty-chain `absent_source` refusal),
-with `constraint-union-vectors.schema.json`.
+with `constraint-union-vectors.schema.json`.  The UTF-8 byte-order collation
+pinned in rev CLC-1.15 (§7.1) — where UTF-16 code-unit order would diverge —
+is exercised by the companion file `constraint-union-collation-vectors.json`
+in the same directory.
 
 ### B.11 AuthorizeWithChain (external corpus)
 
@@ -2477,11 +2640,14 @@ The §6.6 intersection of `param_bounds` is pinned by
 `capability/data/_vectors/clc-v1/param-bounds-meet-vectors.json` (groups:
 numeric `min`/`max`/`step` meet including the coarser-grid and fail-closed
 step cases, enum intersection and tightened cardinality, `optional` conjunction,
-`nested` recursion, numeric∩enum reduction, the empty meets (`min>max`,
-disjoint enums, scalar∩nested → `no_overlap`), the unrepresentable crosses
-(cardinality-only enum, incommensurable steps → `invalid_params_binding`), the
+`nested` recursion, the empty meets (`min>max`, disjoint enums — empty
+*within one value family*), the unrepresentable crosses (numeric∩enum in
+either order and scalar∩nested, refused since rev CLC-1.15; cardinality-only
+enum, incommensurable steps → `invalid_params_binding`), the
 identity empty Bound, and the cross-site refusal), with
-`param-bounds-meet-vectors.schema.json`.
+`param-bounds-meet-vectors.schema.json`.  The rev CLC-1.15 meet invariant —
+every successful meet authorizes only what **every** source authorizes — is
+exercised by `param-bounds-meet-property-cases.json` in the same directory.
 
 ---
 
@@ -2628,11 +2794,12 @@ by this document as fixed sets.  Should this work be adopted by a working
 group, that group may wish to consider whether either set warrants a registry;
 this revision does not propose one.
 
-The containment relation (§13) defines three additional reason codes
+The containment relation (§13) registers three additional reason codes
 (`child_exceeds_parent`, `params_not_narrower`,
-`delegation_mode_not_narrower`); they are part of the same fixed set, and no
-constraint reason code is defined for containment because constraints are
-outside the relation (§13.4.4).
+`delegation_mode_not_narrower` — the last produced by the binding profile's
+delegation-mode pre-check, §13.4.5, never by the relation itself); they are
+part of the same fixed set, and no constraint reason code is defined for
+containment because constraints are outside the relation (§13.4.4).
 
 ## Privacy Considerations
 

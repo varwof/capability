@@ -1,0 +1,189 @@
+[
+  {
+    "id": "pbe-001",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality), §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": true}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "true ≠ 1: enum membership is JSON type-sensitive (booleans are never numbers, §6.2)"
+  },
+  {
+    "id": "pbe-002",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality), §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [true]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": 1}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "1 ≠ true: the reverse direction of pbe-001 (a coercing host language must not widen the member set)"
+  },
+  {
+    "id": "pbe-003",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality), §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": "1"}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "\"1\" ≠ 1: a string is never a number member"
+  },
+  {
+    "id": "pbe-004",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality), §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": ["1"]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": 1}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "1 ≠ \"1\": the reverse direction of pbe-003"
+  },
+  {
+    "id": "pbe-005",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8 nested recursion, JSON type-sensitive equality)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"cfg": {"nested": {"flag": {"enum": [1]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"cfg": {"flag": true}}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "type-sensitive equality applies inside nested Bounds too: true is not a member of enum[1]"
+  },
+  {
+    "id": "pbe-006",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8 nested recursion, JSON type-sensitive equality)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"cfg": {"nested": {"flag": {"enum": [true]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"cfg": {"flag": 1}}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "nested, reverse direction: 1 is not a member of enum[true]"
+  },
+  {
+    "id": "pbe-007",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8 nested recursion, JSON type-sensitive equality)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"cfg": {"nested": {"flag": {"enum": ["1"]}}}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"cfg": {"flag": 1}}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "nested, string vs number: 1 is not a member of enum[\"1\"]"
+  },
+  {
+    "id": "pbe-008",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, canonicalized number equality), §6.2 step 1",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1.0]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": 1}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "numbers compare after §6.2 canonicalization: 1 and 1.0 are one binary64 value, so equal"
+  },
+  {
+    "id": "pbe-009",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, array requests element-wise)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1, 2]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": [1, true]}
+    },
+    "expect": {"verdict": "deny", "reason": "not_in_enum"},
+    "derivation": "array request element-wise: the element true is not a member of enum[1,2] (true ≠ 1)"
+  },
+  {
+    "id": "pbe-010",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1, true, "1"]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": true}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "1, true and \"1\" are three distinct members; the boolean member matches the boolean request exactly"
+  },
+  {
+    "id": "pbe-011",
+    "kind": "param-bounds",
+    "spec_clause": "CLC-v1 §6.5 (layer 8, JSON type-sensitive equality)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "param_bounds": {"flag": {"enum": [1, true, "1"]}}
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {"flag": "1"}
+    },
+    "expect": {"verdict": "allow"},
+    "derivation": "the string member \"1\" matches the string request exactly (type-sensitive equality is not over-rejecting)"
+  }
+]

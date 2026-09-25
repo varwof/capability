@@ -146,27 +146,27 @@
     "id": "bm-012",
     "kind": "param-bounds-meet",
     "spec_clause": "CLC-v1 §6.6",
-    "clc_revision": "CLC-1.14",
+    "clc_revision": "CLC-1.15",
     "conformance_class": "CLC-A",
     "sources": [
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 2, "max": 4}}},
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}}
     ],
-    "expect": {"param_bounds": {"t": {"enum": [3]}}},
-    "derivation": "numeric ∩ enum reduces to the enum members inside the numeric range"
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "numeric ∩ enum, either order, is a cross-family meet and is refused: the family clash is decided before any member or range math (§6.6 rev CLC-1.15). Supersedes the CLC-1.14 filtered-enum result — that enum{3} accepted the array [3] while the numeric source fail-closed at §6.5 layer 9. Adjudicated in CLC-1.15 as a baseline-impacting change (allow->deny on this subset; the Iman Schrock review vector)."
   },
   {
     "id": "bm-013",
     "kind": "param-bounds-meet",
     "spec_clause": "CLC-v1 §6.6",
-    "clc_revision": "CLC-1.14",
+    "clc_revision": "CLC-1.15",
     "conformance_class": "CLC-A",
     "sources": [
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 10, "max": 20}}},
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}}
     ],
-    "expect": {"reason": "no_overlap"},
-    "derivation": "numeric ∩ enum with no member in range: empty meet"
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "numeric ∩ enum with no member in the range is still a cross-family meet: the family clash precedes member math, so the refusal is invalid_params_binding, not the CLC-1.14 empty meet no_overlap (§6.6 rev CLC-1.15). Adjudicated in CLC-1.15 as a baseline-impacting change (allow->deny on this subset)."
   },
   {
     "id": "bm-014",
@@ -237,14 +237,14 @@
     "id": "bm-019",
     "kind": "param-bounds-meet",
     "spec_clause": "CLC-v1 §6.6",
-    "clc_revision": "CLC-1.14",
+    "clc_revision": "CLC-1.15",
     "conformance_class": "CLC-A",
     "sources": [
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"max": 5}}},
       {"id": "std/database-v1:query:SELECT", "param_bounds": {"cfg": {"nested": {"a": {"max": 5}}}}}
     ],
-    "expect": {"reason": "no_overlap"},
-    "derivation": "scalar ∩ nested: a number and an object have no common value"
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "scalar ∩ nested (numeric or enum vs. object), either order, is a cross-family meet and is refused with invalid_params_binding before any value math: no single-family Bound carries both a scalar family and the object recursion (§6.6 rev CLC-1.15; design-notes D12). Adjudicated from the CLC-1.14 no_overlap reading (closing the open scalar-meets-nested question left by that review)."
   },
   {
     "id": "bm-020",
@@ -324,5 +324,31 @@
     ],
     "expect": {"params": {"tables": ["a", "b"]}, "param_bounds": {"limit": {"max": 50}}},
     "derivation": "a params key that no source declares in param_bounds stays in params; the bounds key unions in"
+  },
+  {
+    "id": "bm-026",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6 (rev CLC-1.15 cross-family refusal)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 2, "max": 4}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}}
+    ],
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "rev CLC-1.15: numeric ∩ enum fails closed in either source order — the CLC-1.14 filtered enum{3} was broader than either source (it accepts the array [3], which the numeric side fail-closes at §6.5 layer 9)"
+  },
+  {
+    "id": "bm-027",
+    "kind": "param-bounds-meet",
+    "spec_clause": "CLC-v1 §6.6 (rev CLC-1.15 cross-family refusal)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "sources": [
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"enum": [1, 3, 5]}}},
+      {"id": "std/database-v1:query:SELECT", "param_bounds": {"t": {"min": 2, "max": 4}}}
+    ],
+    "expect": {"reason": "invalid_params_binding"},
+    "derivation": "rev CLC-1.15: the refusal is symmetric in the two sources (twin of bm-026, reversed order)"
   }
 ]

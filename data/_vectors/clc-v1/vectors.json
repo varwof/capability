@@ -1790,6 +1790,96 @@
     "derivation": "two sources with a present-but-empty params object and different identifiers: the narrower identifier wins. The identifier comparison must be params-free — routing it through Entails makes a bounded grant meet a params-less operation and wrongly fail closed (§6.3 step 4). Both implementations reported no_overlap before 2026-09-11."
   },
   {
+    "id": "intersect-011",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 6 / §6.5 layer 8",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": "1"
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "x": 1
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "no_overlap"
+    },
+    "derivation": "cross-type audit 2026-09-25: a string and a number constraining the same params key must not merge — Go's intersectValue fell through to fmt.Sprintf('%v') and treated \"1\" == 1 as equal, merging the grants (fail-open). Pinned after the fix, along with the Python/TS parity."
+  },
+  {
+    "id": "intersect-012",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 6 / §6.5 layer 8",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": [
+          1
+        ]
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "x": [
+            "1"
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "deny",
+      "reason": "no_overlap"
+    },
+    "derivation": "cross-type audit 2026-09-25: enum-list element intersection must be type-sensitive — Go's intersectValue list branch compared fmt.Sprintf('%v') and merged [1] with [\"1\"]. Pinned after the fix."
+  },
+  {
+    "id": "intersect-013",
+    "kind": "intersect",
+    "spec_clause": "CLC-v1 §7 rule 6 / §2.4",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "x": [
+          1.0
+        ]
+      }
+    },
+    "others": [
+      {
+        "id": "std/database-v1:query:SELECT",
+        "params": {
+          "x": [
+            1
+          ]
+        }
+      }
+    ],
+    "expect": {
+      "verdict": "allow",
+      "result_params": {
+        "x": [
+          1
+        ]
+      }
+    },
+    "derivation": "cross-type audit 2026-09-25: 1 and 1.0 are one IEEE-754 value (§2.4), so [1.0] ∪_∩ [1] = [1]; the result must serialize as [1], not [1.0]. Pins Python's member rendering (integer floats normalize to int), matching Go/TS byte output."
+  },
+  {
     "id": "params-022",
     "kind": "entail",
     "spec_clause": "CLC-v1 §6.2",
@@ -2625,7 +2715,7 @@
       "verdict": "deny",
       "reason": "different_namespace"
     },
-    "derivation": "* at class position (product-segment) is not a trailing action wildcard; namespace mismatch (§5.1/§9.3 layer 3)"
+    "derivation": "* at class position (product-segment) is not a trailing action wildcard; namespace mismatch (§3; §9.1 layer 3)"
   },
   {
     "id": "entail-008",
@@ -2643,7 +2733,7 @@
       "verdict": "deny",
       "reason": "different_namespace"
     },
-    "derivation": "same class-position wildcard vs different action; still namespace mismatch (§5.1/§9.3 layer 3)"
+    "derivation": "same class-position wildcard vs different action; still namespace mismatch (§3; §9.1 layer 3)"
   },
   {
     "id": "decide-035",

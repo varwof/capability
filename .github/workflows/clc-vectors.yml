@@ -115,5 +115,31 @@ jobs:
           print(f"schema OK, {len(v)} BoundMeet vectors")
           PY
 
+      - name: Validate the §6.5 type-sensitive-equality vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/param-bounds-equality-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/param-bounds-equality-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} param-bounds-equality vectors")
+          PY
+
+      - name: Validate the §7.1 ConstraintUnion collation vectors against their schema
+        run: |
+          python3 - <<'PY'
+          import json, jsonschema
+          v = json.load(open("data/_vectors/clc-v1/constraint-union-collation-vectors.json"))
+          s = json.load(open("data/_vectors/clc-v1/constraint-union-collation-vectors.schema.json"))
+          jsonschema.validate(v, s)
+          print(f"schema OK, {len(v)} ConstraintUnion collation vectors")
+          PY
+
+      - name: BoundMeet property cases are reproducible
+        run: |
+          python3 scripts/gen-param-bounds-meet-property-cases.py --out /tmp/param-bounds-meet-property-cases.json
+          diff -u data/_vectors/clc-v1/param-bounds-meet-property-cases.json /tmp/param-bounds-meet-property-cases.json \
+            || (echo "param-bounds-meet-property-cases.json is stale: re-run scripts/gen-param-bounds-meet-property-cases.py"; exit 1)
+
       - name: OCMP offline vectors (coverage + vocabulary)
         run: python3 scripts/check-offline-vectors.py

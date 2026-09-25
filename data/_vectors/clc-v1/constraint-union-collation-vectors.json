@@ -1,0 +1,39 @@
+[
+  {
+    "id": "cuc-001",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1 (rev CLC-1.15, UTF-8 byte-order collation)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["vendor/profile-v1:tag:\ud83d\ude00"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["vendor/profile-v1:tag:\ue000alpha", "vendor/profile-v1:tag:ascii"]}
+    ],
+    "expect": {
+      "union": [
+        "vendor/profile-v1:tag:ascii",
+        "vendor/profile-v1:tag:\ue000alpha",
+        "vendor/profile-v1:tag:\ud83d\ude00"
+      ]
+    },
+    "derivation": "UTF-8 byte order (= code-point order): 'ascii' (0x61…) < U+E000 (EE 80 80) < U+1F600 (F0 9F 98 80); UTF-16 code-unit order would wrongly place the emoji (D83D DE00) before the U+E000 string"
+  },
+  {
+    "id": "cuc-002",
+    "kind": "constraint-union",
+    "spec_clause": "CLC-v1 §7.1 (rev CLC-1.15, UTF-8 byte-order collation)",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "chain": [
+      {"id": "std/database-v1:query:SELECT", "constraints": ["vendor/profile-v1:tag:\ue000alpha", "vendor/profile-v1:tag:\ud83d\ude00"]},
+      {"id": "std/database-v1:query:SELECT", "constraints": ["vendor/profile-v1:tag:\ud83d\ude00"]}
+    ],
+    "expect": {
+      "union": [
+        "vendor/profile-v1:tag:\ue000alpha",
+        "vendor/profile-v1:tag:\ud83d\ude00"
+      ]
+    },
+    "derivation": "duplicates fold and the order is chain-order independent: U+E000 (EE…) sorts before U+1F600 (F0…) in UTF-8 byte order"
+  }
+]
