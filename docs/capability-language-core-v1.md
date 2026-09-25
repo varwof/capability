@@ -2902,8 +2902,8 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   sub-operation to be strictly narrower in scope.
 - [EVC] "External Verifier Contract", draft-kondoju-evc-02, Work in Progress.
 - [CLC-CORPUS] J. Wei, "Capability Language Core — conformance corpus,
-  schemas and working documents", commit c97fd93, September 2026.
-  <https://github.com/varwof/capability/tree/c97fd93e20446db39d5b57f76df2aea46ad48a25>
+  schemas and working documents", commit b15b51b, September 2026.
+  <https://github.com/varwof/capability/tree/b15b51b8f94125b7a00aa281f98405806e6ea95c>
 - [AEGIS] AEGIS Governance, `aegis-initiative/aegis-governance`, repository
   (AIAM-1 v0.1).  `AIAM1-DEL-010` requires monotonic authority narrowing;
   `AIAM1-CAP-011` states composition is not closed under transitivity.
