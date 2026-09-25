@@ -56,7 +56,7 @@ grant   = { "id": "std/database-v1:*" }
 request = { "id": "std/database-v1:query:SELECT" }
 ```
 
-**Output**: `deny` `different_namespace`. A `*` at *class* (product) position is **not** a trailing action wildcard (§5.1/§9.3 layer 3). Full rules live in [`03-identifiers.md`](03-identifiers.md).
+**Output**: `deny` `different_namespace`. A `*` at *class* (product) position is **not** a trailing action wildcard (§6.1/§9.1 layer 3). Full rules live in [`03-identifiers.md`](03-identifiers.md).
 
 ## Step 3 — add params and bounds (narrow the grant)
 
