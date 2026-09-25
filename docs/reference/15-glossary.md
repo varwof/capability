@@ -119,4 +119,4 @@
 **Wildcard** — Trailing `*` action segment in an identifier; matches one or more trailing segments, never zero. Bare `*`, partial segments, `**`, `{a,b}`, `[a-z]` are `unsupported_wildcard` in v1 (§3).
 
 ---
-← [14-cookbook.md](14-cookbook.md) · *this is the last page* · related: [02-overview.md](02-overview.md), [README.md](README.md)
+← [14-cookbook.md](14-cookbook.md) · → [16-principles.md](16-principles.md) · related: [02-overview.md](02-overview.md), [README.md](README.md)

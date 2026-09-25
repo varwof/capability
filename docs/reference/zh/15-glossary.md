@@ -119,4 +119,4 @@
 **Wildcard** — 标识符末尾的 `*` Action 段；匹配一个或多个末尾段，绝不匹配零个。v1 中，裸 `*`、部分段、`**`、`{a,b}`、`[a-z]` 均为 `unsupported_wildcard`（§3）。
 
 ---
-← [14-cookbook.md](14-cookbook.md) · *这是最后一页* · 相关：[02-overview.md](02-overview.md)、[README.md](README.md)
+← [14-cookbook.md](14-cookbook.md) · → [16-principles.md](16-principles.md) · 相关：[02-overview.md](02-overview.md)、[README.md](README.md)

@@ -8,7 +8,7 @@ Welcome to the readable language reference for the **Capability Language Core v1
 
 This reference is organized the way a programming-language manual is: a quickstart, concept pages, field tables, ✅/❌ example pairs drawn from the conformance corpus, and a reason-code cheat sheet. It is **derived** from the specification: every page anchors its claims to a spec section, and every JSON example is either a real corpus vector or a value constructed from a stated grammar rule.
 
-## The 16 pages at a glance
+## The 17 pages at a glance
 
 | # | Page | What it covers | Spec anchor |
 |---|------|----------------|-------------|
@@ -28,11 +28,12 @@ This reference is organized the way a programming-language manual is: a quicksta
 | 13 | [`13-conformance.md`](13-conformance.md) | Conformance classes, corpora, language revision rule | §12/12.1/Appendix B |
 | 14 | [`14-cookbook.md`](14-cookbook.md) | Scenario-driven ✅/❌ recipes distilled from the corpus | all vectors |
 | 15 | [`15-glossary.md`](15-glossary.md) | Alphabetical term glossary | §2/§13.2 |
+| 16 | [`16-principles.md`](16-principles.md) | Design principles P1–P12 with falsifiable checks, derived rules R1–R5, runnable properties, the clause↔evidence ledger | principles declaration; §1/§12 |
 
 ## Three reading paths
 
 - **Writing an authorization policy** (you configure grants): `01-quickstart` → `05-grants` → `07-parameters` → `08-constraints` → `14-cookbook`.
-- **Implementing a validator** (you build or audit an evaluator): `02-overview` → `03-identifiers` → `06-entailment` → `09-intersection` → `10-decisions` → `11-reason-codes` → `13-conformance`.
+- **Implementing a validator** (you build or audit an evaluator): `02-overview` → `03-identifiers` → `06-entailment` → `09-intersection` → `10-decisions` → `11-reason-codes` → `13-conformance` → `16-principles`.
 - **Building delegation chains** (you want `Contains`/`AuthorizeWithChain`): `02-overview` → `12-containment` → `13-conformance`.
 
 ## Authority statement
@@ -53,6 +54,7 @@ Refer to `13-conformance` for the full, carefully-worded statement and to `Spec`
 | Abstract | `02-overview`, `13-conformance` | the honest conformance scope is repeated verbatim in spirit there |
 | Revision History | `13-conformance` (§12.1 rule) | the per-revision table lives in the spec only |
 | §1 Design Principle | `02-overview` | why the core exists; P1–P12 |
+| Principles declaration (companion document) | `16-principles` | P1–P12 with falsifiable checks, R1–R5, the runnable properties and the ledger; the declaration is not part of the spec |
 | §2 Terminology | `15-glossary` | every defined term, alphabetized |
 | §3 Grammar | `03-identifiers` | capability-id, wildcard, scheme disambiguation |
 | §4 Action | `04-actions` | 4.1 Operation / 4.2 ObservedAction / 4.3 Identity |

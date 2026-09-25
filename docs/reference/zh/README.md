@@ -8,7 +8,7 @@
 
 本参考的组织方式类似编程语言手册：先给出快速入门，再逐页讲解概念、字段表、来自一致性测试集的 ✅/❌ 示例，最后附上 reason code 速查表。本参考**派生自**规范：每页的论断都锚定到具体规范章节；每个 JSON 示例要么来自真实测试集 vector，要么依据明确给出的语法规则构造。
 
-## 16 个页面一览
+## 17 个页面一览
 
 | # | 页面 | 内容 | 规范锚点 |
 |---|------|----------------|-------------|
@@ -28,11 +28,12 @@
 | 13 | [`13-conformance.md`](13-conformance.md) | 一致性类别、测试集、语言修订规则 | §12/12.1/Appendix B |
 | 14 | [`14-cookbook.md`](14-cookbook.md) | 从测试集提炼的场景化 ✅/❌ 配方 | 全部 vectors |
 | 15 | [`15-glossary.md`](15-glossary.md) | 按字母顺序排列的术语表 | §2/§13.2 |
+| 16 | [`16-principles.md`](16-principles.md) | 设计原则 P1–P12 及其可证伪检验、派生规则 R1–R5、可运行性质、条文↔证据台账 | 原则声明；§1/§12 |
 
 ## 三条阅读路径
 
 - **编写授权策略**（你负责配置 grants）：`01-quickstart` → `05-grants` → `07-parameters` → `08-constraints` → `14-cookbook`。
-- **实现验证器**（你负责构建或审计求值器）：`02-overview` → `03-identifiers` → `06-entailment` → `09-intersection` → `10-decisions` → `11-reason-codes` → `13-conformance`。
+- **实现验证器**（你负责构建或审计求值器）：`02-overview` → `03-identifiers` → `06-entailment` → `09-intersection` → `10-decisions` → `11-reason-codes` → `13-conformance` → `16-principles`。
 - **构建委派链**（你需要 `Contains`/`AuthorizeWithChain`）：`02-overview` → `12-containment` → `13-conformance`。
 
 ## 权威说明
@@ -53,6 +54,7 @@
 | Abstract | `02-overview`, `13-conformance` | 两处均如实重复一致性的适用边界 |
 | Revision History | `13-conformance`（§12.1 规则） | 逐版本表格只保留在规范中 |
 | §1 Design Principle | `02-overview` | 核心存在的原因；P1–P12 |
+| 原则声明（伴生文档） | `16-principles` | P1–P12 及可证伪检验、R1–R5、可运行性质与台账；声明不是规范的一部分 |
 | §2 Terminology | `15-glossary` | 全部已定义术语，按字母排序 |
 | §3 Grammar | `03-identifiers` | capability-id、wildcard、scheme 消歧 |
 | §4 Action | `04-actions` | 4.1 Operation / 4.2 ObservedAction / 4.3 Identity |
