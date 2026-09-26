@@ -67,7 +67,7 @@ which is retired.
 
 ---
 
-## 1. Design Principle
+## 1. Introduction
 
 CLC-v1 is a **universal minimal language** that can be consistently
 presented on either the authorization side or the evidence side.
@@ -2370,7 +2370,9 @@ first appeared in `CLC-1.9`, folded from `EXT-00 rev 0`).
 ## Appendix A: Consumption Mapping
 
 The rows below are examples of consumers of this shared vocabulary, not
-required profiles: conformance to CLC-A does not depend on any of them.
+required profiles: conformance to CLC-A does not depend on any of them.  RAR
+authorization details [RFC9396] are one such carrier; CLC is a candidate
+evaluation language for the capabilities they declare.
 
 | Consumer | Grammar | Binding | Verdict | Notes |
 |----------|---------|---------|---------|-------|
