@@ -86,8 +86,6 @@ specification, the corpora, and the reference implementation in
 - [`docs/reference/`](docs/reference/) — a **16-page readable language reference** (developer
   documentation, not the normative text).  Chinese edition: [`docs/reference/zh/`](docs/reference/zh/),
   maintained in sync with the English pages and covering §13 and Appendix C.
-- The legacy partial Chinese translation of the spec text (pinned at CLC-1.8) was
-  removed in favour of the reference set above; it remains available in git history.
 
 ## CLC-v1 conformance vectors and schemes
 

@@ -67,7 +67,6 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 - [`docs/capability-language-core-v1.md`](docs/capability-language-core-v1.md) —— **英文正本**（规范权威）。
 - ⭐ [`docs/reference/zh/`](docs/reference/zh/) —— **中文阅读入口**：16 章可读语言参考（开发者文档，
   非规范正本），已覆盖 §13 与附录 C，与英文参考页同步维护。
-- 规范正文的旧中文对照版（停在 CLC-1.8）已删除，改以上方中文参考集为准；如需查阅，git 历史中仍在。
 
 ## CLC-v1 一致性向量与 scheme
 
