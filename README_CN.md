@@ -65,9 +65,12 @@ CLC 与本仓的语料面向**第三方可用**，而不是作者专有：
 ## CLC-v1 规范
 
 - [`docs/capability-language-core-v1.md`](docs/capability-language-core-v1.md) —— **英文正本**（规范权威）。
-- [`docs/capability-language-core-v1-zh.md`](docs/capability-language-core-v1-zh.md) —— **中文对照版**
-  （供评审；两版有歧义时以英文正本为准）。完整覆盖 §1–§12.1 与附录 A；附录 B 的逐条向量表不重复，
-  以免两份数据漂移。
+- ⭐ [`docs/reference/zh/`](docs/reference/zh/) —— **中文阅读入口**：16 章可读语言参考（开发者文档，
+  非规范正本），已覆盖 §13 与附录 C，与英文参考页同步维护。
+- [`docs/capability-language-core-v1-zh.md`](docs/capability-language-core-v1-zh.md) —— 规范正文的
+  **部分中文对照版**（§1–§12.1 与附录 A），仅作术语评审用；**停在 rev CLC-1.8**，不含委托包含性
+  （§13、附录 C）。中文读者建议从 `docs/reference/zh/` 入手；两版有歧义时以英文正本为准。附录 B 的
+  逐条向量表不重复，以免两份数据漂移。
 
 ## CLC-v1 一致性向量与 scheme
 

@@ -83,12 +83,16 @@ specification, the corpora, and the reference implementation in
 
 - [`docs/capability-language-core-v1.md`](docs/capability-language-core-v1.md) — the
   **English canonical** language specification (CLC-v1).
+- [`docs/reference/`](docs/reference/) — a **16-page readable language reference** (developer
+  documentation, not the normative text).  Chinese edition: [`docs/reference/zh/`](docs/reference/zh/),
+  maintained in sync with the English pages and covering §13 and Appendix C.
 - [`docs/capability-language-core-v1-zh.md`](docs/capability-language-core-v1-zh.md) —
-  **Chinese reference translation** of the same text (for review; the English text
-  prevails where the two differ).  It carries §1–§12.1 and Appendix A in full and
-  currently tracks rev CLC-1.8; the CLC-1.9 containment material (§13, Appendix C)
-  is not yet translated.  The per-vector tables of Appendix B are not duplicated,
-  to avoid two diverging copies.
+  **partial Chinese translation of the spec text** (§1–§12.1 + Appendix A), kept for
+  terminology review.  It is pinned at rev **CLC-1.8** and does **not** cover the
+  delegation-containment material (§13, Appendix C) — Chinese readers should start from
+  [`docs/reference/zh/`](docs/reference/zh/) instead.  The English text prevails where the
+  two differ, and the per-vector tables of Appendix B are not duplicated, to avoid two
+  diverging copies.
 
 ## CLC-v1 conformance vectors and schemes
 
