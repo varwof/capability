@@ -1,7 +1,7 @@
 # CLC-D containment vectors
 
 Machine-readable conformance vectors for **CLC-D** (the delegation containment
-relation, [`capability-language-core-v1.md`](../capability-language-core-v1.md) §13.4/§13.7,
+relation, [`capability-language-core-v1.md`](../../../docs/capability-language-core-v1.md) §13.4/§13.7,
 folded in rev CLC-1.9 and formerly `draft-wei-clc-ext-00`).
 These are the single source of truth used by the three implementations:
 
