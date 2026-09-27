@@ -82,9 +82,11 @@ The two sides share five foundational abstractions:
 | **Constraint** | Grant params / limits | Evidence requirements / freshness |
 | **Verdict** | allow / deny / allow_unresolved | SATISFIED / UNSATISFIED |
 
-**Conventions.**  The key words MUST, MUST NOT, SHOULD, SHOULD NOT and MAY in
-this document are to be interpreted as described in BCP 14 [RFC2119] and
-[RFC8174] when, and only when, they appear in all capitals, as shown here.  "UTC instant"
+**Conventions.**  The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+"SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+"MAY", and "OPTIONAL" in this document are to be interpreted as described
+in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+capitals, as shown here.  "UTC instant"
 is an [RFC3339] timestamp.  "JCS" is the JSON Canonicalization Scheme
 [RFC8785]; "I-JSON" is [RFC7493].
 
@@ -244,11 +246,11 @@ Two identity levels, corresponding to the two Action forms:
 A CapabilityId covers a class; an ActionId identifies the material content of one
 action.  It does not identify an **occurrence**: ActionId binds the declared
 material content, and correlation to a particular occurrence additionally requires
-an occurrence discriminator defined and checked by the consuming profile.  CAID-02
-Section 4.5 carries such a discriminator as the optional `occurrence_id` of an
+an occurrence discriminator defined and checked by the consuming profile.  CAID-03
+Section 4.6 carries such a discriminator as the optional `occurrence_id` of an
 action object; when a profile uses one, it MUST appear among the declared material
 fields for it to affect the digest.  Allocating unique occurrences and proving
-one-time consumption or execution stay outside both documents (CAID-02 Section 7).
+one-time consumption or execution stay outside both documents (CAID-03 Section 7).
 Entailment checks class coverage; Match checks content binding.
 
 ---
@@ -480,8 +482,8 @@ Evidence E is bound to exact action A if:
 Match is content correlation only.  It does not validate a native
 artifact and does not authorize execution.  It also does not identify an
 occurrence: correlation to a particular occurrence additionally requires an
-occurrence discriminator defined and checked by the consuming profile (CAID-02
-Section 4.5), and a profile that uses one MUST pin how it is obtained and that the
+occurrence discriminator defined and checked by the consuming profile (CAID-03
+Section 4.6), and a profile that uses one MUST pin how it is obtained and that the
 language sees it among the declared material fields.
 
 Cross-format mapping (E's native format ≠ A's canonical form) uses an
@@ -2883,12 +2885,12 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   <https://www.rfc-editor.org/info/rfc9396>.
 - [AIC-JWT] J. Wei, "AI Agent Identity Certificate (AIC) JSON Web Token
   Profile", draft-wei-aic-jwt-01, Work in Progress, September 2026.
-- [CAID] "Canonical Action Identifier",
-  draft-schrock-canonical-action-identifier-02, Work in Progress.  Section 4.5
+- [CAID] "The Canonical Action Identifier (CAID)",
+  draft-schrock-canonical-action-identifier-03, Work in Progress.  Section 4.6
   defines the optional `occurrence_id`; Section 7 keeps occurrence allocation and
   one-time consumption outside the identifier.
 - [EMILIA-AEB] "Action Evidence Boundary",
-  draft-schrock-action-evidence-boundary-06, Work in Progress.
+  draft-schrock-action-evidence-boundary-07, Work in Progress.
 - [AEC] "Authorization Evidence Chains: Composing Heterogeneous Agent-Action
   Evidence (EP-AEC)", draft-schrock-ep-authorization-evidence-chain-06, Work in
   Progress.

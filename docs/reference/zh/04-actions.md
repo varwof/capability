@@ -57,7 +57,7 @@ ObservedAction 包含：
 | **Instance** | `ActionId`（projection digest） | 某个 action 的 material *内容*，**不是** occurrence | `clc-action:1:payment.release.1:jcs-sha256:…` |
 
 - CapabilityId 覆盖一个 class；ActionId 标识某个 action 的 material 内容。
-- ActionId **不标识某次 occurrence**。它绑定的是已声明的 material 内容。要进一步关联到特定 occurrence，消费 profile 还必须定义并检查 **occurrence discriminator**。CAID-02 Section 4.5 将其作为可选的 `occurrence_id`；如果 profile 使用该字段，它必须出现在已声明的 material fields 中，才能影响 digest。唯一 occurrence 的分配，以及一次性消费/执行证明，不属于这两份文档的范围（CAID-02 Section 7）。
+- ActionId **不标识某次 occurrence**。它绑定的是已声明的 material 内容。要进一步关联到特定 occurrence，消费 profile 还必须定义并检查 **occurrence discriminator**。CAID-03 Section 4.6 将其作为可选的 `occurrence_id`；如果 profile 使用该字段，它必须出现在已声明的 material fields 中，才能影响 digest。唯一 occurrence 的分配，以及一次性消费/执行证明，不属于这两份文档的范围（CAID-03 Section 7）。
 - **Entailment 检查 class 覆盖；Match 检查内容绑定**。这两种机制刻意位于不同层级。
 
 ## 这些内容如何参与判定

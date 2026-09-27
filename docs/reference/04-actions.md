@@ -59,7 +59,7 @@ An ObservedAction carries:
 | **Instance** | `ActionId` (projection digest) | the material *content of one action*, **not** an occurrence | `clc-action:1:payment.release.1:jcs-sha256:…` |
 
 - A CapabilityId covers a class; an ActionId identifies the material content of one action.
-- An ActionId **does not identify an occurrence**: it binds the declared material content. Correlating to a particular occurrence additionally requires an **occurrence discriminator** defined and checked by the consuming profile (CAID-02 Section 4.5 carries it as the optional `occurrence_id`; when a profile uses one, it MUST appear among the declared material fields to affect the digest). Allocating unique occurrences and proving one-time consumption/execution stay outside both documents (CAID-02 Section 7).
+- An ActionId **does not identify an occurrence**: it binds the declared material content. Correlating to a particular occurrence additionally requires an **occurrence discriminator** defined and checked by the consuming profile (CAID-03 Section 4.6 carries it as the optional `occurrence_id`; when a profile uses one, it MUST appear among the declared material fields to affect the digest). Allocating unique occurrences and proving one-time consumption/execution stay outside both documents (CAID-03 Section 7).
 - **Entailment checks class coverage; Match checks content binding** — the two mechanisms are deliberately different layers.
 
 ## Where this fits in decisions
