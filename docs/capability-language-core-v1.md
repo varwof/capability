@@ -18,7 +18,7 @@ three-valued verdict (`allow`, `deny`, `allow_unresolved`).
 The language is carrier-neutral: it defines what is evaluated, not how it is
 carried or trusted.  Trust models, native verification, execution lifecycle,
 and receipt or token formats are out of scope (Section 11).  Conformance is
-exercised by a published corpus of 123 vectors and 1184 property cases; three
+exercised by a published corpus of 146 vectors and 1184 property cases; three
 implementations (Go, Python, TypeScript) that share an author pass both.
 **Implementation conformance and this document's claim of a conformance class
 are separate.**  An implementation conforms to CLC-A when it meets the
@@ -64,6 +64,7 @@ which is retired.
 | CLC-1.13 | 2026-09-21 | §13.6, §13.10.4, §13.11(new), §13.12(renumbered), §12.1, Appendix B | **Additive, CLC-D-scoped: `AuthorizeWithChain`, the fused chain check.**  §13.11 adds `AuthorizeWithChain(chain, op)`: an empty chain denies `absent_source`; each adjacent hop is checked with `Contains` and the first failure denies with that hop's §13.5 code (before op validation); otherwise the operation is authorized against `Intersect(chain...)`, which is what brings every ancestor's params **and** constraints (a union axis, outside containment) into force.  Authorizing against the leaf alone was rejected as unsound.  It closes §13.10.4: the fourth relation is now defined, as a CLC-D function, not a core change.  CLC-D conformance now also requires it.  It adds 14 `authorize-chain-vectors.json` vectors; no CLC-A verdict changes.  **Editorial review corrections to this revision (text only, no verdict or corpus change):** §6.3 `Entails` now shows the §6.5 `param_bounds` step and reads the declared key set; §6.5 states that intersecting `param_bounds` is undefined and fails closed (`invalid_params_binding`) and renders the Bound grammar as JSON; §9.2 widens `invalid_params_number` to "no canonical form" (matching §6.2 step 7); §7's object example now intersects numeric leaves to their minimum (`{"a":1}`∩`{"a":2}`→`{"a":1}`) instead of denying; §8.1's `time:window` rule is stated in seconds-of-day, defining the reserved `end:"00:00"` as 86400; §8.5/§11 add the caching horizon for a core-clock discharge; §9 runs the grant-side pre-check before op validation and unions residuals only across covering-*and-allowing* grants; §10 says a top-level `unknown` yields `UNSATISFIED` (no evidence-side `allow_unresolved`); §13.2's `ContainmentResult` is rendered as JSON; the BCP 14 / RFC 3339 / JCS / I-JSON conventions and references are added; and stale cross-references (Appendix D15, §5.1/§9.3, "four foreign representations") are corrected.  **Second editorial pass (text only):** §7 rule 3 states the constraint merge as a **union** (constraints are conjunctive; a tighter same-type bound binds by construction, nothing is dropped as a "meet"); §6.5 closes the `optional` × `param_defaults` precedence (presence is decided first, `optional` wins over a default, no "is the default needed?" recursion) and states that a default is not part of the declared set nor the containment lattice; §6.5 adds the four-layer presence/declaration/constraint/value model that keeps the three senses of `{}` distinct; and §7 makes the **value → authorization-set denotation** explicit (numbers denote `(-∞,v]`, so `{"a":1}∩{"a":2}={"a":1}` is a minimum, and an empty meet needs genuinely disjoint denotations). |
 | CLC-1.14 | 2026-09-21 | §6.6(new), §7, §13.11, §12.1, Appendix B | **Additive: `Intersect` now meets `param_bounds` (`BoundMeet`).**  CLC-1.10 grafted the extended bounds onto the grant but left their intersection undefined, so `Intersect` refused any source carrying `param_bounds` (`invalid_params_binding`) and a delegation chain that used `param_bounds` could never be fused-authorized (`AuthorizeWithChain` denies at its `Intersect` step).  §6.6 defines the meet per family: numeric `min`=greatest, `max`=least, `step`=the coarser grid when one exactly divides the other (else fail-closed); enum member intersection and tightened cardinality; `nested` recursion over identical key sets; `optional` by conjunction; numeric∩enum reduces to the filtered enum; scalar∩nested and `min>max` are an empty meet (`no_overlap`).  A key must keep one declaration site across sources (§13.4.3 already guarantees this for a valid chain).  It adds no reason code and is strictly additive: a chain without `param_bounds` is byte-for-byte unchanged, so every existing verdict, reason code and vector is untouched.  It adds `param-bounds-meet-vectors.json`, and updates `authorize-chain-vectors.json` (`ac-012` now allows — a `param_bounds` chain fuses — and `ac-015` denies with `params_out_of_range` at a meet that is empty). |
 | CLC-1.15 | 2026-09-25 | §6.5, §6.6, §7, §7.1, §12.1, §13.2, §13.3, §13.4.5, §13.5, §13.6, §13.11, §13.12, Appendix B.12, IANA | **Corrective: the Iman Schrock review of CLC-1.14 landed.**  The §6.6 `numeric ∩ enum` exception is **removed** — the filtered-enum meet was broader than either source (numeric `{min:2,max:4}` ∩ enum `{1,3,5}` filtered to `enum{3}`, which accepts the array `[3]` while the numeric source fail-closes it at §6.5 layer 9), so every cross-family numeric × enum meet now refuses with `invalid_params_binding` in either order, agreeing with §6.5's mixed-family rejection and §13.4.3's added-family refusal.  §6.5 layer 8 gains the missing definition of enum `equal`: **JSON type-sensitive equality** (`true ≠ 1`, `"1" ≠ 1`; numbers compare after §6.2 canonicalization, so `1 = 1.0`), fixing the implementation divergence where Python's `True == 1` allowed what Go/TypeScript denied.  §6.6's step-grid rationale is corrected: incommensurable steps (5, 7) *do* share a common grid (multiples of 35) — the meet fails closed not because no grid exists but because the meet's `step` must be one of the two declared steps and the language does not synthesize an undeclared grid (behavior unchanged).  §7.1 pins `ConstraintUnion`'s ordering to **UTF-8 byte order** (UTF-16 code-unit order placed an emoji before U+E000–U+FFFF characters).  `delegation_mode_not_narrower` is attributed to the **binding-profile pre-check** (§13.4.5) and removed from the core's reason commitments (§12, §13.5, §13.6, §13.11, IANA) — the relation never took a mode argument.  §13.3 states `Contains` antisymmetry on **semantic equivalence classes**, and §13.11 adds the caller's complete-authenticated-root-first-chain obligation (no decision rule changes).  §12.1 records the honest verdict-stability scope of the CLC-1.10→1.14 `param_bounds`-meet change (deny→allow on that subset) and of this revision (allow→deny for the cross-family sub-case).  No input without `param_bounds` changes verdict; on the §6.6 meet subset the cross-family direction reverses CLC-1.14.  Corpus: adds `bm-026`/`bm-027` (cross-family refusal, both orders), `param-bounds-equality-vectors.json` (type-sensitive equality), `constraint-union-collation-vectors.json` (UTF-8 order), and `param-bounds-meet-property-cases.json` (the meet invariant: every successful meet authorizes only what **every** source authorizes), and `intersect-011/-012/-013` in `vectors.json` (the 2026-09-25 cross-type audit of §7 rule 6: string × number merge refusal, type-sensitive enum-member equality, `1.0` ≡ `1` — corpus 120 → 123 vectors).  **Review follow-up (same date):** the scalar ∩ `nested` pair (numeric or enum vs. object, either order) is adjudicated from the CLC-1.14 empty-meet reading to the cross-family refusal `invalid_params_binding` — design-notes D12, so the empty-meet code stays reserved for genuinely empty meets *within one value family* (§6.6, §7, Appendix B.12); `bm-012`/`bm-013` (numeric × enum, with and without an in-range member) are re-adjudicated to a single refusal reason for every cross-family pair (a baseline-impacting change: allow→deny on that subset, recorded in §12.1); and the §8.4 residual-obligation collation is pinned to the §7.1 UTF-8 byte order (the TS implementation sorted by default UTF-16 code-unit order, silently diverging from Go and Python) — the corpus runners now assert the exact manifest order instead of pre-sorting both sides. |
+| CLC-1.16 | 2026-09-28 | §6.2, §6.5, §8.1, §12, §12.1, §13.4.2, §13.4.3, Appendix B, References | **Corrective: the cross-port cross-check landed.**  §6.2 step 3 gains the **I-JSON integer bound** — an integer-valued numeric param whose magnitude exceeds 2^53 − 1 is refused (`invalid_params_number`, [RFC7493] §6) instead of being rounded to binary64 (**verdict change** on that subset: a comparison over a rounded value becomes a refusal; recorded in §12.1).  New step 8 refuses a **leading UTF-8 BOM** on the raw path ([RFC8259] §8.1 permits ignoring it, CLC MUST NOT; closes the ECMAScript-`trim()` U+FEFF divergence; **allow → deny** for implementations that trimmed).  New step 9 requires **host numeric-carrier normalization**: every numeric carrier (`int` vs `float64`, `BigInteger`, `decimal`) compares under JSON number semantics and MUST NOT fall into a string-shaped fallback (fixes the reference-engine grant-carrier bug where `{"n":50}` against `{"n":"50"}` was allowed by a text comparison).  §6.2 step 7's decoded entry hardens from advice into obligation: the raw-text entry is the **sole conformance entry point**, and a decoder that repairs malformed Unicode (U+FFFD substitution, e.g. Go's `encoding/json`) MUST NOT feed an entry used for a conformance claim — closing the Go-vs-Python/TypeScript lone-surrogate divergence at the decoded entry.  §8.1 states the **`max_rows` × key-closure reconciliation**: the constraint's operand is not exempt from layer-7 closure, a bounded grant carrying a `max_rows` constraint declares `max_rows` in **both** places at once, and an over-bound constraint integer is `invalid_constraint` (codification plus the bound extension).  §13.4.2 states that **`:`-segments are not a hierarchy** (`Contains(std/database-v1:query, std/database-v1:query:SELECT)` → `child_exceeds_parent` in both directions), and §13.4.3 reduces params narrowing to a **normative five-row decision table** (the child's key set EQUALS the parent's; both the "fewer keys is narrower" and the "more keys is narrower" readings are refused) — codifications, no verdict change.  Corpus: 123 → 146 vectors.  `params-040`–`params-052` (kind=decide, the layer-8 type-sensitivity backfill over the §6.2 params algebra, tagged CLC-1.15; decide 50 → 63), then `params-053`–`params-062` — the corpus pins for the I-JSON integer bound and the leading-BOM refusal, kind=entail, tagged CLC-1.16, covering both sides of each bound, the spellings that must not launder an over-bound integer (exponent and trailing-`.0` forms), the non-integer case the bound must not reach, and the BOM × size precedence.  [RFC8259] added to the normative references. |
 
 ---
 
@@ -371,8 +372,18 @@ layer runs, the `params` object is normalized at the input boundary:
    so float64 and decimal/bignum implementations MUST NOT diverge: the judged
    input is always the raw token text (`params-*` number probes in the corpus;
    near-limit forms such as `1.0000000000000001` extend the probes without
-   changing the rule).  Malformed params text that cannot be parsed as an
-   object is refused with the same code (see step 7).
+   changing the rule).  **Integer bound (I-JSON).**  An integer-valued number
+   whose magnitude exceeds 2^53 − 1 (`9007199254740991`) has no exact IEEE-754
+   binary64 representation and its value is not preserved across
+   implementations ([RFC7493] §6): it is refused with the same code —
+   fail-closed, never rounded.  The bound is judged on the mathematical value
+   of the received token, not on its digit count (`9007199254740993` has 16
+   digits, so the over-precision rule above does not catch it).  Non-integer
+   numbers are unaffected: they arrive as binary64 through step 1, whose
+   rounding is deterministic across implementations.  `param_bounds` numerics
+   inherit the bound through §6.5's input-normalization clause.  Malformed
+   params text that cannot be parsed as an object is refused with the same code
+   (see step 7).
 4. **Size and depth.** Params whose canonical length exceeds 512 **UTF-8
    octets** — measured in octets, never in code points or UTF-16 code units
    (rev CLC-1.4) — or whose nesting depth exceeds 32, are rejected:
@@ -415,14 +426,51 @@ layer runs, the `params` object is normalized at the input boundary:
 
    - the party that receives the input MUST run steps 1-5 on the received text,
      not on a re-serialization of a decoded value;
-   - an implementation that exposes **only** a decoded-value entry point MUST
-     NOT be described as refusing malformed Unicode: its verdict is defined
-     over the value it was handed, which may already be a repaired one.  The
-     entry point that takes the text is the normative one, and an
-     implementation SHOULD name the two so a caller cannot mistake one for the
-     other;
+   - the entry point that takes the text is the **sole conformance entry
+     point**: conformance (§12) is judged there, and an implementation SHOULD
+     name the two entry points so a caller cannot mistake one for the other;
+   - a decoded-value entry point inherits the obligation of the received text:
+     the decoding that produced the value MUST have been **lossless** — a
+     decoder that repairs malformed input (replacing an invalid octet or an
+     unpaired surrogate escape with U+FFFD, as Go's `encoding/json` does) MUST
+     NOT feed an entry point used for a conformance claim, because the repaired
+     value can no longer reproduce the refusal the received text requires.  An
+     implementation whose decoded entry cannot establish that its decoding was
+     lossless MUST NOT be described as refusing malformed Unicode: its verdict
+     is defined over the value it was handed, which may already be a repaired
+     one;
    - two parties that must agree on the verdict MUST agree on the received
      text, or on a digest of it.
+
+8. **Byte-order mark is refused (raw path).**  A leading UTF-8 BOM (`EF BB BF`,
+   U+FEFF) is not part of a JSON text: [RFC8259] §8.1 permits a parser to
+   ignore it, but this specification MUST NOT — params text that begins with a
+   BOM is refused with `deny("invalid_params_number")` before parsing.  The
+   refusal outranks the step-4 caps: a BOM-prefixed text that is also over the
+   size/depth limit reports `invalid_params_number`, never
+   `invalid_params_size` (`params-062` pins this precedence).  An
+   implementation MUST NOT strip U+FEFF as whitespace: ECMAScript classifies it
+   as `WhiteSpace` (so a JavaScript `trim()` pre-step silently accepts a
+   BOM-prefixed text that Python's `str.strip` and Go's `strings.TrimSpace`
+   both refuse) — this rule closes that divergence fail-closed.  A BOM inside
+   the text is likewise invalid (U+FEFF is not a JSON structural character).
+
+9. **Host numeric carriers normalize to JSON number semantics.**  A numeric
+   value that reaches a comparison through a host-language numeric type — an
+   integer type vs. a float type (`int` vs. `float64`), an arbitrary-precision
+   or decimal carrier (`BigInteger`, `BigDecimal`, `decimal`) — MUST be
+   compared under the JSON number semantics of steps 1–3: the same JSON number
+   yields the same verdict whichever host type carries it.  A numeric carrier
+   MUST NOT fall out of the numeric branch into a string-shaped fallback
+   comparison, and a host equality MUST NOT be applied that coerces across
+   JSON types (§6.5 layer 8: `true ≠ 1`, `"1" ≠ 1`).  Where a host offers a
+   carrier binary64 cannot hold, the step 3 integer bound decides acceptance
+   before any carrier-specific arithmetic; a value that cannot be compared
+   losslessly fails closed (`invalid_params_number`) rather than being silently
+   rounded.  The property is not observable from the JSON corpus alone (every
+   JSON number decodes to one host type per implementation); it is checked by
+   representation invariance across the port's own numeric types, and
+   `params-040`/`params-041` guard the contract at the language level.
 
 ### 6.3 Algorithm
 
@@ -583,7 +631,9 @@ keys, number shape, size (512 octets) and depth (32), checked at layer 2.
   equal.  The same equality is used by §6.2 array membership, by the §6.6 enum
   intersection, and by §13.4.3 enum narrowing; implementations MUST NOT
   substitute a host-language equality that coerces across JSON types (e.g. a
-   language where `true == 1`).  If `min_items` / `max_items` are declared,
+   language where `true == 1`).  The host's numeric carrier MUST likewise not
+  decide the comparison branch (§6.2 step 9): every numeric carrier — integer,
+  float, decimal, arbitrary-precision — compares under JSON number semantics.  If `min_items` / `max_items` are declared,
    the **request cardinality** (an array's length; a
    scalar counts as 1) must satisfy `min_items ≤ n ≤ max_items`, else
    `params_cardinality`.
@@ -923,6 +973,23 @@ A recognized-but-unevaluated constraint is carried
 on the decision's additive `unresolved` field — never silently dropped
 (§8.4).  A non-recognized `(scheme,type)` → `deny("unknown_constraint")`
 (fail-closed).
+
+**`max_rows` meets the §6.2 key closure.**  The operand of the `max_rows`
+constraint is the operation's `max_rows` parameter, read from the same params
+object layer-7 key closure governs.  The parameter is **not** exempt from
+closure: an operation carrying `max_rows` against a grant that declares other
+params without declaring `max_rows` fails with `undeclared_param: max_rows`
+before the constraint is consulted, and an operation omitting the parameter
+under a `max_rows` constraint fails closed with `max_rows:violated` (table
+below; Appendix B D21).  A grant that therefore declares any params **and**
+carries a `max_rows` constraint MUST declare `max_rows` among its
+`params`/`param_bounds` keys — the bound is written into both places at once
+(the constraint carries the enforced value, the declaration satisfies the
+closure), and the two checks apply conjunctively.  Only an unconstrained grant
+(no `params`, or `params:{}`) can carry the constraint alone.  A `max_rows`
+constraint value whose integer magnitude exceeds the §6.2 step 3 integer bound
+(2^53 − 1) is out of grammar → `invalid_constraint` (the same fail-closed
+bound; no silent binary64 rounding).
 
 | type | value grammar (v1) | core behavior |
 |------|--------------------|---------------|
@@ -1461,7 +1528,7 @@ tree pinned as [CLC-CORPUS]; repository paths written as `capability/...`
 throughout this document are relative to that pinned tree, so the exact
 vectors named here are retrievable.  CLC-A conformance is exercised by two
 machine-readable reference suites at
-`capability/data/_vectors/clc-v1/`: `vectors.json` — 123 vectors mapped
+`capability/data/_vectors/clc-v1/`: `vectors.json` — 146 vectors mapped
 to Appendix B — and `property-cases.json` — 1184 cases pinning the §7
 meet-law, identifier narrowing and source-order independence.  Their
 syntax is defined by `vectors.schema.json`; `offline-vectors.json` is a
@@ -1502,8 +1569,22 @@ evidence**: they share an author, and their agreement is a regression test for
 the specification, not third-party validation.  An independent implementation is
 invited; until one exists, the parity claim in this document is scoped to
 "same-author, three languages, one corpus".  Reviewers SHOULD treat a
-single-author parity claim as evidence that the text is *implementable*, not that
-it has been independently *interpreted*.
+single-author parity claim as evidence that the text is *implementable*, not
+that it has been independently *interpreted*.
+
+**Participated in the cross-check vs. published here.**  The normative gaps that
+this revision closes were found by checking each rule against several
+same-author implementations written in different host languages, because a
+carrier-specific value model is exactly where a decision rule goes wrong — an
+integer that one runtime widens and another refuses, a string comparison that
+orders by UTF-16 code units instead of UTF-8 octets.  **Only the three ports
+named above are published**, and they run the machine-readable corpora at their
+ordinary test entry points.  This document asserts nothing about the behaviour
+of any implementation it does not publish: a further same-author port that took
+part in the cross-check carries no public conformance claim, and its results are
+not part of the parity claim above.  Readers SHOULD evaluate the rules on their
+merits — each is anchored to a cited requirement — and not on the number of
+ports that happened to surface it.
 
 **Experimental neighbours are not CLC.**  The WIT/WPT interop study in
 `varwof/aic-jwt` (`wit-wpt-interop/`) is an **experimental** research artifact that
@@ -1515,7 +1596,7 @@ provisioning and carries its own EXPERIMENTAL banner.
 ### 12.1 Language Revision
 
 Every implementation declares a language revision `CLC-<major>.<minor>` —
-this document declares **`CLC-1.15`**.  A capability input (grant,
+this document declares **`CLC-1.16`**.  A capability input (grant,
 operation, or OCM) SHOULD carry the revision it was authored against; an
 input without a declared revision is treated as `CLC-1.0`.
 
@@ -1626,10 +1707,29 @@ input without a declared revision is treated as `CLC-1.0`.
   apply this revision MUST declare CLC-1.14 or earlier and let the minor gate
   (§12.1) resolve any input that relies on the corrected behavior.
 
+- **CLC-1.16 is a corrective revision** (cross-port cross-check; see the
+  Revision History): the I-JSON integer bound (§6.2 step 3), leading-BOM
+  refusal on the raw path (step 8), host numeric-carrier normalization (step
+  9), the hardened decoded-entry obligation (step 7), the `max_rows` ×
+  key-closure reconciliation (§8.1) and the containment clarifications
+  (§13.4.2 segments-are-not-a-hierarchy, §13.4.3 decision table).  **Honest
+  scope of the verdict changes.**  Two input subsets move against CLC-1.15:
+  (1) an integer-valued numeric param whose magnitude exceeds 2^53 − 1 was
+  previously canonicalized to binary64 (rounded) and compared — it is now
+  refused (`invalid_params_number`), so whatever verdict the rounded
+  comparison produced becomes a **deny**; (2) raw params text with a leading
+  UTF-8 BOM was previously implementation-split (an ECMAScript-whitespace trim
+  accepted it) — it is now uniformly refused, an **allow → deny** for the
+  trimming implementations.  The §8.1 and §13.4 additions codify existing
+  behavior and change no verdict; every other well-formed input is
+  verdict-stable against CLC-1.15.  An implementation that does not apply this
+  revision MUST declare CLC-1.15 or earlier and let the minor gate resolve an
+  input that relies on the corrected boundaries.
+
 - **CLC-A conformance and the minor gate are the two sides of one rule.**
   Claiming CLC-A (this section) means implementing the CLC-A-relevant
   semantics of the revision claimed — so an implementation that advertises
-  `CLC-1.15` MUST implement `param_bounds` (grammar and the §6.6 meet), `Resolve`, `ConstraintUnion` and
+  `CLC-1.16` MUST implement `param_bounds` (grammar and the §6.6 meet), `Resolve`, `ConstraintUnion` and
   the §6.2 canonicalization, not merely tolerate their inputs.  The minor gate
   is the complement for an implementation that **lags**: it declares an older
   revision and refuses any input that uses a field or function introduced
@@ -1773,6 +1873,20 @@ construction):
 Mid-identifier wildcards remain `unsupported_wildcard` per §3: this section does
 not enlarge the v1 wildcard surface.
 
+**Segments are not a hierarchy.**  The `:`-separated segments of an identifier
+read like a path, but coverage here is only segment equality or the trailing
+wildcard — a *prefix* relation between segments confers nothing.
+`Contains(std/database-v1:query, std/database-v1:query:SELECT)` fails at this
+layer with `child_exceeds_parent` (the child is deeper and the parent carries
+no wildcard), and the reverse order fails the same way: two identifiers of
+different segment depth cover each other only through a wildcard.  The
+relation between an action *class* and an action inside it is established
+outside this relation — by whatever declares action relations (an action type
+definition) — never inferred from the identifier text.  A caller building a
+delegation chain obtains coverage only from an explicit parent trailing
+wildcard (`std/database-v1:query:*` covers `std/database-v1:query:SELECT`),
+never from a shared prefix.
+
 #### 13.4.3 Layer 3: Parameter narrowing
 
 Every parameter the child declares must be *within* the parent's declared
@@ -1816,6 +1930,28 @@ union of `params` and `param_bounds` keys (§6.5):
   and contains any child params; a child `{}` under a *bounded* parent is
   `false` (`params_not_narrower`) — declaring nothing is not the same as
   declaring a subset of the parent's bounds.
+
+**Decision procedure.**  The rules above reduce to one table; presence is
+decided first (§6.5's four layers), then the key sets, then the per-key values.
+The table is normative over any prose reading:
+
+| parent `params`/`param_bounds` | child | layer-3 result |
+|---|---|---|
+| absent or `{}` | absent or `{}` | contains — decided by the identifier layer alone |
+| absent or `{}` | present | contains — an unconstrained parent contains any child params |
+| present | absent or `{}` | `params_not_narrower` — declaring nothing is not a subset of declared bounds |
+| present | present, child key set **equal** to the parent's | contains iff every child value is within the parent's value for that key (rules above) |
+| present | present, key sets differing in **either** direction | `params_not_narrower` — a key the child omits would allow operations the parent denies (`params_missing` in entailment); a key the child adds would allow operations the parent denies (`undeclared_param`) |
+
+Both shorthand readings of "narrower" are wrong and are refused here: *fewer
+keys* is not narrower (a child that omits a parent-declared key lifts the
+parent's bound on it), and *more keys* is not narrower either (an extra
+declared key looks more constrained on the child's own operations, but
+containment asks whether every operation the **child** authorizes is one the
+**parent** authorizes — and an operation carrying the child's added key is
+`undeclared_param` at the parent).  Key-set **equality** (the symmetric closure
+above) is the only shape that passes layer 3, decided before any per-key value
+comparison.
 
 The presence semantics match §6.2 exactly: a grant (parent or child) whose
 params are present-but-empty `{}` is unconstrained, identical to an absent
@@ -1977,8 +2113,9 @@ independently interpreted.
 ### 13.8 AIC-JWT / AIC Certificate Binding
 
 This subsection is a *cross-walk profile of the relation*, not part of the
-language.  At the AIC delegation boundary the parent grant is produced from the
-principal's authorization and the child grant from the
+language.  It covers the X.509 AIC model [AIC] and its JWT representation
+[AIC-JWT].  At the AIC delegation boundary the parent grant is produced from
+the principal's authorization and the child grant from the
 `DelegationAuthTBS`/AIC-JWT DA capabilities:
 
 - **Parent grant** `GP`: the principal's capability entry (scheme:id params),
@@ -2391,14 +2528,16 @@ evaluation language for the capabilities they declare.
 category (B.1–B.6).  The machine-readable `vectors.json` uses a `kind`
 field that collates these groups differently:
 `kind=entail (47)` covers B.2 (8), the 35 params vectors that sit under
-`kind=entail` (B.3's 39 rows minus `params-028/-029/-034/-036`, which are
-`kind=decide`), and the four scheme stress-test entail vectors
-(`clinical-001/-002`, `payments-001`, `data-002`); `kind=decide (50)`
+`kind=entail` (B.3's 52 rows minus `params-028/-029/-034/-036` and the
+thirteen type-sensitivity backfill rows `params-040`–`params-052`, all
+seventeen being `kind=decide`), and the four scheme stress-test entail vectors
+(`clinical-001/-002`, `payments-001`, `data-002`); `kind=decide (63)`
 covers the B.5 rows below (34), the seven combined decision vectors,
 `payments-002` and `data-001`, the four params boundary decisions that
 sit under `kind=decide` (`params-028/-029/-034/-036`, all four also
-listed in B.3) and the three nested key-closure vectors
-(`nested-001/-002/-003`);
+listed in B.3), the three nested key-closure vectors
+(`nested-001/-002/-003`) and the thirteen type-sensitivity backfill
+vectors (`params-040`–`params-052`, also listed in B.3);
 `kind=intersect (17)` covers B.4 (10), the four combined vectors that
 call the intersect function (`combined-004/-005/-008/-011`) and the three
 CLC-1.15 cross-type audit vectors (`intersect-011/-012/-013`, outside the
@@ -2433,7 +2572,7 @@ machine-checkable rather than maintained by hand.
 | E7 | `std/database-v1:*` | `std/database-v1:query:SELECT` | deny | class-position (product-segment) wildcard is v1-forbidden: only a trailing action segment may be `*` (§3; §9.1 layer 3) |
 | E8 | `std/database-v1:*` | `std/database-v1:admin:DDL` | deny | same class-position wildcard; the v1-forbidden shape denies regardless of the action it faces (§3; §9.1 layer 3) |
 
-### B.3 Params (39 vectors)
+### B.3 Params (52 vectors)
 
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
@@ -2476,6 +2615,19 @@ machine-checkable rather than maintained by hand.
 | P37 | `{"s":"x"}` | raw `{"s":"<251×\u00e9 escapes>"}` | allow | the same 510-octet string spelled with `\u00e9` escapes reaches the same verdict and the same size as the literal form of P36 (`params-030`, rev CLC-1.4) |
 | P38 | `{"limit":100}` | raw `{"s":"\ud800"}` | deny(`invalid_params_number`) | a lone surrogate escape is not valid Unicode: refused at the raw boundary, never repaired to U+FFFD (RFC 8785 §3.2.2.2; §6.2 step 2; `params-031`, rev CLC-1.6) |
 | P39 | `{}` | raw `{"s":"\ud83d\ude02"}` | allow | a valid surrogate pair is one character (U+1F602, four UTF-8 octets) and counts as such under the size rule (`params-032`, rev CLC-1.6) |
+| P40 | `{"n":50}` | `{"n":"50"}` | deny(`params_exceed_grant`) | a JSON string is not a number: `"50"` must not satisfy a granted `50` — §6.5 layer-8 type sensitivity inside the §6.2 algebra; host carriers normalize per §6.2 step 9 (`params-040`) |
+| P41 | `{"n":"50"}` | `{"n":50}` | deny(`params_exceed_grant`) | a number never satisfies a string grant — string row, exact; the reverse direction of P40 (`params-041`) |
+| P42 | `{"n":100}` | `{"n":100.0}` | allow | `100.0` is the same JSON number as `100` after step-1 canonicalization; 100 ≤ 100 (`params-042`) |
+| P43 | `{"n":100}` | `{"n":99.5}` | allow | a numeric grant is an upper bound, not an exact value: 99.5 ≤ 100 (`params-043`) |
+| P44 | `{"n":100}` | `{"n":100.5}` | deny(`params_exceed_grant`) | 100.5 > 100 (`params-044`) |
+| P45 | `{"n":100.5}` | `{"n":100}` | allow | the upper bound in the other direction: 100 ≤ 100.5 (`params-045`) |
+| P46 | `{"n":100.5}` | `{"n":101}` | deny(`params_exceed_grant`) | 101 > 100.5 (`params-046`) |
+| P47 | `{"s":"abc"}` | `{"s":"abc"}` | allow | string-branch guard: equal strings still allow under the type-sensitivity backfill (`params-047`) |
+| P48 | `{"flag":true}` | `{"flag":"true"}` | deny(`params_exceed_grant`) | boolean is exact only: the string `"true"` is not the boolean `true` (`params-048`) |
+| P49 | `{"n":1}` | `{"n":true}` | deny(`params_exceed_grant`) | `true ≠ 1` (§6.5 layer 8) — the boolean-side reverse of P22 (`params-049`) |
+| P50 | `{"cfg":{"limit":"10"}}` | `{"cfg":{"limit":10}}` | deny(`params_exceed_grant`) | nested objects recurse with the same type sensitivity (mirrors `nested-003`) (`params-050`) |
+| P51 | `{"ids":[1,2]}` | `{"ids":[1,"2"]}` | deny(`not_in_enum`) | enum membership is type-sensitive: the member `2` is not the string `"2"` (`params-051`) |
+| P52 | `{"ids":[1,2]}` | `{"ids":[1.0]}` | allow | `1.0` is the member `1` after canonicalization (§6.5 layer 8) (`params-052`) |
 
 ### B.4 Intersection (10 vectors)
 
@@ -2549,7 +2701,7 @@ Shorthand: params shown compact; constraints use colon notation.
 | C10 | malformed id in operation | deny("invalid_capability_id") | D4 |
 | C11 | delegation chain, intermediate hop declares empty bound | deny | deny-when-declared propagates |
 
-**Total: 123 vectors**
+**Total: 146 vectors**
 
 > Decisions D17–D28 are the corpus pin for the
 > residual-obligation channel `unresolved` / `allow_unresolved`, the §8.1
@@ -2580,7 +2732,9 @@ Shorthand: params shown compact; constraints use colon notation.
 > `intersect-011/-012/-013` (rev CLC-1.15) are the cross-type audit pins of
 > §7 rule 6 (string × number merge refusal, type-sensitive enum-member
 > equality, `1.0` ≡ `1`) and sit outside the B.1–B.6 tables, taking the
-> corpus total to 123.  B.5 row labels `Dn` are semantic row numbers, not
+> corpus total to 123; likewise `params-053`–`params-062` (rev CLC-1.16,
+> §6.2 input boundary: the I-JSON integer bound and the leading-BOM refusal)
+> sit outside B.1–B.6, taking the total to 146.  B.5 row labels `Dn` are semantic row numbers, not
 > corpus ids (D15/D16 ↔ `decide-016/-017`, D29 ↔ `decide-035`); D10
 > (absent/empty grant, operation present) has no dedicated vector — the
 > pre-check path is pinned by `decide-016` (D15).
@@ -2874,6 +3028,9 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
 - [RFC7493] T. Bray, Ed., "The I-JSON Message Format", RFC 7493,
   DOI 10.17487/RFC7493, March 2015,
   <https://www.rfc-editor.org/info/rfc7493>.
+- [RFC8259] T. Bray, Ed., "The JavaScript Object Notation (JSON) Data
+  Interchange Format", STD 90, RFC 8259, DOI 10.17487/RFC8259, December 2017,
+  <https://www.rfc-editor.org/info/rfc8259>.
 - [RFC8785] A. Rundgren, B. Jordan, S. Erdtman, "JSON Canonicalization Scheme
   (JCS)", RFC 8785, DOI 10.17487/RFC8785, June 2020,
   <https://www.rfc-editor.org/info/rfc8785>.
@@ -2884,7 +3041,9 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   RFC 9396, DOI 10.17487/RFC9396, May 2023,
   <https://www.rfc-editor.org/info/rfc9396>.
 - [AIC-JWT] J. Wei, "AI Agent Identity Certificate (AIC) JSON Web Token
-  Profile", draft-wei-aic-jwt-01, Work in Progress, September 2026.
+  Profile", draft-wei-aic-jwt, Work in Progress, September 2026.
+- [AIC] J. Wei, "AI Agent Identity Certificate (AIC) Extension for X.509
+  v3", draft-wei-aic-identity-cert, Work in Progress, September 2026.
 - [CAID] "The Canonical Action Identifier (CAID)",
   draft-schrock-canonical-action-identifier-03, Work in Progress.  Section 4.6
   defines the optional `occurrence_id`; Section 7 keeps occurrence allocation and

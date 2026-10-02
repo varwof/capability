@@ -73,7 +73,7 @@ R5 in practice: "implemented and pinned by a corpus, **not claimed**" is a legit
 | **Local decidability** | P9 | the core corpus runs with no I/O; `offline-vectors.json` (12 OCMP cases, all 11 §3 reason codes) has a coverage + vocabulary gate in CI |
 | **Bounded work** | P10 | `params-018/019` (one step past each limit → deny) + `params-020/021` (exactly at each limit → pass) |
 | **Composition narrows only** | P11 | `property-cases.json` — 1184 deterministic cases run by all three implementations (identical numbers); CLC-D adds `containment-property-cases.json` (784 forward-closure cases); CLC-1.15 adds `param-bounds-meet-property-cases.json` (500 cases: every successful meet authorizes only what **every** source authorizes) |
-| **Agreement is the bar** | P12 | 123 vectors asserted on verdict *and* canonical reason by the Go, Python and TypeScript runners, non-zero exit on mismatch, CI in three repositories — **with the same-author caveat of §6 below** |
+| **Agreement is the bar** | P12 | 146 vectors asserted on verdict *and* canonical reason by the Go, Python and TypeScript runners, non-zero exit on mismatch, CI in three repositories — **with the same-author caveat of §6 below** |
 
 ## 6. The ledger discipline — and the recorded gaps
 

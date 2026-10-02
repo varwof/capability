@@ -27,32 +27,51 @@ JSON-format capability definitions for varwof zero-trust gateways: `std` (standa
 
 ```bash
 export CAPABILITY_DIR=/path/to/capability/data
-ls data/
-# std/database-v1/v1.json
-# std/clinical-v1/v1.json
-# std/payments-v1/v1.json
-# std/data-v1/v1.json
-# varwof/core-v1/v1.json
-# varwof/gateway-v1/v1.json
-# varwof/constraint-v1/v1.json
-# varwof/llm-v1/v1.json
-# x-vendor/acme-v1/v1.json
+
+# Every scheme file, as addressed by consumers (<vendor>/<product>-v<major>/v<major>.json)
+find "$CAPABILITY_DIR" -name 'v1.json' -not -path '*_vectors*' | sort
+
+# What a scheme actually declares
+python3 -c "import json,sys; d=json.load(open(sys.argv[1])); \
+print(d['scheme_id'], d['version'], len(d['capabilities']), 'caps', len(d['roles']), 'roles')" \
+  "$CAPABILITY_DIR/varwof/core-v1/v1.json"
+# -> varwof/core-v1 1.1.0 37 caps 10 roles
+
+# Validate the corpora and the schema gate (no network, no dependencies)
+python3 scripts/check-offline-vectors.py
 ```
+
+The three same-author implementations that consume this data are
+[`varwof/register`](https://github.com/varwof/register) (Go — the reference),
+[`varwof/aic-capability-demo`](https://github.com/varwof/aic-capability-demo)
+(Python) and its
+[`ts/`](https://github.com/varwof/aic-capability-demo/tree/main/ts) (TypeScript).
 
 ## Data Structure
 
+14 scheme files, 112 capabilities and 17 roles in total:
+
 ```
 data/
-├── std/database-v1/v1.json         — Standard database capability schema
-├── std/clinical-v1/v1.json         — Clinical IS capabilities (records, orders, prescribing)
-├── std/payments-v1/v1.json         — Payments capabilities (transfers, payouts, KYC, refunds)
-├── std/data-v1/v1.json             — Data & privacy capabilities (read/export/join/train/delete)
-├── varwof/core-v1/v1.json          — Core permissions (37 capabilities + 10 roles)
-├── varwof/gateway-v1/v1.json       — Gateway permissions (21 capabilities + 5 roles)
-├── varwof/constraint-v1/v1.json    — Execution constraint capabilities (§8.1: max_rows/time/network)
-├── varwof/llm-v1/v1.json           — LLM API capabilities
-└── x-vendor/acme-v1/v1.json        — Private extension example
+├── std/clinical-v1/v1.json         — Clinical IS (7 capabilities)
+├── std/database-v1/v1.json         — Database operations (7 capabilities + 2 roles)
+├── std/data-v1/v1.json             — Data & privacy (5 capabilities)
+├── std/deploy-v1/v1.json           — Deployment / infrastructure (3 capabilities)
+├── std/mcp-v1/v1.json              — MCP tool access (1 capability)
+├── std/payments-v1/v1.json         — Payments (6 capabilities)
+├── std/robot-line-v1/v1.json       — Industrial robot line (10 capabilities)
+├── std/wallet-v1/v1.json           — Digital wallet (3 capabilities)
+├── varwof/constraint-v1/v1.json    — System constraints: max_rows / time / network (§8.1)
+├── varwof/core-v1/v1.json          — PKI core (37 capabilities + 10 roles)
+├── varwof/demo-mysql-v1/v1.json    — MySQL API gateway demo fixture (5 capabilities)
+├── varwof/gateway-v1/v1.json       — Gateway (21 capabilities + 5 roles)
+├── varwof/llm-v1/v1.json           — LLM API (1 capability)
+└── x-vendor/acme-v1/v1.json        — private-extension example (3 capabilities)
 ```
+
+`data/_vectors/` holds the CLC conformance corpora (see
+[Consistency vectors](#clc-v1-conformance-vectors-and-schemes)); it is not a
+scheme namespace and consumers must exclude it when they enumerate `data/`.
 
 ## Neutrality
 
@@ -92,7 +111,7 @@ specification, the corpora, and the reference implementation in
 This repository also carries the machine-readable side of **CLC-v1** (the
 minimal capability decision language):
 
-- `data/_vectors/clc-v1/` — **123 conformance vectors** and **32 evidence-side vectors**
+- `data/_vectors/clc-v1/` — **146 conformance vectors** and **32 evidence-side vectors**
   (`evidence-vectors.json`: evidence constraints, requirements, `ActionId` and
   `Match`), `vectors.schema.json`, `clc-v1-ambiguities.md`
   (resolution log), **1184 deterministic P11 property cases**
@@ -198,6 +217,13 @@ graph TB
 ```
 
 capability is the **capability data layer** of the varwof ecosystem. This project is a member of the [Open Invention Network](https://openinventionnetwork.com/).
+
+### Related repositories
+
+| Repository | What it is |
+|---|---|
+| [`varwof/register`](https://github.com/varwof/register) | the Go reference implementation that loads these schemes, signs them and enforces CLC-v1 ([中文](https://github.com/varwof/register/blob/main/README_CN.md)) |
+| [`varwof/aic-capability-demo`](https://github.com/varwof/aic-capability-demo) | the Python and TypeScript ports that consume the same corpora ([中文](https://github.com/varwof/aic-capability-demo/blob/main/README_CN.md)) |
 
 ## Links
 

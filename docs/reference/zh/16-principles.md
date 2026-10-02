@@ -73,7 +73,7 @@ R5 的现实含义：「已实现、有语料钉住、**不声称**」是合法�
 | **本地可判** | P9 | 核心语料零 I/O 运行；`offline-vectors.json`（12 条 OCMP 用例，覆盖全部 11 个 §3 reason code）在 CI 中有覆盖 + 词表闸门 |
 | **有界工作量** | P10 | `params-018/019`（越界一步 → deny）+ `params-020/021`（恰好顶格 → pass） |
 | **组合只收窄** | P11 | `property-cases.json`——1184 条确定性用例，三个实现全部运行（数字完全一致）；CLC-D 另有 `containment-property-cases.json`（784 条前向闭包用例）；CLC-1.15 新增 `param-bounds-meet-property-cases.json`（500 条：每次成功的 meet 只授权**每个**源都授权的操作） |
-| **一致即门槛** | P12 | 123 条 vector 由 Go、Python、TypeScript runner 按 verdict *和*规范 reason 断言，任何不一致非零退出，三个仓库的 CI 均运行——**并带有下节所述同作者限定** |
+| **一致即门槛** | P12 | 146 条 vector 由 Go、Python、TypeScript runner 按 verdict *和*规范 reason 断言，任何不一致非零退出，三个仓库的 CI 均运行——**并带有下节所述同作者限定** |
 
 ## 6. 台账纪律——与已记录的 gap
 

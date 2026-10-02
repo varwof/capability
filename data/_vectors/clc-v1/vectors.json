@@ -2700,6 +2700,328 @@
     "derivation": "raw path: a literal U+000A inside a string is not valid JSON text, so the params cannot be normalized.  Go and Python refused it already; TypeScript counted it as a character and accepted until CLC-1.8."
   },
   {
+    "id": "params-040",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 50
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": "50"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "a JSON string is not a number: \"50\" must not satisfy a granted 50 (§6.5 layer 8 type sensitivity in the §6.2 params algebra). A host that delivered the granted number in a non-canonical numeric type compared values by string form and allowed this until 2026-09-28; the JSON corpus cannot express that host representation, so this vector guards the contract rather than reproducing it."
+  },
+  {
+    "id": "params-041",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": "50"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 50
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "string is exact (§6.2): a number never satisfies a string grant — the reverse direction of params-040."
+  },
+  {
+    "id": "params-042",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100.0
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "JCS canonicalization makes 100.0 the same JSON number as 100 (§6.2 input normalization step 1) and a numeric grant is an upper bound: 100 <= 100."
+  },
+  {
+    "id": "params-043",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 99.5
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "op <= grant (§6.2 number row): 99.5 <= 100 whatever the fractional part, so a fraction under an integer grant is allowed. A host that compared granted and operation numbers for exact equality denied this until 2026-09-28; not expressible in the JSON corpus."
+  },
+  {
+    "id": "params-044",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100.5
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "op <= grant: 100.5 > 100 -> deny. Pins that an integer grant is an upper bound, not an exact value."
+  },
+  {
+    "id": "params-045",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100.5
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "a numeric grant is an upper bound in the other direction too: 100 <= 100.5. Exact-value comparison denied this until 2026-09-28; not expressible in the JSON corpus."
+  },
+  {
+    "id": "params-046",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 100.5
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 101
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "op <= grant: 101 > 100.5 -> deny."
+  },
+  {
+    "id": "params-047",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "abc"
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "s": "abc"
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "string is exact (§6.2): equal strings are allowed — guards the string branch that the type-sensitivity change must not break."
+  },
+  {
+    "id": "params-048",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": true
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "flag": "true"
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "boolean is exact only (§6.2): the string \"true\" is not the boolean true."
+  },
+  {
+    "id": "params-049",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 1
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": true
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "true != 1 (§6.5 layer 8): the boolean-opposite of params-022, which pins a number grant against a boolean operation value."
+  },
+  {
+    "id": "params-050",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2/§9.1",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "limit": "10"
+        }
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "cfg": {
+          "limit": 10
+        }
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "params_exceed_grant"
+    },
+    "derivation": "layer 7 recurses with the same type sensitivity: a nested string value is not a nested number, mirroring nested-003."
+  },
+  {
+    "id": "params-051",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "ids": [
+          1,
+          2
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "ids": [
+          1,
+          "2"
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "deny",
+      "reason": "not_in_enum"
+    },
+    "derivation": "an array-valued params is the set of allowed values (§6.2): the member 2 is not the string \"2\", so an array holding it is not a subset -> not_in_enum."
+  },
+  {
+    "id": "params-052",
+    "kind": "decide",
+    "spec_clause": "CLC-v1 §6.2",
+    "clc_revision": "CLC-1.15",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "ids": [
+          1,
+          2
+        ]
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "ids": [
+          1.0
+        ]
+      }
+    },
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "membership compares numbers after JCS canonicalization (§6.5 layer 8): 1.0 is the member 1, so [1.0] is a subset of [1,2]."
+  },
+  {
     "id": "entail-007",
     "kind": "entail",
     "spec_clause": "CLC-v1 §5.1",
@@ -2850,5 +3172,247 @@
       "reason": "params_exceed_grant"
     },
     "derivation": "nested bound exceeded (§6.2/§9.1 layer 7): grant declares cfg.limit <= 10, request carries cfg.limit = 15 -> deny(\"params_exceed_grant\"), same rule as top-level params-002."
+  },
+  {
+    "id": "params-053",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740991
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740991
+      }
+    },
+    "raw_params": "{\"n\":9007199254740991}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "raw path, positive side of the I-JSON integer bound (§6.2 step 3): 2^53 - 1 is the largest integer with an exact binary64 representation, so it is accepted (rev CLC-1.16)."
+  },
+  {
+    "id": "params-054",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740992
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740992
+      }
+    },
+    "raw_params": "{\"n\":9007199254740992}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "the first refused integer: 2^53 has no exact binary64 representation. A comparison over the rounded value would decide on a number the caller never wrote, so the bound refuses it instead (§6.2 step 3)."
+  },
+  {
+    "id": "params-055",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "raw_params": "{\"n\":9007199254740993}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "2^53 + 1 is the value binary64 silently rounds UP to 2^53: decoded naively it would compare as exactly the power of two and could satisfy a grant it does not. Refused rather than rounded (§6.2 step 3)."
+  },
+  {
+    "id": "params-056",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "raw_params": "{\"n\":9.007199254740993e15}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "the same integer as params-055 in the exponent spelling a JSON serializer emits for a large double. The bound is judged on the mathematical value of the received token, not on a double parse, so the spelling cannot launder it (§6.2 step 3)."
+  },
+  {
+    "id": "params-057",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 9007199254740993
+      }
+    },
+    "raw_params": "{\"n\":9007199254740993.0}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "the same integer as params-055 with a trailing fraction. A trailing \".0\" does not make a value a fraction — JCS reads 9007199254740993.0 as the integer it is — so it reaches the same refusal (§6.2 step 3 with step 1)."
+  },
+  {
+    "id": "params-058",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": -9007199254740993
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": -9007199254740993
+      }
+    },
+    "raw_params": "{\"n\":-9007199254740993}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "negative side of the bound: the rule is on magnitude, so a large negative integer is refused exactly like a large positive one (§6.2 step 3)."
+  },
+  {
+    "id": "params-059",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 4503599627370495.5
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 4503599627370495.5
+      }
+    },
+    "raw_params": "{\"n\":4503599627370495.5}",
+    "expect": {
+      "verdict": "allow"
+    },
+    "derivation": "non-integer near the top of the range is unaffected: step 1 already fixed a fraction's rounding deterministically across implementations, so the bound — which guards integer preservation — does not reach it (§6.2 step 3)."
+  },
+  {
+    "id": "params-060",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 123456789012345678901234567890
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 123456789012345678901234567890
+      }
+    },
+    "raw_params": "{\"n\":123456789012345678901234567890}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "far over the bound, and 30 significant digits so it is also over-precision; both clauses of step 3 refuse it and both resolve to the same stable code."
+  },
+  {
+    "id": "params-061",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 1
+      }
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT",
+      "params": {
+        "n": 1
+      }
+    },
+    "raw_params": "﻿{\"n\":1}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "a leading UTF-8 BOM is not part of a JSON text: RFC 8259 §8.1 permits a parser to ignore it, this specification MUST NOT. Refused before parsing (§6.2 step 8). Closes the ECMAScript trim() divergence, where JavaScript silently strips U+FEFF as WhiteSpace and Python's str.strip, Go's strings.TrimSpace, Java's String.strip and .NET's string.Trim all refuse it."
+  },
+  {
+    "id": "params-062",
+    "kind": "entail",
+    "spec_clause": "CLC-v1 §6.2 (rev CLC-1.16)",
+    "clc_revision": "CLC-1.16",
+    "conformance_class": "CLC-A",
+    "grant": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "request": {
+      "id": "std/database-v1:query:SELECT"
+    },
+    "raw_params": "﻿{\"s\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+    "expect": {
+      "verdict": "deny",
+      "reason": "invalid_params_number"
+    },
+    "derivation": "BOM × size precedence (§6.2 step 8 with step 5): this text is both BOM-prefixed and over the 512-octet cap. The BOM is refused before parsing, so it outranks the size check and the stable code is invalid_params_number, not invalid_params_size."
   }
 ]
