@@ -3245,7 +3245,7 @@
       "verdict": "deny",
       "reason": "invalid_params_number"
     },
-    "derivation": "2^53 + 1 is the value binary64 silently rounds UP to 2^53: decoded naively it would compare as exactly the power of two and could satisfy a grant it does not. Refused rather than rounded (§6.2 step 3)."
+    "derivation": "2^53 + 1 is the value binary64 silently rounds to 2^53: decoded naively it would compare as exactly the power of two and could satisfy a grant it does not. Refused rather than rounded (§6.2 step 3)."
   },
   {
     "id": "params-056",
@@ -3510,7 +3510,7 @@
       "verdict": "deny",
       "reason": "invalid_params_number"
     },
-    "derivation": "exactly-representable over-bound value: binary64 holds `1e100` exactly, but it is integer-valued with magnitude > 2^53 - 1, so the I-JSON integer bound refuses it on the mathematical value - acceptance must not turn on the carrier's representability (§6.2 step 3, rev CLC-1.17)."
+    "derivation": "over-bound value that is not exactly representable in binary64: `1e100` is integer-valued with magnitude > 2^53 - 1, so the I-JSON integer bound refuses it on the mathematical value - acceptance must not turn on the carrier's representability (§6.2 step 3, rev CLC-1.17)."
   },
   {
     "id": "params-067",

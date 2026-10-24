@@ -388,8 +388,9 @@ layer runs, the `params` object is normalized at the input boundary:
    integer-valued number may be silently rounded to a neighbour
    (`9007199254740993` → `9007199254740992`).  The bound is judged on the
    **mathematical value** of the received token, independent of its spelling
-   and of whether the port's carrier could hold it exactly — so `1e100` and
-   `9007199254740992` are refused even though binary64 represents them
+   and of whether the port's carrier could hold it exactly — so
+   `9007199254740992` (2^53) is refused although binary64 represents it
+   exactly, and `1e100` is refused although binary64 cannot represent it
    exactly: an acceptance rule that turned on binary64 representability would
    let the numeric carrier a port happens to use change the verdict.  It is
    not judged on digit count (`9007199254740993` has 16 digits, so the
@@ -1844,7 +1845,8 @@ input without a declared revision is treated as `CLC-1.0`.
   Revision History): §6.2 step 3 is restated so the **I-JSON integer bound is
   judged on the mathematical value** of the received token — an integer-valued
   number outside `[−(2^53 − 1), 2^53 − 1]` is refused whether or not binary64
-  represents it exactly (`1e100` and `9007199254740992` are refused), correcting
+  represents it exactly (`9007199254740992` is exactly representable but
+  refused; `1e100` is not exactly representable and is also refused), correcting
   a CLC-1.16 justification that had said such a number "has no exact IEEE-754
   binary64 representation".  Step 3 additionally states that **number identity
   is the JSON number, not its spelling** (`-0` ≡ `0`, `1e3` ≡ `1000`,
@@ -2941,7 +2943,7 @@ The params vectors are grouped by the property each subgroup pins.
 |---|-------|-----------|----------|------------|
 | P53 | `{"n":9007199254740991}` | raw `{"n":9007199254740991}` | allow | top of the I-JSON integer range: 2^53 − 1 is the largest integer-valued magnitude accepted (`params-053`, rev CLC-1.16) |
 | P54 | `{"n":9007199254740992}` | raw `{"n":9007199254740992}` | deny(`invalid_params_number`) | the first refused integer-valued magnitude above the bound (`params-054`) |
-| P55 | `{"n":9007199254740993}` | raw `{"n":9007199254740993}` | deny(`invalid_params_number`) | 2^53 + 1 rounds up to 2^53 in binary64; refused, never rounded (`params-055`) |
+| P55 | `{"n":9007199254740993}` | raw `{"n":9007199254740993}` | deny(`invalid_params_number`) | 2^53 + 1 rounds to 2^53 in binary64; refused, never rounded (`params-055`) |
 | P56 | `{"n":9007199254740993}` | raw `{"n":9.007199254740993e15}` | deny(`invalid_params_number`) | the bound is on the mathematical value: the exponent spelling cannot launder an over-bound integer (`params-056`) |
 | P57 | `{"n":9007199254740993}` | raw `{"n":9007199254740993.0}` | deny(`invalid_params_number`) | a trailing `.0` does not make it a fraction (`params-057`) |
 | P58 | `{"n":-9007199254740993}` | raw `{"n":-9007199254740993}` | deny(`invalid_params_number`) | the rule is on magnitude: the negative side is refused like the positive (`params-058`) |
@@ -2957,7 +2959,7 @@ The params vectors are grouped by the property each subgroup pins.
 | P63 | `{"n":0}` | raw `{"n":-0}` | allow | `-0` and `0` are one JSON number; JCS renders both as `0` (`params-063`, rev CLC-1.17) |
 | P64 | `{"n":1000}` | raw `{"n":1e3}` | allow | `1e3` ≡ `1000`: number identity is the value, not the spelling (`params-064`) |
 | P65 | `{"n":0.0015}` | raw `{"n":1.5e-3}` | allow | `1.5e-3` ≡ `0.0015` (`params-065`) |
-| P66 | `{"n":1e100}` | raw `{"n":1e100}` | deny(`invalid_params_number`) | binary64 holds `1e100` exactly, yet the mathematical-value bound refuses it — acceptance must not turn on the carrier (`params-066`) |
+| P66 | `{"n":1e100}` | raw `{"n":1e100}` | deny(`invalid_params_number`) | `1e100` is integer-valued and far outside the I-JSON range; binary64 cannot represent it exactly, but the mathematical-value bound refuses it independently of carrier representability (`params-066`) |
 | P67 | `{"n":1.7976931348623157e308}` | raw | deny(`invalid_params_number`) | the largest finite binary64 is integer-valued and over the bound → refused (`params-067`) |
 | P68 | `{"n":5e-324}` | `{"n":0}` | allow | a subnormal is finite and in range: 0 ≤ 5e-324 (`params-068`) |
 | P69 | `{"n":0}` | `{"n":5e-324}` | deny(`params_exceed_grant`) | the inverse bound direction: 5e-324 > 0 (`params-069`) |
