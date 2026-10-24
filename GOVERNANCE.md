@@ -71,6 +71,23 @@ Until there are at least two active maintainers, the editor may merge after the
 review period but must record why consensus was judged sufficient. The editor
 MUST NOT use that fallback to bypass CI or an unresolved technical objection.
 
+### Bootstrap exception
+
+The repository must not be unable to adopt its own review process because no
+second reviewer exists yet. The initial editor may therefore merge a
+documentation-only governance, adoption or contribution-policy PR without an
+approving review when all of the following hold:
+
+- required CI and DCO checks pass;
+- the PR states that the bootstrap exception is being used;
+- no unresolved technical objection is present;
+- the change does not modify CLC semantics, conformance claims, vectors,
+  security behavior or release artifacts; and
+- the exception is recorded in the pull request history.
+
+This exception ends when another maintainer or an external reviewer is
+available. It MUST NOT be reused for routine technical changes.
+
 ### Security fixes
 
 Security fixes may use a private review period when public disclosure would
