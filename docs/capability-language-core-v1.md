@@ -3401,7 +3401,7 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   authenticated and serves, and to be indistinguishable toward anyone else;
   Appendix A restates Sections 3–5 as conformance cases.
 - [KONDA] "Preserving Evaluation State in Agent Protocol Decisions",
-  draft-konda-agentproto-evaluation-state-01, Work in Progress.  §6 separates
+  draft-konda-agentproto-evaluation-state-02, Work in Progress.  §6 separates
   established-negative, not-established and stale as states of particular
   inputs, and states that not-established is not a fourth authorization
   decision.
@@ -3426,6 +3426,6 @@ adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
   schema defines its own subset semantics for the `authorization_details` it
   carries.
 - [MISSION] "Mission-Bound Authorization for OAuth 2.0",
-  draft-mcguinness-oauth-mission-00, Work in Progress.  A named constraint
+  draft-mcguinness-oauth-mission-01, Work in Progress.  A named constraint
   vocabulary, including `max_amount` with amount and currency, carried with a
   mission.
