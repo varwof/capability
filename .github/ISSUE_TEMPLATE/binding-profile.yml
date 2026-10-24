@@ -1,0 +1,39 @@
+name: Carrier binding or projection
+description: Propose a mapping from a native carrier to CLC
+title: "[Binding]: "
+body:
+  - type: input
+    id: carrier
+    attributes:
+      label: Carrier and revision
+      placeholder: draft-example-00 / RFC 0000 / product specification
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Native verification and trust
+      description: Who validates signatures, credentials, status and lifecycle?
+    validations:
+      required: true
+  - type: textarea
+    id: mapping
+    attributes:
+      label: Mapping
+      description: Map observation, fact, requirement and result objects.
+    validations:
+      required: true
+  - type: textarea
+    id: residual
+    attributes:
+      label: Residual semantics
+      description: What cannot CLC express, who decides it, and how is fail-closed behavior preserved?
+    validations:
+      required: true
+  - type: textarea
+    id: vectors
+    attributes:
+      label: Executable evidence
+      description: Provide positive and negative cases and exact runner commands.
+    validations:
+      required: true

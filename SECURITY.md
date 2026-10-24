@@ -21,8 +21,16 @@ public disclosure.
 This project is the capability data / capability-scheme repository of the varwof AIC ecosystem. Issues of
 interest include:
 
+- a CLC rule that permits by omission, ambiguity or incorrect precedence;
+- failure to reject malformed or unsupported inputs;
+- a mismatch that lets conforming implementations reach different verdicts;
+- incorrect or poisoned conformance vectors;
 - capability-scheme integrity and parameter definitions
 - dependency and supply-chain integrity
+
+The security of external credential formats, trust anchors, runtime status
+services and native verifiers is outside this repository unless the CLC text
+incorrectly claims to establish that property.
 
 ## Supported Versions
 

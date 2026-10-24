@@ -17,6 +17,10 @@
 规范文本中引用的 Internet-Draft 一律以 work in progress 形式列出，不作为规范性来源；
 本仓未复制任何第三方代码。
 
+项目参与和决策流程见 [GOVERNANCE.md](GOVERNANCE.md)；许可、专利承诺和一致性声明方式见
+[ADOPTION.md](ADOPTION.md)；贡献要求与 DCO sign-off 见
+[CONTRIBUTING.md](CONTRIBUTING.md)；安全问题按 [SECURITY.md](SECURITY.md) 报告。
+
 ## 什么是 varwof-capability？
 
 为 varwof 零信任网关提供 JSON 格式的能力定义数据：`std`（标准能力）与 `varwof`

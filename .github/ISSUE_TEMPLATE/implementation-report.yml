@@ -1,0 +1,43 @@
+name: Implementation report
+description: Report an implementation, its conformance claims and exact results
+title: "[Implementation]: "
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Repository and exact commit
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author or organization
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: CLC revision and claimed class
+      placeholder: CLC-1.19, CLC-A / CLC-D / CLC-E
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact runner command and result
+    validations:
+      required: true
+  - type: textarea
+    id: gaps
+    attributes:
+      label: Known failures and unsupported cases
+      description: Do not omit failing cases. A partial implementation may still be useful.
+    validations:
+      required: true
+  - type: textarea
+    id: independence
+    attributes:
+      label: Independence statement
+      description: State whether the implementation shares an author or organization with an existing implementation.
+    validations:
+      required: true

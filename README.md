@@ -19,6 +19,12 @@ material.  Implementations here are written from published specifications; the
 Internet-Drafts cited in the CLC text are referenced as work in progress, not as
 normative sources, and no third-party code was copied into this repository.
 
+Project participation is governed by [GOVERNANCE.md](GOVERNANCE.md). Licensing,
+patent commitments and conformance-reporting guidance are in
+[ADOPTION.md](ADOPTION.md); contribution requirements and DCO sign-off are in
+[CONTRIBUTING.md](CONTRIBUTING.md). Security reports follow
+[SECURITY.md](SECURITY.md).
+
 ## What is varwof-capability?
 
 JSON-format capability definitions for varwof zero-trust gateways: `std` (standard capabilities) and `varwof` (core/gateway/constraint capabilities), plus `x-vendor` (private extensions).  Third-party vendor namespaces are contributed by their owners and are not published from this repository. Loaded by the `register` module for PKCS#7 signature verification and permission validation.

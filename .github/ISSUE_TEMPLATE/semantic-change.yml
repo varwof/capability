@@ -1,0 +1,43 @@
+name: CLC semantic change
+description: Propose a change to syntax, relations, verdicts, reason codes or conformance
+title: "[Semantic change]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Normative changes require public review, executable evidence and a compatibility analysis. See GOVERNANCE.md.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What concrete implementation or interoperability problem is not solved by the current text?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Quote the clauses to change and define the new deterministic behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Why can this remain in a binding, scheme or profile?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Vectors and implementation impact
+      description: List positive/negative vectors and affected implementations.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility
+      description: State changes to verdicts, reason ordering, corpora or existing inputs.
+    validations:
+      required: true
