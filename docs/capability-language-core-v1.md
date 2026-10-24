@@ -4,7 +4,7 @@
 
 > **Preview** — Not for production use. APIs and features may change before official release.
 
-**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-10-23
+**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-10-24
 
 ## Abstract
 
@@ -1496,6 +1496,15 @@ Properties: deterministic, fail-closed, stable reason codes.
 
 CLC-v1 defines the **shared minimal vocabulary** and **evaluation
 algorithms** for both authorization and evidence.
+
+A **projection** is not a third decision language.  When a carrier profile maps
+native authorization or evidence artifacts into the objects defined here, it
+does not add a verdict source.  Authorization and evidence remain distinct, but
+share the ActionId (§4.3) and constraint vocabulary (§8) needed to connect a
+proposed action with evidence about the action that occurred.  A projection
+MUST NOT report a native check or relation as satisfied unless the carrier's
+verifier establishes it; carrier-specific fields, trust decisions and runtime
+state remain profile responsibilities.
 
 CLC-v1 does NOT define:
 - **Trust models**: who signs what, issuer trust, delegation chains
