@@ -2861,6 +2861,10 @@ machine-checkable rather than maintained by hand.
 
 ### B.3 Params (70 vectors)
 
+The params vectors are grouped by the property each subgroup pins.
+
+#### B.3.1 Basic bounds, enums, objects and unconstrained grants (P1–P15)
+
 | # | Grant | Operation | Expected | Derivation |
 |---|-------|-----------|----------|------------|
 | P1 | `{"limit":100}` | `{"limit":50}` | allow | 50 ≤ 100 |
@@ -2878,6 +2882,11 @@ machine-checkable rather than maintained by hand.
 | P13 | `{"station":[1],"speed":0.3}` | `{"station":1,"speed":0.25}` | allow | member + number bound unaffected |
 | P14 | `{"station":[3]}` | `{"station":2}` | deny | categorical: granting 3 does not cover 1/2 (`not_in_enum`) |
 | P15 | `{"columns":{"t":["id","name"]}}` | `{"columns":{"t":["id"]}}` | allow | object recursion: request element is a member of the granted set (§6.2 v1.1) |
+
+#### B.3.2 Raw-input rejection and reason precedence (P16–P27)
+
+| # | Grant | Operation | Expected | Derivation |
+|---|-------|-----------|----------|------------|
 | P16 | `{"limit":100}` | raw `{"limit":100,"limit":150}` | deny(`invalid_params_duplicate_key`) | duplicate JSON key rejected at input normalization (§6.2 step 2) |
 | P17 | `{"limit":100}` | raw `{"limit":1e400}` | deny(`invalid_params_number`) | non-finite number literal (§6.2 step 3) |
 | P18 | `{"s":"x"}` | raw `{"s":"<600 chars>"}` | deny(`invalid_params_size`) | serialized form > 512 B (§6.2 step 4) |
@@ -2890,6 +2899,11 @@ machine-checkable rather than maintained by hand.
 | P25 | `{"s":"x"}` | raw `{"s":"<512 B>","s":"dup"}` | deny(`invalid_params_size`) | multi-fault: size (4) precedes duplicate keys (2) (`params-025`) |
 | P26 | `{"s":"x"}` | raw `{"n":1e400,"s":"<512 B>"}` | deny(`invalid_params_size`) | multi-fault: size (4) precedes number shape (3) (`params-026`) |
 | P27 | `{"a":1}` | raw `{"a":1,"a":2,"n":1e400}` | deny(`invalid_params_duplicate_key`) | multi-fault under the size limit: duplicate keys (2) precede number shape (3) (`params-027`) |
+
+#### B.3.3 Canonical size and Unicode boundaries (P28–P39)
+
+| # | Grant | Operation | Expected | Derivation |
+|---|-------|-----------|----------|------------|
 | P28 | `{}` | raw `{"n":1e-6,"s":"<494 a>"}` | deny(`invalid_params_size`) | the received text is 511 octets but the JCS form writes `1e-6` as `0.000001`, so the §6.2 step 4 size is 515 (`params-033`) |
 | P29 | `{}` | `{"n":1e-6,"s":"<494 a>"}` (decoded) | deny(`invalid_params_size`) | decoded counterpart of P28: both boundaries agree (`params-034`) |
 | P30 | `{}` | raw `{"n":1.0,"s":"<498 a>"}` | allow | the received text is 514 octets but the JCS form writes `1.0` as `1`, so the size is 512 and inside the cap (`params-035`) |
@@ -2902,6 +2916,11 @@ machine-checkable rather than maintained by hand.
 | P37 | `{"s":"x"}` | raw `{"s":"<251×\u00e9 escapes>"}` | allow | the same 510-octet string spelled with `\u00e9` escapes reaches the same verdict and the same size as the literal form of P36 (`params-030`, rev CLC-1.4) |
 | P38 | `{"limit":100}` | raw `{"s":"\ud800"}` | deny(`invalid_params_number`) | a lone surrogate escape is not valid Unicode: refused at the raw boundary, never repaired to U+FFFD (RFC 8785 §3.2.2.2; §6.2 step 2; `params-031`, rev CLC-1.6) |
 | P39 | `{}` | raw `{"s":"\ud83d\ude02"}` | allow | a valid surrogate pair is one character (U+1F602, four UTF-8 octets) and counts as such under the size rule (`params-032`, rev CLC-1.6) |
+
+#### B.3.4 Type-sensitive equality (P40–P52)
+
+| # | Grant | Operation | Expected | Derivation |
+|---|-------|-----------|----------|------------|
 | P40 | `{"n":50}` | `{"n":"50"}` | deny(`params_exceed_grant`) | a JSON string is not a number: `"50"` must not satisfy a granted `50` — §6.5 layer-8 type sensitivity inside the §6.2 algebra; host carriers normalize per §6.2 step 9 (`params-040`) |
 | P41 | `{"n":"50"}` | `{"n":50}` | deny(`params_exceed_grant`) | a number never satisfies a string grant — string row, exact; the reverse direction of P40 (`params-041`) |
 | P42 | `{"n":100}` | `{"n":100.0}` | allow | `100.0` is the same JSON number as `100` after step-1 canonicalization; 100 ≤ 100 (`params-042`) |
@@ -2915,6 +2934,11 @@ machine-checkable rather than maintained by hand.
 | P50 | `{"cfg":{"limit":"10"}}` | `{"cfg":{"limit":10}}` | deny(`params_exceed_grant`) | nested objects recurse with the same type sensitivity (mirrors `nested-003`) (`params-050`) |
 | P51 | `{"ids":[1,2]}` | `{"ids":[1,"2"]}` | deny(`not_in_enum`) | enum membership is type-sensitive: the member `2` is not the string `"2"` (`params-051`) |
 | P52 | `{"ids":[1,2]}` | `{"ids":[1.0]}` | allow | `1.0` is the member `1` after canonicalization (§6.5 layer 8) (`params-052`) |
+
+#### B.3.5 I-JSON bound and BOM (P53–P62)
+
+| # | Grant | Operation | Expected | Derivation |
+|---|-------|-----------|----------|------------|
 | P53 | `{"n":9007199254740991}` | raw `{"n":9007199254740991}` | allow | top of the I-JSON integer range: 2^53 − 1 is the largest integer-valued magnitude accepted (`params-053`, rev CLC-1.16) |
 | P54 | `{"n":9007199254740992}` | raw `{"n":9007199254740992}` | deny(`invalid_params_number`) | the first refused integer-valued magnitude above the bound (`params-054`) |
 | P55 | `{"n":9007199254740993}` | raw `{"n":9007199254740993}` | deny(`invalid_params_number`) | 2^53 + 1 rounds up to 2^53 in binary64; refused, never rounded (`params-055`) |
@@ -2925,6 +2949,11 @@ machine-checkable rather than maintained by hand.
 | P60 | `{"n":<30-digit>}` | raw | deny(`invalid_params_number`) | far over the bound and over-precision; both clauses resolve to one stable code (`params-060`) |
 | P61 | `{"n":1}` | raw with a leading UTF-8 BOM | deny(`invalid_params_number`) | a leading BOM is not part of a JSON text — refused before parsing (§6.2 step 8; `params-061`) |
 | P62 | `{}` | raw: BOM-prefixed **and** over the size cap | deny(`invalid_params_number`) | the BOM refusal outranks the step-4 size cap (`params-062`) |
+
+#### B.3.6 Numeric corner cases (P63–P70)
+
+| # | Grant | Operation | Expected | Derivation |
+|---|-------|-----------|----------|------------|
 | P63 | `{"n":0}` | raw `{"n":-0}` | allow | `-0` and `0` are one JSON number; JCS renders both as `0` (`params-063`, rev CLC-1.17) |
 | P64 | `{"n":1000}` | raw `{"n":1e3}` | allow | `1e3` ≡ `1000`: number identity is the value, not the spelling (`params-064`) |
 | P65 | `{"n":0.0015}` | raw `{"n":1.5e-3}` | allow | `1.5e-3` ≡ `0.0015` (`params-065`) |
