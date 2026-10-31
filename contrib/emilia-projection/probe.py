@@ -21,6 +21,13 @@ FIXTURE = pathlib.Path(
             "testdata" / "emilia-binding-fixture-v1.json"),
     )
 )
+SCHEMA_FIXTURE = pathlib.Path(
+    os.environ.get(
+        "CLC_EMILIA_SCHEMA_FIXTURE",
+        str(ROOT.parent / "register" / "cmd" / "emilia-projection-probe" /
+            "testdata" / "emilia-binding-fixture-v2.json"),
+    )
+)
 PY_DIR = pathlib.Path(
     os.environ.get(
         "CLC_PY_DIR",
@@ -248,6 +255,125 @@ def print_case(case_id, name, want, got, expected_got=None):
     print(f"{status} {case_id} {name:<55} want={want} got={got}")
 
 
+def schema_carrier_error(fixture, binding, results):
+    """Apply the profile's schema-identity and membership rules.
+
+    Every uncertain case is a refusal: a missing document, an empty pin set, a
+    missing identity, a duplicate carrier, an unpinned digest or a result whose
+    schema differs from its carrier never reaches an accept.
+    """
+    document = fixture.get("status_schema_document")
+    if not isinstance(document, dict) or not document:
+        raise ValueError("status_schema_document is missing")
+    accepted_raw = fixture.get("accepted_status_schema_digests")
+    if not isinstance(accepted_raw, list) or not accepted_raw:
+        raise ValueError("accepted_status_schema_digests is empty")
+    doc_digest = digest_object(document)
+    doc_id = document.get("$id")
+    accepted = set()
+    for digest in accepted_raw:
+        if not isinstance(digest, str) or not digest:
+            raise ValueError("accepted schema digest is empty")
+        accepted.add(digest)
+    if not binding.get("targets"):
+        raise ValueError("target set is empty")
+    doc_type = None
+    properties = document.get("properties")
+    if isinstance(properties, dict):
+        type_spec = properties.get("type")
+        if isinstance(type_spec, dict) and isinstance(type_spec.get("const"), str):
+            doc_type = type_spec["const"]
+    members = {}
+    for target in binding["targets"]:
+        artifact_id = target.get("artifact_id")
+        if not isinstance(artifact_id, str) or not artifact_id:
+            raise ValueError("target has no artifact_id")
+        if artifact_id in members:
+            raise ValueError(f"duplicate target artifact_id {artifact_id}")
+        if doc_type is not None and target.get("type") != doc_type:
+            raise ValueError(
+                f"target {artifact_id}: type does not match the pinned schema type"
+            )
+        schema = target.get("status_schema")
+        if not isinstance(schema, dict):
+            raise ValueError(f"target {artifact_id}: missing status_schema")
+        for key in ("id", "version", "digest"):
+            value = schema.get(key)
+            if not isinstance(value, str) or not value:
+                raise ValueError(f"target {artifact_id}: status_schema.{key} is empty")
+        if isinstance(doc_id, str) and doc_id and schema["id"] != doc_id:
+            raise ValueError(f"target {artifact_id}: status_schema.id does not name the pinned document")
+        if schema["digest"] != doc_digest:
+            raise ValueError(f"target {artifact_id}: schema digest does not pin the document")
+        if schema["digest"] not in accepted:
+            raise ValueError(f"target {artifact_id}: schema digest is not accepted")
+        members[artifact_id] = schema
+    for result in results:
+        artifact_id = result.get("artifact_id")
+        if not isinstance(artifact_id, str) or not artifact_id:
+            raise ValueError("native result has no artifact_id")
+        target_schema = members.get(artifact_id)
+        if target_schema is None:
+            raise ValueError(f"result {artifact_id}: carrier is not in the target set")
+        if digest_object(result.get("status_schema")) != digest_object(target_schema):
+            raise ValueError(f"result {artifact_id}: schema identity differs from its carrier")
+
+
+def reliance_accepts(satisfaction, complete, outcomes):
+    if not outcomes or satisfaction != "SATISFIED" or not complete:
+        return "reject"
+    if any(outcome != "success" for outcome in outcomes):
+        return "reject"
+    return "accept"
+
+
+def schema_cases():
+    fixture = json.loads(SCHEMA_FIXTURE.read_text(encoding="utf-8"))
+    schema_subject = binding_subject(fixture["binding"])
+    print_case(
+        "EMI-BIND-011",
+        "schema-bearing set has a new subject",
+        fixture["expected_subject"],
+        schema_subject,
+    )
+    for case in fixture["schema_cases"]:
+        binding = json.loads(json.dumps(fixture["binding"]))
+        results = json.loads(json.dumps(fixture["native_status_results"]))
+        mutation = case["mutation"]
+        if mutation == "none":
+            pass
+        elif mutation == "missing":
+            binding["targets"][0].pop("status_schema", None)
+        elif mutation == "unpinned":
+            binding["targets"][0]["status_schema"]["digest"] = "sha-256:" + "0" * 64
+        elif mutation == "schema-mismatch":
+            results[0]["status_schema"]["id"] = (
+                "https://emiliaprotocol.ai/schemas/other-status-v1.json"
+            )
+        elif mutation == "omitted":
+            results.append({
+                "artifact_id": "approval-carol",
+                "status_schema": {
+                    "id": "https://emiliaprotocol.ai/schemas/ep-quorum-status-v1.json",
+                    "version": "1",
+                    "digest": "sha-256:" + "0" * 64,
+                },
+            })
+        else:
+            raise ValueError(f"unknown schema mutation {mutation}")
+        try:
+            schema_carrier_error(fixture, binding, results)
+            got = "accept"
+        except ValueError:
+            got = "reject"
+        print_case(case["id"], case["name"], case["expected"], got)
+    for case in fixture["completeness_cases"]:
+        got = reliance_accepts(
+            case["satisfaction"], case["complete"], case["required_outcomes"]
+        )
+        print_case(case["id"], case["name"], case["expected"], got)
+
+
 def main():
     fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
     binding = fixture["binding"]
@@ -377,6 +503,8 @@ def main():
     except ValueError:
         got = "rejected"
     print_case("EMI-BIND-010", "empty artifact set rejected", "rejected", got)
+
+    schema_cases()
 
     requirement = fixture["mapped_requirement"]
     for case in fixture["evidence_cases"]:

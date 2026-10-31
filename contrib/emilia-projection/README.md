@@ -172,8 +172,11 @@ constraint 失败或 required binding 无法建立时，整个 requirement 仍�
 只属于授权侧。
 
 Python 和 TypeScript runner（`probe.py`、`probe.mjs`）读取 register 仓库中的
-同一 `emilia-binding-fixture-v1.json`，输出同样的 36 个 case ID、
-`want` 和 `got`。Go 通过 `go:embed` 读取该 fixture；求值事实也来自
+同一 `emilia-binding-fixture-v1.json`，输出同样的 45 个 case ID、
+`want` 和 `got`。schema 与完备性的 9 个用例（`EMI-BIND-011`、
+`EMI-SCHEMA-001..005`、`EMI-COMP-001..003`）读 `emilia-binding-fixture-v2.json`：
+载体必须钉住状态 schema 的摘要，结果不能声明与载体不同的 schema，且
+`SATISFIED` 只有在 native 检查完整且全部成功时才成立。Go 通过 `go:embed` 读取该 fixture；求值事实也来自
 fixture 的 `evidence_cases`，三份实现不再各留一份。每个 case 行都满足
 `want == got`（`want` 是完整期望，而不是只写 verdict 前缀）。
 

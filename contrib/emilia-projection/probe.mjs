@@ -9,6 +9,9 @@ const ROOT = path.resolve(HERE, '..', '..');
 const FIXTURE = process.env.CLC_EMILIA_BINDING_FIXTURE
   || path.resolve(ROOT, '..', 'register', 'cmd', 'emilia-projection-probe',
     'testdata', 'emilia-binding-fixture-v1.json');
+const SCHEMA_FIXTURE = process.env.CLC_EMILIA_SCHEMA_FIXTURE
+  || path.resolve(ROOT, '..', 'register', 'cmd', 'emilia-projection-probe',
+    'testdata', 'emilia-binding-fixture-v2.json');
 const CLC_TS_FILE = process.env.CLC_TS_FILE
   || path.resolve(ROOT, '..', 'aic-capability-demo', 'ts', 'clc_semantics.ts');
 const CLC_TS_URL = CLC_TS_FILE.startsWith('file://')
@@ -252,6 +255,130 @@ function requirementDigest(value) {
       .digest('hex');
 }
 
+function schemaCarrierError(schemaFixture, binding, results) {
+  const document = schemaFixture.status_schema_document;
+  if (!document || typeof document !== 'object' || Object.keys(document).length === 0) {
+    throw new Error('status_schema_document is missing');
+  }
+  const acceptedRaw = schemaFixture.accepted_status_schema_digests;
+  if (!Array.isArray(acceptedRaw) || acceptedRaw.length === 0) {
+    throw new Error('accepted_status_schema_digests is empty');
+  }
+  const docDigest = digestObject(document);
+  const docId = document.$id;
+  const accepted = new Set();
+  for (const digest of acceptedRaw) {
+    if (typeof digest !== 'string' || digest.length === 0) {
+      throw new Error('accepted schema digest is empty');
+    }
+    accepted.add(digest);
+  }
+  if (!Array.isArray(binding.targets) || binding.targets.length === 0) {
+    throw new Error('target set is empty');
+  }
+  const properties = document.properties;
+  const docType = properties && properties.type && typeof properties.type.const === 'string'
+    ? properties.type.const : null;
+  const members = new Map();
+  for (const target of binding.targets) {
+    const artifactId = target.artifact_id;
+    if (typeof artifactId !== 'string' || artifactId.length === 0) {
+      throw new Error('target has no artifact_id');
+    }
+    if (members.has(artifactId)) {
+      throw new Error(`duplicate target artifact_id ${artifactId}`);
+    }
+    if (docType !== null && target.type !== docType) {
+      throw new Error(`target ${artifactId}: type does not match the pinned schema type`);
+    }
+    const schema = target.status_schema;
+    if (!schema || typeof schema !== 'object') {
+      throw new Error(`target ${artifactId}: missing status_schema`);
+    }
+    for (const key of ['id', 'version', 'digest']) {
+      if (typeof schema[key] !== 'string' || schema[key].length === 0) {
+        throw new Error(`target ${artifactId}: status_schema.${key} is empty`);
+      }
+    }
+    if (typeof docId === 'string' && docId.length > 0 && schema.id !== docId) {
+      throw new Error(`target ${artifactId}: status_schema.id does not name the pinned document`);
+    }
+    if (schema.digest !== docDigest) {
+      throw new Error(`target ${artifactId}: schema digest does not pin the document`);
+    }
+    if (!accepted.has(schema.digest)) {
+      throw new Error(`target ${artifactId}: schema digest is not accepted`);
+    }
+    members.set(artifactId, schema);
+  }
+  for (const result of results) {
+    const artifactId = result.artifact_id;
+    if (typeof artifactId !== 'string' || artifactId.length === 0) {
+      throw new Error('native result has no artifact_id');
+    }
+    const targetSchema = members.get(artifactId);
+    if (!targetSchema) {
+      throw new Error(`result ${artifactId}: carrier is not in the target set`);
+    }
+    if (digestObject(result.status_schema) !== digestObject(targetSchema)) {
+      throw new Error(`result ${artifactId}: schema identity differs from its carrier`);
+    }
+  }
+}
+
+function relianceAccepts(satisfaction, complete, outcomes) {
+  if (!Array.isArray(outcomes) || outcomes.length === 0
+      || satisfaction !== 'SATISFIED' || complete !== true) {
+    return 'reject';
+  }
+  return outcomes.every((outcome) => outcome === 'success') ? 'accept' : 'reject';
+}
+
+function schemaCases() {
+  const schemaFixture = JSON.parse(fs.readFileSync(SCHEMA_FIXTURE, 'utf8'));
+  const subject = bindingSubject(schemaFixture.binding);
+  printCase('EMI-BIND-011', 'schema-bearing set has a new subject',
+    schemaFixture.expected_subject, subject);
+  for (const testCase of schemaFixture.schema_cases) {
+    const binding = JSON.parse(JSON.stringify(schemaFixture.binding));
+    const results = JSON.parse(JSON.stringify(schemaFixture.native_status_results));
+    const mutation = testCase.mutation;
+    if (mutation === 'none') {
+      // no change
+    } else if (mutation === 'missing') {
+      delete binding.targets[0].status_schema;
+    } else if (mutation === 'unpinned') {
+      binding.targets[0].status_schema.digest = 'sha-256:' + '0'.repeat(64);
+    } else if (mutation === 'schema-mismatch') {
+      results[0].status_schema.id = 'https://emiliaprotocol.ai/schemas/other-status-v1.json';
+    } else if (mutation === 'omitted') {
+      results.push({
+        artifact_id: 'approval-carol',
+        status_schema: {
+          id: 'https://emiliaprotocol.ai/schemas/ep-quorum-status-v1.json',
+          version: '1',
+          digest: 'sha-256:' + '0'.repeat(64),
+        },
+      });
+    } else {
+      throw new Error(`unknown schema mutation ${mutation}`);
+    }
+    let got = 'accept';
+    try {
+      schemaCarrierError(schemaFixture, binding, results);
+    } catch {
+      got = 'reject';
+    }
+    printCase(testCase.id, testCase.name, testCase.expected, got);
+  }
+  for (const testCase of schemaFixture.completeness_cases) {
+    const got = relianceAccepts(
+      testCase.satisfaction, testCase.complete, testCase.required_outcomes,
+    );
+    printCase(testCase.id, testCase.name, testCase.expected, got);
+  }
+}
+
 const fixture = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
 if (digestObject(fixture.binding.trust_inputs) !== fixture.binding.trust_snapshot_digest) {
   throw new Error('trust_snapshot_digest does not match trust_inputs');
@@ -373,6 +500,8 @@ try {
   emptyVerdict = 'rejected';
 }
 printCase('EMI-BIND-010', 'empty artifact set rejected', 'rejected', emptyVerdict);
+
+schemaCases();
 
 for (const testCase of fixture.evidence_cases) {
   const [verdict, reason] = evidence.evaluateRequirement(

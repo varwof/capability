@@ -76,6 +76,17 @@ PASS EMI-BIND-004 action mutation changes the relation subject            want=d
 PASS EMI-BIND-005 status mutation changes the relation subject            want=different got=different
 PASS EMI-BIND-006 CLC treats the binding subject as opaque                want=opaque-subject-accepted got=opaque-subject-accepted
 
+4b. Schema-bearing fixture (status_schema and reliance completeness)
+PASS EMI-BIND-011 schema-bearing set has a new subject                    want=eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg got=eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg
+PASS EMI-SCHEMA-001 schema-bearing set accepted                             want=accept got=accept
+PASS EMI-SCHEMA-002 missing status_schema rejected                          want=reject got=reject
+PASS EMI-SCHEMA-003 unpinned schema digest rejected                         want=reject got=reject
+PASS EMI-SCHEMA-004 omitted carrier rejected                                want=reject got=reject
+PASS EMI-SCHEMA-005 result schema differs from its carrier                  want=reject got=reject
+PASS EMI-COMP-001 SATISFIED but native checks incomplete is refused       want=reject got=reject
+PASS EMI-COMP-002 complete but required check failed is refused           want=reject got=reject
+PASS EMI-COMP-003 complete and required check succeeded is accepted       want=accept got=accept
+
 5. Native status-check results (explicit, never inferred from an empty list)
    success        complete=true  satisfaction=UNSATISFIED/requirement:expression_false reason=
    failed         complete=true  satisfaction=UNSATISFIED/requirement:expression_false reason=emilia:revoked

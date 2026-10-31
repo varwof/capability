@@ -4,10 +4,10 @@
   "corpus_base_revision_note": "Committed on top of this revision; the commit that introduces this manifest is the corpus revision to cite after publication.",
   "probe_repository": "https://github.com/varwof/register",
   "probe_base_revision": "c4cbc53f117e7e7dc3eae980267c5b6e12f08e50",
-  "probe_revision": "e422020b0e55bec98ab1fd106167fe6ca849bea9",
+  "probe_revision": "1ee8efb24c50d247f805fa712a9e8edd51339245",
   "probe_source_sha256": {
     "cmd/asor-projection-probe/main.go": "871fbf53ef27ef710537b87e4240a9fbfcf170c4057a37038ce9c0673a7b1fda",
-    "cmd/emilia-projection-probe/main.go": "06223d01754727491be8db226387d218b10173622e66deb9bdbee5dded426ad7",
+    "cmd/emilia-projection-probe/main.go": "d7b70030e71be80634e612384da1155c2f39217ddc41fbfd3dd79bab0cfab15d",
     "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json": "37654a11d7666c4165ac38f9cc03a688cb8bc1eb7dfd2fd8e8226d0cc5c0715f",
     "cmd/gilda-projection-probe/main.go": "ee22fe91ac42999514509336db470b9864ab631541a971b97ea4beffd2c87ffb",
     "cmd/oasnt-projection-probe/main.go": "7df80215f3833b4f64c3bb35ed43774c3ec448aa922defcd3acb6a56fc2ac421",
@@ -18,9 +18,10 @@
     "cmd/izmaylov-projection-probe/testdata/izmaylov-containment-fixture-v1.json": "4dc54254d1f2c141e2ab31b2426656b346ce89ec8eb08993f637faa7d08a438e",
     "cmd/izmaylov-projection-probe/testdata/izmaylov-conditions-fixture-v1.json": "2063d24834dfa8dc542fa38db033deeaf28aba88c4b73eb11c874615ea59223c",
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-inclusion-fixture-v1.json": "178736e4a31d0d6b50e8c31a285e77597b0170109d3843b6cc8a8e0da9933f6c",
-    "cmd/izmaylov-projection-probe/testdata/izmaylov-log-consistency-fixture-v1.json": "74f70077581ba05e4cfb2fe22ae40ade7b10b9163149680162d3735c2315b262"
+    "cmd/izmaylov-projection-probe/testdata/izmaylov-log-consistency-fixture-v1.json": "74f70077581ba05e4cfb2fe22ae40ade7b10b9163149680162d3735c2315b262",
+    "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json": "544ab449d307d9a3249f01bf6cc9e30fe3fb94cf55d594991685469df5314783"
   },
-  "total_cases": 106,
+  "total_cases": 115,
   "cross_language_binding": {
     "case_set": "emilia-projection",
     "fixture": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json",
@@ -35,23 +36,25 @@
     },
     "python": {
       "source": "contrib/emilia-projection/probe.py",
-      "source_sha256": "8892b1babc3ac364eaffe1fa8f217fb55752b3dc1322215a58a7f8745f14af61",
+      "source_sha256": "4e5d1e621958587e951e86a915dc435346378717a353526e91f3825721c2e957",
       "output": "contrib/emilia-projection/out-python.txt",
-      "output_sha256": "ef55fa49eed569dfce53dab66d98e95ee9b42376630e750d9a6daf80d0ca00a6",
+      "output_sha256": "1eeebbd8bf612ff4826ea2159ffec11214c9053bcdb03bf66ef26816bc58a2c4",
       "command": "python3 contrib/emilia-projection/probe.py"
     },
     "typescript": {
       "source": "contrib/emilia-projection/probe.mjs",
-      "source_sha256": "1e76ba83836fdefcb0477aa500bf2652e1702723abe059befc836b5db24cfde7",
+      "source_sha256": "77b005a8f6d52a47de5cdcfca278f3373c3363f43561ee41044a1e5a48447249",
       "output": "contrib/emilia-projection/out-typescript.txt",
-      "output_sha256": "aec3240ce15d5399d34cac80331b7b79960824871fbe879af4625e951aa6b4a9",
+      "output_sha256": "f369051a295fb869498a877fea2e96f27efb6b8298fda8a49f12148657a8a97d",
       "command": "node --disable-warning=ExperimentalWarning --experimental-strip-types contrib/emilia-projection/probe.mjs"
-    }
+    },
+    "fixture_schema": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json",
+    "fixture_schema_sha256": "544ab449d307d9a3249f01bf6cc9e30fe3fb94cf55d594991685469df5314783"
   },
   "probes": {
     "emilia-projection": {
       "output": "contrib/emilia-projection/out-probe.txt",
-      "output_sha256": "c264ccb40a4127d1f1b2437229adb6d1c3bde45b6c828fad255621bd81a8af41",
+      "output_sha256": "206bbf78e4f03d2691526664beb4a1643f240e1bf40a76ed566e05ae5f872dfe",
       "command": "go run ./cmd/emilia-projection-probe",
       "cases": [
         {"id": "EMI-PROJ-001", "want": "match", "got": "match"},
@@ -81,15 +84,24 @@
         {"id": "EMI-CAID-001", "want": "MATCH", "got": "MATCH"},
         {"id": "EMI-CAID-002", "want": "NOT_EQUIVALENT", "got": "NOT_EQUIVALENT"},
         {"id": "EMI-BIND-001", "want": "wy00iyR8vT7-WXT-kVbBJjVW16FINmmvDmhy2FGO5hY", "got": "wy00iyR8vT7-WXT-kVbBJjVW16FINmmvDmhy2FGO5hY"},
+        {"id": "EMI-BIND-007", "want": "unchanged", "got": "unchanged"},
+        {"id": "EMI-BIND-008", "want": "rejected", "got": "rejected"},
+        {"id": "EMI-BIND-009", "want": "rejected", "got": "rejected"},
+        {"id": "EMI-BIND-010", "want": "rejected", "got": "rejected"},
         {"id": "EMI-BIND-002", "want": "different", "got": "different"},
         {"id": "EMI-BIND-003", "want": "different", "got": "different"},
         {"id": "EMI-BIND-004", "want": "different", "got": "different"},
         {"id": "EMI-BIND-005", "want": "different", "got": "different"},
         {"id": "EMI-BIND-006", "want": "opaque-subject-accepted", "got": "opaque-subject-accepted"},
-        {"id": "EMI-BIND-007", "want": "unchanged", "got": "unchanged"},
-        {"id": "EMI-BIND-008", "want": "rejected", "got": "rejected"},
-        {"id": "EMI-BIND-009", "want": "rejected", "got": "rejected"},
-        {"id": "EMI-BIND-010", "want": "rejected", "got": "rejected"}
+        {"id": "EMI-BIND-011", "want": "eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg", "got": "eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg"},
+        {"id": "EMI-SCHEMA-001", "want": "accept", "got": "accept"},
+        {"id": "EMI-SCHEMA-002", "want": "reject", "got": "reject"},
+        {"id": "EMI-SCHEMA-003", "want": "reject", "got": "reject"},
+        {"id": "EMI-SCHEMA-004", "want": "reject", "got": "reject"},
+        {"id": "EMI-SCHEMA-005", "want": "reject", "got": "reject"},
+        {"id": "EMI-COMP-001", "want": "reject", "got": "reject"},
+        {"id": "EMI-COMP-002", "want": "reject", "got": "reject"},
+        {"id": "EMI-COMP-003", "want": "accept", "got": "accept"}
       ]
     },
     "gilda-projection": {
