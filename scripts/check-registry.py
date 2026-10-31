@@ -159,6 +159,12 @@ def check_row(row: dict[str, str], problems: list[str]) -> None:
 
 def check_notes(text: str, rows: list[dict[str, str]], problems: list[str]) -> None:
     claims = section(text, "## Verified claims")
+    row_ids = {row["ID"].strip("`") for row in rows}
+    for note_id in set(re.findall(r"^### `(reg-\d{4}-\d{3})` — notes\s*$", claims, re.M)):
+        if note_id not in row_ids:
+            problems.append(
+                f"{note_id}: notes section has no row in '## Verified claims'"
+            )
     for row in rows:
         identifier = row["ID"]
         heading = f"### {identifier} — notes"
