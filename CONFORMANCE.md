@@ -48,8 +48,9 @@ thread, or agreement between implementations that share an author.
 
 1. **Submit.** The implementer opens an issue with the fields in §1 and a link
    to a public CI run at the claimed commit. Private runs are not evidence.
-2. **Review.** A conformance reviewer checks the claim against the checklist in
-   §4. The reviewer may ask for a rerun but does not edit the implementation.
+2. **Review.** A conformance reviewer whose scope covers the class and whose
+   term is current checks the claim against the checklist in §4. The reviewer
+   may ask for a rerun but does not edit the implementation.
 3. **Record.** The reviewer writes a review note and adds a row to
    `conformance/registry.md`, or rejects the claim with the specific unmet
    item.
@@ -95,6 +96,12 @@ cleanroom evidence (repository history, leash checks, pinned inputs).
 The registry is append-only in substance: a superseded claim gets a new row and
 the old row is marked `superseded`, with the replacement ID. A claim found to be
 wrong is marked `withdrawn` with the reason; rows are not deleted.
+
+Each row records the reviewer's scope and the end of that scope's term as it stood
+when the claim was signed, so a reader can tell whether the row is still covered
+by an appointed reviewer. A claim signed while the term was current stays
+recorded when the term ends; a reviewer whose term has ended cannot sign a new
+claim until the appointment is renewed.
 
 ## 8. Review notes
 

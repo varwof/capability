@@ -27,9 +27,9 @@ claimed.
 
 ## Verified claims
 
-| ID | Implementation | Class | Revision | Impl. commit | Corpus commit | Result | Reviewer | Date | Status |
-|---|---|---|---|---|---|---|---|---|---|
-| `reg-2026-001` | `jdieselny/ecr-wg` → `rust/clc-rust-cleanroom` | CLC-A core | CLC-1.19, Section 12 core corpus | `8db495ac68f9` | `1f3cbdf` | 44 tests; 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | 2026-10-27 | verified |
+| ID | Implementation | Class | Revision | Impl. commit | Corpus commit | Result | Reviewer | Scope / term | Date | Status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `reg-2026-001` | `jdieselny/ecr-wg` → `rust/clc-rust-cleanroom` | CLC-A core | CLC-1.19, Section 12 core corpus | `8db495ac68f9` | `1f3cbdf` | 44 tests; 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | bootstrap review; no appointed scope | 2026-10-27 | verified |
 
 ### `reg-2026-001` — notes
 
