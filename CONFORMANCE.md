@@ -100,8 +100,9 @@ wrong is marked `withdrawn` with the reason; rows are not deleted.
 Each row records the reviewer's scope and the end of that scope's term as it stood
 when the claim was signed, so a reader can tell whether the row is still covered
 by an appointed reviewer. CI checks the registry rather than trusting it: table
-shape, note placement, claim dates against the scope term, and every corpus hash
-against the commit the row names. A claim signed while the term was current stays
+shape, note placement, claim dates against the scope term, the reviewer against
+`MAINTAINERS.md` and its scope against the claimed class, the class against the
+requirements above, and every corpus hash against the commit the row names. A claim signed while the term was current stays
 recorded when the term ends; a reviewer whose term has ended cannot sign a new
 claim until the appointment is renewed.
 

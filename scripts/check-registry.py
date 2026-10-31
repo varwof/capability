@@ -123,8 +123,11 @@ def check_row(row: dict[str, str], problems: list[str]) -> None:
         problems.append(f"{identifier}: date {date!r} is not YYYY-MM-DD")
         return
     claimed = datetime.date.fromisoformat(date)
-    if claimed > datetime.date.today():
-        problems.append(f"{identifier}: claim dated in the future ({date})")
+    today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date()
+    if claimed > today:
+        problems.append(
+            f"{identifier}: claim dated in the future ({date} > {today} in +08:00)"
+        )
     for column in ("Class", "Reviewer", "Result"):
         if not row[column]:
             problems.append(f"{identifier}: {column} is empty")
@@ -171,10 +174,29 @@ def check_notes(text: str, rows: list[dict[str, str]], problems: list[str]) -> N
         body = rest[: end.start()] if end else rest
         if not row["Corpus commit"].strip("`"):
             problems.append(f"{identifier}: no corpus commit")
-        if "Independence" not in body:
-            problems.append(f"{identifier}: notes do not state independence")
-        if "Residual gaps" not in body:
-            problems.append(f"{identifier}: notes do not state residual gaps")
+        flat = " ".join(body.split())
+        for field in ("Independence:", "Residual gaps:"):
+            if field not in flat:
+                problems.append(f"{identifier}: notes have no '{field}' field")
+        independence = re.search(r"Independence:\s*(.+?)(?:- [A-Z]|$)", flat)
+        if independence:
+            statement = independence.group(1).strip()
+            if len(statement) < 40 or statement.lower() in {"none", "n/a", "none."}:
+                problems.append(
+                    f"{identifier}: independence statement is empty or a placeholder"
+                )
+            if "varwof/" in row["Implementation"] and not re.search(
+                r"same author|not independent|shares an author", statement, re.I
+            ):
+                problems.append(
+                    f"{identifier}: a project-owned implementation must state that it "
+                    "shares an author, not claim independence"
+                )
+        gaps = re.search(r"Residual gaps:\s*(.+?)(?:- [A-Z]|$)", flat)
+        if gaps:
+            statement = gaps.group(1).strip()
+            if statement.lower() not in {"none", "none.", "n/a"} and len(statement) < 40:
+                problems.append(f"{identifier}: residual gaps statement is too short")
 
 
 def check_pins(text: str, rows: list[dict[str, str]], problems: list[str]) -> None:
@@ -255,6 +277,46 @@ def covers(scope_text: str, claim_class: str) -> bool:
     )
 
 
+def check_classes(problems: list[str]) -> None:
+    """The registry's classes and CONFORMANCE.md must name the same corpora.
+
+    A class added to the checker but not documented (or documented but unknown to
+    the checker) is a gap on one side or the other, and either way a claim can be
+    signed under two different readings of what it requires.
+    """
+    path = ROOT / "CONFORMANCE.md"
+    if not path.exists():
+        problems.append("CONFORMANCE.md is missing")
+        return
+    body = section(path.read_text(encoding="utf-8"), "## 2. Class requirements")
+    if not body:
+        problems.append("CONFORMANCE.md has no '## 2. Class requirements'")
+        return
+    bullets = re.findall(r"^- \*\*(CLC-[A-Z])\*\*:(.*?)(?=^- \*\*|\Z)", body, re.M | re.S)
+    documented = {family: " ".join(text.split()) for family, text in bullets}
+    for klass, required in CLASS_CORPUS.items():
+        family = klass.split()[0]
+        if family not in documented:
+            problems.append(f"class {klass} is not documented in CONFORMANCE.md")
+            continue
+        for path_text in required:
+            name = path_text.rsplit("/", 1)[-1]
+            if name not in documented[family]:
+                problems.append(
+                    f"CONFORMANCE.md class {family} does not name {name}, "
+                    "which the registry requires"
+                )
+    known = {klass.split()[0] for klass in CLASS_CORPUS}
+    for family, text in documented.items():
+        if family in known:
+            continue
+        if "not claimed" in text.lower():
+            continue
+        problems.append(
+            f"CONFORMANCE.md documents {family} but the registry has no corpus set for it"
+        )
+
+
 def check_reviewers(
     rows: list[dict[str, str]], problems: list[str]
 ) -> None:
@@ -324,13 +386,29 @@ def check_closed(text: str, problems: list[str]) -> None:
     for column in ("ID", "Status", "Superseded by"):
         if column not in header:
             problems.append(f"closed-section table has no {column!r} column")
+    open_ids = {
+        match for match in re.findall(r"^\| `(reg-\d{4}-\d{3})` \|", text, re.M)
+    }
+    closed_ids = set()
     for line in rows[2:]:
         values = dict(zip(header, cells(line)))
-        identifier = values.get("ID", "?")
+        identifier = values.get("ID", "?").strip("`")
+        closed_ids.add(identifier)
         if values.get("Status") not in {"superseded", "withdrawn"}:
             problems.append(f"{identifier}: closed row status must be superseded or withdrawn")
-        if values.get("Status") == "superseded" and not values.get("Superseded by"):
-            problems.append(f"{identifier}: superseded without a replacement ID")
+        replacement = values.get("Superseded by", "").strip().strip("`")
+        if values.get("Status") == "superseded":
+            if not replacement:
+                problems.append(f"{identifier}: superseded without a replacement ID")
+            elif replacement == identifier:
+                problems.append(f"{identifier}: superseded by itself")
+            elif replacement not in open_ids and replacement not in closed_ids:
+                problems.append(
+                    f"{identifier}: superseded by {replacement}, which is not a row"
+                )
+    both = closed_ids & open_ids
+    for identifier in sorted(both):
+        problems.append(f"{identifier}: appears in both open and closed sections")
 
 
 def main() -> int:
@@ -346,6 +424,7 @@ def main() -> int:
     check_notes(text, rows, problems)
     check_pins(text, rows, problems)
     check_reviewers(rows, problems)
+    check_classes(problems)
     check_closed(text, problems)
     if problems:
         fail(problems)
