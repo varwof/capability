@@ -125,10 +125,10 @@ conformance obligation or a claimed conformance class requires:
 4. an impact statement for existing implementations and corpora; and
 5. resolution of every unresolved technical objection.
 
-[bootstrap] Until a second maintainer has merge rights, the editor may merge
-after the review period but must record why consensus was judged sufficient. The
-editor MUST NOT use that fallback to bypass CI or an unresolved technical
-objection.
+[bootstrap] While one person holds merge rights, the merge conditions are those
+of `Bootstrap exception`; the editor also records why consensus was judged
+sufficient. The editor MUST NOT use that fallback to bypass CI or an unresolved
+technical objection.
 
 ### Decision records
 
@@ -149,29 +149,42 @@ the record, and the next appointed maintainer reviews it.
 
 ### Bootstrap exception
 
-The repository must not be unable to adopt its own review process because no
-second reviewer exists yet. The initial editor may therefore merge a
-documentation-only governance, adoption or contribution-policy PR without an
-approving review when all of the following hold:
+The repository must not be unable to do its own work because no second person
+holds merge rights. While exactly one person does, that person may merge a pull
+request without an approving review when all of the following hold:
 
 - required CI and DCO checks pass;
-- the PR states that the bootstrap exception is being used;
+- the review window for that change has elapsed;
 - no unresolved technical objection is present;
-- the change does not modify CLC semantics, conformance claims, vectors,
-  security behavior or release artifacts; and
-- the exception is recorded in the pull request history.
+- where the change needs a conformance review, a decision record or a roster
+  entry, that artifact exists and is linked from the pull request; and
+- the pull request states that the bootstrap exception is being used.
+
+A direct push to the default branch is the same decision and needs the same
+conditions. Where a pull request is possible it is preferred, because the
+conditions are then visible to everyone rather than only to the person who
+merged.
 
 This exception ends when a second person holds merge rights. An external
 conformance reviewer does not end it, because that role does not include
-approving specification or corpus changes. It MUST NOT be reused for routine
-technical changes.
+approving specification or corpus changes.
+
+### Editorial changes
+
+A change limited to typography, links, formatting or spelling in non-normative
+text may merge once CI passes, without a review window and without invoking the
+bootstrap exception, provided it changes no normative statement, no vector
+expectation, no reason code, no registry row and no decision record. A change
+that touches any of those is a normal change, however small its diff looks.
 
 ### Security fixes
 
 Security fixes may use a private review period when public disclosure would
-create immediate risk. The technical rationale and regression vectors MUST be
-published after coordinated disclosure unless doing so would reveal secrets or
-personal data.
+create immediate risk. The security contact named in `SECURITY.md` decides
+whether a private period applies, sets its end date and records the decision; the
+period is at most 90 days from the report unless a longer one is recorded with a
+reason. The technical rationale and regression vectors MUST be published when
+the period ends, unless doing so would reveal secrets or personal data.
 
 ### Bindings
 
@@ -186,6 +199,9 @@ A binding is governed by its binding maintainer. Core maintainers review only:
 Maintainer candidates are evaluated on sustained, constructive contributions,
 including specification text, vectors, implementation reports, security review
 or binding maintenance.
+
+A maintainer is active while they have merged a change, reviewed one, or taken
+part in a recorded decision within the previous 12 months.
 
 Appointment requires:
 
@@ -219,9 +235,11 @@ Appointment as a conformance reviewer requires:
 [bootstrap] While one maintainer is active, the appointment is recorded in
 `decisions/` and is re-checked by the next maintainer appointed.
 
-Reviewers serve 12-month terms and may be renewed. A reviewer inactive for
-12 months may move to emeritus after public notice, on the same terms as a
-maintainer.
+Reviewers serve 12-month terms and may be renewed. The end date of each scope's
+term is recorded in `MAINTAINERS.md`; a row whose term has ended is marked
+`expired` until it is renewed, and the claims recorded under it are not
+withdrawn by the expiry. A reviewer inactive for 12 months may move to emeritus
+after public notice, on the same terms as a maintainer.
 
 Until the first conformance reviewer is appointed, the editor may perform the
 review and MUST mark the registry row as a bootstrap review. The bootstrap mark
@@ -256,7 +274,7 @@ A reviewer may:
 A reviewer may not:
 
 - edit normative text, vectors, reason codes or schemas;
-- merge a change to `docs/`, `data/`, `scripts/` or `tools/`;
+- merge a change to `docs/`, `data/`, `scripts/`, `tools/` or `decisions/`;
 - approve an implementation they authored, employ or depend on;
 - create, remove or reclassify a conformance class.
 
@@ -301,9 +319,14 @@ The initiator intends to transfer change control to an IETF Working Group or a
 neutral standards organization when:
 
 - there are at least three maintainers from at least two organizations;
-- at least two independent implementations pass the applicable public corpora;
-- at least two external bindings or adoption statements exist;
-- security and IPR reviews are complete; and
+- at least two implementations recorded in `conformance/registry.md` pass the
+  applicable public corpora, each with a reviewer whose scope covers the class,
+  and neither depends on the other under the independence rule of
+  `CONFORMANCE.md` §5;
+- at least two external bindings or adoption statements are registered in
+  `BINDINGS.md`;
+- the security and IPR reviews this document requires are complete and recorded
+  in `decisions/`; and
 - repository, publication, trademark and succession arrangements are agreed.
 
 Until then, the project remains community-open but explicitly initiated and
