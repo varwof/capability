@@ -62,6 +62,9 @@ A binding must state:
 - reproducibility data and positive/negative cases; and
 - whether it is normative, experimental or informational.
 
+Registered bindings are listed in `BINDINGS.md`; registration reviews the core
+boundary and the cases, and does not transfer ownership.
+
 ### New vectors
 
 Vectors must be deterministic, minimal and independently derivable from the
