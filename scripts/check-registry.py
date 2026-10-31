@@ -23,6 +23,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "conformance" / "registry.md"
+CONFORMANCE = ROOT / "CONFORMANCE.md"
 
 COLUMNS = [
     "ID",
@@ -290,7 +291,7 @@ def check_classes(problems: list[str]) -> None:
     the checker) is a gap on one side or the other, and either way a claim can be
     signed under two different readings of what it requires.
     """
-    path = ROOT / "CONFORMANCE.md"
+    path = CONFORMANCE
     if not path.exists():
         problems.append("CONFORMANCE.md is missing")
         return
@@ -417,9 +418,9 @@ def check_closed(text: str, problems: list[str]) -> None:
         problems.append(f"{identifier}: appears in both open and closed sections")
 
 
-def main() -> int:
+def collect(text: str) -> tuple[list[str], list[dict[str, str]]]:
+    """Every problem in a registry document, plus the rows it parsed."""
     problems: list[str] = []
-    text = REGISTRY.read_text(encoding="utf-8")
     rows = parse_rows(text, problems)
     seen = set()
     for row in rows:
@@ -432,6 +433,11 @@ def main() -> int:
     check_reviewers(rows, problems)
     check_classes(problems)
     check_closed(text, problems)
+    return problems, rows
+
+
+def main() -> int:
+    problems, rows = collect(REGISTRY.read_text(encoding="utf-8"))
     if problems:
         fail(problems)
     print(f"registry OK: {len(rows)} claim(s), notes and pins verified")
