@@ -329,6 +329,10 @@ A release MUST record:
 - known gaps and residual risks; and
 - the exact commit used to build publication artifacts.
 
+Release tags match `v*` and are protected by a repository ruleset: creating,
+moving or deleting one requires the bypass the editor holds, so a reviewer with
+write access to `conformance/` cannot cut or retag a release.
+
 CLC's own P12 rule applies: agreement between implementations that share an
 author is regression evidence, not independent validation.
 
