@@ -15,7 +15,11 @@ Open an issue for changes involving:
 - a new carrier binding or evidence projection;
 - a claim of independent implementation or conformance.
 
-Small documentation fixes may go directly to a pull request.
+A change limited to typography, links, formatting or spelling in non-normative
+text may go directly to a pull request and merges on CI alone. Anything that
+touches a normative statement, a vector expectation, a reason code, a registry row
+or a decision record is a normal change however small its diff looks; see
+`GOVERNANCE.md` "Editorial changes".
 
 ## Licensing and sign-off
 
