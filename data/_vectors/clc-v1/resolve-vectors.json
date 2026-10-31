@@ -310,7 +310,7 @@
   {
     "id": "resolve-027",
     "kind": "resolve",
-    "spec_clause": "CLC-1.15 §8.5",
+    "spec_clause": "CLC-v1 §8.5",
     "clc_revision": "CLC-1.19",
     "conformance_class": "CLC-A",
     "decision": {"verdict": "allow_unresolved", "reason": null, "unresolved": ["varwof/constraint-v1:network:cidr:[\"10.0.1.0/24\"]", "varwof/constraint-v1:time:window:[{\"end\":\"15:00\",\"start\":\"14:00\"}]"]},
