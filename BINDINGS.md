@@ -43,6 +43,12 @@ deliberately not listed:
 
 ## Rules
 
+- A binding name follows `<source>->clc-v<n>`: the source or carrier identifier,
+  `->clc-v`, and the version of the projection, not of CLC. `iicp->clc-v1` is the
+  shape.
+- The first registered use of a name allocates it. A second binding that wants
+  the same name is refused until the two are distinguished, and a collision is
+  settled by a recorded decision rather than by whichever spelling is closer.
 - A binding may define its own authorship, release schedule and IPR process while
   citing the CLC clauses it uses.
 - A binding MUST NOT silently add carrier semantics to the core.
