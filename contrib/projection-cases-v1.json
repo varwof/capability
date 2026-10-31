@@ -4,10 +4,10 @@
   "corpus_base_revision_note": "Committed on top of this revision; the commit that introduces this manifest is the corpus revision to cite after publication.",
   "probe_repository": "https://github.com/varwof/register",
   "probe_base_revision": "c4cbc53f117e7e7dc3eae980267c5b6e12f08e50",
-  "probe_revision": "36293dcf8a8f55eb2527ab66752b2cab96ceed55",
+  "probe_revision": "e422020b0e55bec98ab1fd106167fe6ca849bea9",
   "probe_source_sha256": {
     "cmd/asor-projection-probe/main.go": "871fbf53ef27ef710537b87e4240a9fbfcf170c4057a37038ce9c0673a7b1fda",
-    "cmd/emilia-projection-probe/main.go": "d7142cf7e90d13e102131108a50d22a7bd8c5388731407aaea585baaf34e340d",
+    "cmd/emilia-projection-probe/main.go": "06223d01754727491be8db226387d218b10173622e66deb9bdbee5dded426ad7",
     "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json": "37654a11d7666c4165ac38f9cc03a688cb8bc1eb7dfd2fd8e8226d0cc5c0715f",
     "cmd/gilda-projection-probe/main.go": "ee22fe91ac42999514509336db470b9864ab631541a971b97ea4beffd2c87ffb",
     "cmd/oasnt-projection-probe/main.go": "7df80215f3833b4f64c3bb35ed43774c3ec448aa922defcd3acb6a56fc2ac421",
@@ -20,7 +20,7 @@
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-inclusion-fixture-v1.json": "178736e4a31d0d6b50e8c31a285e77597b0170109d3843b6cc8a8e0da9933f6c",
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-consistency-fixture-v1.json": "74f70077581ba05e4cfb2fe22ae40ade7b10b9163149680162d3735c2315b262"
   },
-  "total_cases": 102,
+  "total_cases": 106,
   "cross_language_binding": {
     "case_set": "emilia-projection",
     "fixture": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json",
@@ -35,23 +35,23 @@
     },
     "python": {
       "source": "contrib/emilia-projection/probe.py",
-      "source_sha256": "5ed9fe6abb4c474709bdb60ded6e03df2624ac71db9b7a7a4e37a4a34a62f2cd",
+      "source_sha256": "8892b1babc3ac364eaffe1fa8f217fb55752b3dc1322215a58a7f8745f14af61",
       "output": "contrib/emilia-projection/out-python.txt",
-      "output_sha256": "57bb25338af9b27fe494ede402b4eed793e128e534da16b9a7af85821f1ce126",
+      "output_sha256": "ef55fa49eed569dfce53dab66d98e95ee9b42376630e750d9a6daf80d0ca00a6",
       "command": "python3 contrib/emilia-projection/probe.py"
     },
     "typescript": {
       "source": "contrib/emilia-projection/probe.mjs",
-      "source_sha256": "c0c9478d7c04e9a2b770b488103d0d39f6136622d0f469577f0d727e11895e91",
+      "source_sha256": "1e76ba83836fdefcb0477aa500bf2652e1702723abe059befc836b5db24cfde7",
       "output": "contrib/emilia-projection/out-typescript.txt",
-      "output_sha256": "a287e45f78f3717f85b0d26b8d158861bcd3212a2042b0dd8c6e15274d75bf15",
+      "output_sha256": "aec3240ce15d5399d34cac80331b7b79960824871fbe879af4625e951aa6b4a9",
       "command": "node --disable-warning=ExperimentalWarning --experimental-strip-types contrib/emilia-projection/probe.mjs"
     }
   },
   "probes": {
     "emilia-projection": {
       "output": "contrib/emilia-projection/out-probe.txt",
-      "output_sha256": "e0abd2b14b7c4a4c7bd0d58106707ecb02a0b5b7ac03ef59c2d1d2f23d62b9bf",
+      "output_sha256": "c264ccb40a4127d1f1b2437229adb6d1c3bde45b6c828fad255621bd81a8af41",
       "command": "go run ./cmd/emilia-projection-probe",
       "cases": [
         {"id": "EMI-PROJ-001", "want": "match", "got": "match"},
@@ -85,7 +85,11 @@
         {"id": "EMI-BIND-003", "want": "different", "got": "different"},
         {"id": "EMI-BIND-004", "want": "different", "got": "different"},
         {"id": "EMI-BIND-005", "want": "different", "got": "different"},
-        {"id": "EMI-BIND-006", "want": "opaque-subject-accepted", "got": "opaque-subject-accepted"}
+        {"id": "EMI-BIND-006", "want": "opaque-subject-accepted", "got": "opaque-subject-accepted"},
+        {"id": "EMI-BIND-007", "want": "unchanged", "got": "unchanged"},
+        {"id": "EMI-BIND-008", "want": "rejected", "got": "rejected"},
+        {"id": "EMI-BIND-009", "want": "rejected", "got": "rejected"},
+        {"id": "EMI-BIND-010", "want": "rejected", "got": "rejected"}
       ]
     },
     "gilda-projection": {
