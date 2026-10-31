@@ -14,13 +14,13 @@ SPDX-License-Identifier: Apache-2.0
 ## Decision
 
 `GOVERNANCE.md` names the mode it is operating in at the top of the document —
-currently `bootstrap`, meaning one maintainer and no second independent
-implementation — and describes the three modes: `bootstrap`, `shared`,
+currently `bootstrap`, meaning exactly one maintainer — and describes the three
+modes: `bootstrap`, `shared`,
 `transfer`.
 
 A rule that presumes more than one participant carries a bracketed tag naming
 its trigger and is dormant until that trigger is reached. Five triggers are
-recorded: a second maintainer with merge rights; a second independent
+recorded: a second maintainer appointed; a second independent
 implementation in `conformance/registry.md`; two external bindings or adoption
 statements; an organization repository; and a review date of 2027-04-30, at
 which every dormant rule is activated, rewritten or deleted.

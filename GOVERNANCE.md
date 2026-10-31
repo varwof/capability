@@ -7,8 +7,8 @@ SPDX-License-Identifier: Apache-2.0
 
 Status: initial public governance, effective 2026-10-24.
 Revision: 2, 2026-10-31 (Revision 1 was the initial text).
-Operating mode: `bootstrap` — one maintainer and no second independent
-implementation.
+Operating mode: `bootstrap` — exactly one maintainer. There is no second
+independent implementation, and the project does not claim P12.
 
 This document governs the CLC specification, conformance corpora, reference
 material and supporting tooling in this repository. It does not claim that CLC
@@ -21,7 +21,7 @@ This document describes three modes. One is in force at a time, and the
 
 | Mode | In force when | What it changes |
 |---|---|---|
-| `bootstrap` | one maintainer, no second independent implementation | the single maintainer does the work, records every decision as `bootstrap`, and needs no second approver |
+| `bootstrap` | exactly one maintainer | that maintainer does the work, records every decision as `bootstrap`, and needs no second approver |
 | `shared` | at least two maintainers | consensus, terms and review rules apply as written |
 | `transfer` | the criteria in "Change-control transfer" are met | change control moves to a neutral body |
 
@@ -126,8 +126,8 @@ conformance obligation or a claimed conformance class requires:
 4. an impact statement for existing implementations and corpora; and
 5. resolution of every unresolved technical objection.
 
-[bootstrap] While one person holds merge rights, the merge conditions are those
-of `Bootstrap exception`; the editor also records why consensus was judged
+[bootstrap] While one maintainer is active, the merge conditions are those of
+`Bootstrap exception`; the editor also records why consensus was judged
 sufficient. The editor MUST NOT use that fallback to bypass CI or an unresolved
 technical objection.
 
@@ -150,8 +150,8 @@ the record, and the next appointed maintainer reviews it.
 
 ### Bootstrap exception
 
-The repository must not be unable to do its own work because no second person
-holds merge rights. While exactly one person does, that person may merge a pull
+The repository must not be unable to do its own work because only one
+maintainer exists. While exactly one does, that maintainer may merge a pull
 request without an approving review when all of the following hold:
 
 - required CI and DCO checks pass;
@@ -166,9 +166,9 @@ conditions. Where a pull request is possible it is preferred, because the
 conditions are then visible to everyone rather than only to the person who
 merged.
 
-This exception ends when a second person holds merge rights. An external
-conformance reviewer does not end it, because that role does not include
-approving specification or corpus changes.
+This exception ends when a second maintainer is appointed. A conformance
+reviewer's restricted write does not end it: that role covers `conformance/` and
+`CONFORMANCE.md`, not the specification or the corpora.
 
 ### Editorial changes
 
