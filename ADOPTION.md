@@ -37,6 +37,24 @@ This statement is not a warranty concerning patents or other rights held by
 third parties. Organizations considering deployment should perform their own
 legal and patent review.
 
+## Implementations
+
+CLC is meant to be a shared, community-governed semantic layer. Anyone may
+implement it, including commercially and including in a product that competes
+with the reference implementation, without a separate licence, registration or
+permission from this project.
+
+An implementation belongs to its author. This project does not claim ownership
+of an implementer's code, does not require a CLA, and does not impose copyright
+or patent conditions beyond Apache-2.0 and the patent position above. A
+conformance claim changes nothing about ownership; it only records that a
+pinned corpus was run at a pinned commit.
+
+New bindings, profiles or semantic additions are best discussed in the open
+before they are proposed as corpus or specification changes, so that other
+implementers can say early whether the addition belongs in the core, in a
+binding, or nowhere.
+
 ## Claiming adoption or conformance
 
 An adopter may state:
