@@ -59,29 +59,6 @@ claimed.
   run; no CLC-D official corpus was run. The row records the core corpus, not a
   full CLC-1.19 or CLC-D claim.
 
-## Baseline (not a claim)
-
-The reference implementation is listed for context. It is not independent
-evidence: it shares an author with the specification, so it is a regression
-baseline, not third-party validation.
-
-| Implementation | Class | Revision | Impl. commit | Corpus commit | Evidence |
-|---|---|---|---|---|---|
-| `varwof/register` (Go) | CLC-A + CLC-D | CLC-1.19 | `145252c` | `1f3cbdf` | public CI: <https://github.com/varwof/register/actions/workflows/clc-conformance.yml> |
-
-Corpus hashes used by the baseline:
-
-- `clc-v1/vectors.json` `3c1a5672…`
-- `clc-v1/property-cases.json` `f00ed1f4…`
-- `clc-d/containment-vectors.json`
-  `3d03e5318f1e0cef07bd6cb38111cf6b7fbcc24aa13bd83fb7728ee1d4527b13`
-- `clc-d/authorize-chain-vectors.json`
-  `1ae22422c4c8632fa2d391473f1a9a244845d079baf381875134597409fcfa12`
-
-## Superseded or withdrawn
-
-None.
-
 ### `reg-2026-002` — notes
 
 - Public CI: <https://github.com/varwof/register/actions/runs/41149493086>
@@ -105,5 +82,34 @@ None.
 - Bootstrap: the editor reviewed an implementation the editor wrote, which the
   reviewer rules would otherwise exclude. The row stays `bootstrap` until an
   appointed reviewer whose scope covers CLC-A re-checks it.
-- Pinning gap: `clc-conformance.yml` should pin the corpus commit the way the
-  reviewer's repository does, so a public run identifies its own corpus.
+- Residual gaps: this row claims the CLC-A core corpus only. The CLC-D corpora
+  and the CLC-1.19 minor-gate corpora are not claimed here even where the
+  implementation passes them locally, and independence is explicitly not
+  claimed, so the row does not count towards the two-implementation criterion.
+- Pinning gap, now closed: `clc-conformance.yml` pins the corpus commit
+  (`CLC_CAPABILITY_SHA`), asserts the checked-out commit, and prints it with the
+  two corpus hashes at the start of every run. This row was recorded before that
+  pin existed and cites the corpus it was reproduced against.
+
+## Baseline (not a claim)
+
+The reference implementation is listed for context. It is not independent
+evidence: it shares an author with the specification, so it is a regression
+baseline, not third-party validation.
+
+| Implementation | Class | Revision | Impl. commit | Corpus commit | Evidence |
+|---|---|---|---|---|---|
+| `varwof/register` (Go) | CLC-A + CLC-D | CLC-1.19 | `145252c` | `1f3cbdf` | public CI: <https://github.com/varwof/register/actions/workflows/clc-conformance.yml> |
+
+Corpus hashes used by the baseline:
+
+- `clc-v1/vectors.json` `3c1a5672…`
+- `clc-v1/property-cases.json` `f00ed1f4…`
+- `clc-d/containment-vectors.json`
+  `3d03e5318f1e0cef07bd6cb38111cf6b7fbcc24aa13bd83fb7728ee1d4527b13`
+- `clc-d/authorize-chain-vectors.json`
+  `1ae22422c4c8632fa2d391473f1a9a244845d079baf381875134597409fcfa12`
+
+## Superseded or withdrawn
+
+None.

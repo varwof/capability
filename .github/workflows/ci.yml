@@ -14,6 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The registry check verifies corpus hashes at the commit each claim
+          # names, which needs the history rather than a depth-1 clone.
+          fetch-depth: 0
+
+      - name: Conformance registry (rows, notes, pins)
+        run: python3 scripts/check-registry.py
 
       - name: Validate JSON files
         run: |
