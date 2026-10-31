@@ -30,6 +30,7 @@ one gets its own record, and the earlier one is marked `superseded by NNNN`.
 | Objections | substantive objections and how each was resolved, or `none raised` |
 | Binds | clauses, corpora, registry rows, commits or pull requests |
 | Bootstrap | present only while one maintainer is active |
+| External evidence | who re-ran the change at which commit and with what result, or `none — bootstrap, no second maintainer` |
 
 An objection is quoted rather than characterised. "Nobody objected" and "the
 objection was answered by the pinned pin check" are different facts, and a
@@ -44,3 +45,4 @@ later reader needs to be able to tell which one happened.
 | [0003](0003-governance-revision-2.md) | Objection windows, decision records, governance revision numbering | 2026-10-31 | accepted |
 | [0004](0004-bootstrap-mode-and-exit-triggers.md) | Operating modes, dormant-rule tags, exit triggers from `bootstrap` | 2026-10-31 | accepted |
 | [0005](0005-merge-path-and-measurable-criteria.md) | Single-maintainer merge path, editorial path, measurable transfer criteria, term expiry | 2026-10-31 | accepted |
+| [0006](0006-projection-collaboration.md) | `contrib/` lane, external evidence field, reviewer re-run is not approval | 2026-10-31 | accepted |

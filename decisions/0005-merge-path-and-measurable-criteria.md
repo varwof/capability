@@ -7,8 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 
 - **Status:** accepted
 - **Date:** 2026-10-31
-- **Governance:** Revision 2; records 0003, 0004 and 0005 form that revision and
-  are published together
+- **Governance:** Revision 2 (records 0003 onward, published together)
 - **Bootstrap:** yes — one maintainer was active when this was decided
 
 ## Decision
