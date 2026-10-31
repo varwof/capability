@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 # CLC Governance
 
 Status: initial public governance, effective 2026-10-24.
+Revision: 2, 2026-10-31.
 
 This document governs the CLC specification, conformance corpora, reference
 material and supporting tooling in this repository. It does not claim that CLC
@@ -68,6 +69,12 @@ Normal changes use public lazy consensus. A pull request may merge when:
 - the change stays within the documented scope; and
 - the PR contains the corresponding tests or vectors.
 
+The review window is 7 calendar days, counted from the later of the pull request
+opening and the last change to the proposed content. Silence during the window is
+consent. An objection counts only if it is technical, identifies the clause,
+vector or artifact it concerns, and states what evidence would resolve it; the
+maintainer who merges records how it was resolved.
+
 ### Core semantic changes
 
 A change to CLC syntax, a relation, a verdict, a reason-code ordering, a
@@ -82,6 +89,23 @@ conformance obligation or a claimed conformance class requires:
 Until there are at least two active maintainers, the editor may merge after the
 review period but must record why consensus was judged sufficient. The editor
 MUST NOT use that fallback to bypass CI or an unresolved technical objection.
+
+### Decision records
+
+A decision that changes normative text, a conformance obligation, the
+maintainer or reviewer roster, repository permissions, or this document is
+recorded in `decisions/`, one file per decision, named `NNNN-slug.md`.
+
+A record states the decision, its date, the governance revision it was taken
+under, the alternatives rejected, any substantive objection and how it was
+resolved, and the artifacts it binds (clauses, corpora, registry rows, pull
+requests). The pull request that makes the change links its record, and the
+record links back.
+
+A record is not a vote log and creates no authority. It exists so that a later
+maintainer can learn why a rule exists without reconstructing a comment thread.
+A decision taken while only one maintainer is active is marked `bootstrap` in
+the record, and the next appointed maintainer reviews it.
 
 ### Bootstrap exception
 
@@ -152,7 +176,11 @@ maintainer.
 
 Until the first conformance reviewer is appointed, the editor may perform the
 review and MUST mark the registry row as a bootstrap review. The bootstrap mark
-is removed when an appointed reviewer re-checks the claim.
+is removed when an appointed reviewer re-checks the claim. A reviewer who
+authored, employs or depends on the implementation cannot clear that mark;
+clearing it requires a second appointed reviewer whose scope covers the class.
+Until then the row stays `bootstrap` and is cited as a bootstrap review wherever
+it is used as evidence.
 
 Reviewers do not decide:
 
@@ -232,6 +260,11 @@ edited by its initial editor.
 
 ## Amendments
 
-Changes to this document follow the normal public PR process. A future neutral
-governing body may replace this document in whole when change control is
-transferred.
+Changes to this document follow the normal public PR process, but use the
+14-day window of "Core semantic changes" rather than the 7-day window: the
+process that governs every other change should not be the easiest thing to
+change. Each amendment increments the `Revision` line at the top of this
+document and is recorded in `decisions/`.
+
+A future neutral governing body may replace this document in whole when change
+control is transferred.

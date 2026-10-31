@@ -16,6 +16,7 @@ Describe the problem and the change.
 - Result:
 - Compatibility impact:
 - Independent review or unresolved objections:
+- Decision record (rule, roster, permission or governance change):
 
 ## Licensing
 
