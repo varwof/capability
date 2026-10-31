@@ -34,10 +34,10 @@ incorrectly claims to establish that property.
 
 ## Supported Versions
 
-Security fixes are applied to the default branch. The corpora are identified by
-commit and pinned hashes; no release has been tagged yet. Once releases are cut,
-fixes are applied to the latest release and older releases are supported on a
-best-effort basis.
+Security fixes are applied to the default branch. Once releases are cut they are
+applied to the latest release, and older releases are supported on a best-effort
+basis. Corpora are identified by commit and pinned hashes rather than by release,
+and a conformance claim names the commit it was verified at.
 
 ## Funding note: no paid third-party audit
 
