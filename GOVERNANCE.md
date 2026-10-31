@@ -7,10 +7,49 @@ SPDX-License-Identifier: Apache-2.0
 
 Status: initial public governance, effective 2026-10-24.
 Revision: 2, 2026-10-31.
+Operating mode: `bootstrap` — one maintainer and no second independent
+implementation.
 
 This document governs the CLC specification, conformance corpora, reference
 material and supporting tooling in this repository. It does not claim that CLC
 is an IETF Working Group item or that any external organization has endorsed it.
+
+## Operating modes
+
+This document describes three modes. One is in force at a time, and the
+`Operating mode` line at the top names it.
+
+| Mode | In force when | What it changes |
+|---|---|---|
+| `bootstrap` | one maintainer, no second independent implementation | the single maintainer does the work, records every decision as `bootstrap`, and needs no second approver |
+| `shared` | at least two maintainers | consensus, terms and review rules apply as written |
+| `transfer` | the criteria in "Change-control transfer" are met | change control moves to a neutral body |
+
+A rule that presumes more than one participant carries a bracketed tag:
+`[bootstrap]` for one that only the single maintainer can exercise, and
+`[activates: <trigger>]` for one that waits for a trigger from the table below.
+The tag is not an aspiration: it marks the clause as dormant, and a dormant
+clause is not cited as if it were in force. This document does not describe
+obligations it cannot exercise; when a dormant rule is reached by its trigger it
+is either implemented or rewritten, not inherited by default.
+
+| Trigger | Activates |
+|---|---|
+| second maintainer appointed | maintainer consensus; the review windows become approvals; the `bootstrap` exception and `bootstrap` marks end |
+| second independent implementation recorded in `conformance/registry.md` | the P12 independence claim, and the path to claiming a further class |
+| two external bindings or adoption statements recorded | maintenance obligations for bindings |
+| repository moved to an organization account | `triage`/`maintain` roles and organization-level `CODEOWNERS` |
+| review date 2027-04-30 | every dormant rule is activated, rewritten or deleted |
+
+In `bootstrap` mode the project does not claim P12 and says so wherever the
+single-implementation state is relevant. The absence of that claim restricts no
+one: anyone may implement and deploy CLC, and a claim absent from the registry is
+unrecorded, not failed.
+
+The review date reviews this document, not the search for a second
+implementation. Dormant rules that no one can exercise on that date are removed
+rather than carried forward, because an unexercised obligation decays into a
+formality that the next participant has to argue with.
 
 ## Goals
 
@@ -86,9 +125,10 @@ conformance obligation or a claimed conformance class requires:
 4. an impact statement for existing implementations and corpora; and
 5. resolution of every unresolved technical objection.
 
-Until there are at least two active maintainers, the editor may merge after the
-review period but must record why consensus was judged sufficient. The editor
-MUST NOT use that fallback to bypass CI or an unresolved technical objection.
+[bootstrap] Until a second maintainer has merge rights, the editor may merge
+after the review period but must record why consensus was judged sufficient. The
+editor MUST NOT use that fallback to bypass CI or an unresolved technical
+objection.
 
 ### Decision records
 
@@ -121,8 +161,10 @@ approving review when all of the following hold:
   security behavior or release artifacts; and
 - the exception is recorded in the pull request history.
 
-This exception ends when another maintainer or an external reviewer is
-available. It MUST NOT be reused for routine technical changes.
+This exception ends when a second person holds merge rights. An external
+conformance reviewer does not end it, because that role does not include
+approving specification or corpus changes. It MUST NOT be reused for routine
+technical changes.
 
 ### Security fixes
 
@@ -151,6 +193,10 @@ Appointment requires:
 - consensus of current maintainers; and
 - a public contribution record.
 
+[bootstrap] While one maintainer is active, an appointment is that maintainer's
+decision, recorded in `decisions/`. The consensus line above activates with the
+second maintainer.
+
 The target is at least three maintainers from at least two organizations before
 change control is transferred. Maintainers who are inactive for 12 months may
 move to emeritus status after public notice.
@@ -170,8 +216,11 @@ Appointment as a conformance reviewer requires:
 - disclosure of material implementation, employment or commercial interests;
 - for each review, a short independence statement covering that implementation.
 
+[bootstrap] While one maintainer is active, the appointment is recorded in
+`decisions/` and is re-checked by the next maintainer appointed.
+
 Reviewers serve 12-month terms and may be renewed. A reviewer inactive for
-12 months moves to emeritus after public notice, on the same terms as a
+12 months may move to emeritus after public notice, on the same terms as a
 maintainer.
 
 Until the first conformance reviewer is appointed, the editor may perform the
@@ -211,11 +260,13 @@ A reviewer may not:
 - approve an implementation they authored, employ or depend on;
 - create, remove or reclassify a conformance class.
 
-Repository permissions implement this boundary; they do not replace it. A
-reviewer may hold `triage`, or `write` limited in practice by `CODEOWNERS` and
-branch protection to `conformance/` and `CONFORMANCE.md`. A reviewer does not
-receive merge rights over the specification or the corpora, and does not
-become a maintainer by accepting the review role.
+Repository permissions implement this boundary; they do not replace it.
+[activates: organization repository] A reviewer may hold `triage`; where the
+repository sits on a personal account, that role does not exist and the grant is
+`write` limited in practice by `CODEOWNERS` and branch protection to
+`conformance/` and `CONFORMANCE.md`. A reviewer does not receive merge rights
+over the specification or the corpora, and does not become a maintainer by
+accepting the review role.
 
 The registry row is the authority: if the row is absent or unsigned, the claim
 is not recorded, whatever a README says.

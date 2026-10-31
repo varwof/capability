@@ -42,3 +42,4 @@ later reader needs to be able to tell which one happened.
 | [0001](0001-reviewer-scopes-and-restricted-write.md) | Reviewer appointment held as three separate scopes; restricted write in place of triage | 2026-10-31 | accepted |
 | [0002](0002-ccx-046-scope-and-spec-clause.md) | `ccx-046` scope fields, execution checks moved to `derivation`, `spec_clause` prefixes aligned | 2026-10-31 | accepted |
 | [0003](0003-governance-revision-2.md) | Objection windows, decision records, governance revision numbering | 2026-10-31 | accepted |
+| [0004](0004-bootstrap-mode-and-exit-triggers.md) | Operating modes, dormant-rule tags, exit triggers from `bootstrap` | 2026-10-31 | accepted |
