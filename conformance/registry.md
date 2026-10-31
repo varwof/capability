@@ -30,6 +30,7 @@ claimed.
 | ID | Implementation | Class | Revision | Impl. commit | Corpus commit | Result | Reviewer | Scope / term | Date | Status |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `reg-2026-001` | `jdieselny/ecr-wg` → `rust/clc-rust-cleanroom` | CLC-A core | CLC-1.19, Section 12 core corpus | `8db495ac68f9` | `1f3cbdf` | 44 tests; 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | bootstrap review; no appointed scope | 2026-10-27 | verified |
+| `reg-2026-002` | `varwof/register` (Go) | CLC-A core | CLC-1.19, Section 12 core corpus | `e422020b0e55` | `1ef567c` | 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | bootstrap review; not independent | 2026-10-31 | verified |
 
 ### `reg-2026-001` — notes
 
@@ -80,3 +81,29 @@ Corpus hashes used by the baseline:
 ## Superseded or withdrawn
 
 None.
+
+### `reg-2026-002` — notes
+
+- Public CI: <https://github.com/varwof/register/actions/runs/41149493086>
+  (`clc-conformance` at `e422020`, success).
+- That workflow clones `varwof/capability` `--depth 1` without pinning the commit,
+  so the run does not record which corpus it used. The hashes below are from
+  `capability@1ef567c`; the run was reproduced at `e422020` against those files:
+  `154/154` vectors and `1,184/1,184` property cases (869 order-symmetry checks,
+  841 closure probes).
+- Corpus hashes at `1ef567c`, unchanged since `1f3cbdf`:
+  - `data/_vectors/clc-v1/vectors.json`
+    `3c1a5672d6f107444903f06c51a71ce92451f1b45ca92c5a84a345b0de5a5bbd`
+  - `data/_vectors/clc-v1/property-cases.json`
+    `f00ed1f49299293ac9fff1e10287b9642aa49d6dacf25b2b4a1be2d7103b2f07`
+- Commands: `CLC_VECTORS=<capability>/data/_vectors/clc-v1/vectors.json go run
+  ./cmd/vectors-run/`; `CLC_PROPERTY_CASES=<capability>/data/_vectors/clc-v1/property-cases.json
+  go test -count=1 ./semantics/ -run TestIntersectionProperty -v`.
+- Independence: the implementation shares an author with the corpora. It is
+  regression evidence, not independent evidence, and it does not count towards
+  P12 or the two-implementation transfer criterion on its own.
+- Bootstrap: the editor reviewed an implementation the editor wrote, which the
+  reviewer rules would otherwise exclude. The row stays `bootstrap` until an
+  appointed reviewer whose scope covers CLC-A re-checks it.
+- Pinning gap: `clc-conformance.yml` should pin the corpus commit the way the
+  reviewer's repository does, so a public run identifies its own corpus.
