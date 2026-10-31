@@ -43,8 +43,11 @@ DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 TERM_RE = re.compile(r"(\d{4})-(\d{2})\s*$")
 PIN_RE = re.compile(r"`(data/[\w./-]+\.json)`\s*`([0-9a-f]{64})`")
 COMMIT_RE = re.compile(r"^`[0-9a-f]{7,40}`$")
-REQUIRED_CORPUS = {
-    "CLC-A": (
+# A class is a closed set. A claim naming anything else is refused rather than
+# matched loosely: an unknown name silently skipping its corpus requirement is how
+# a row ends up citing half a corpus.
+CLASS_CORPUS = {
+    "CLC-A core": (
         "data/_vectors/clc-v1/vectors.json",
         "data/_vectors/clc-v1/property-cases.json",
     ),
@@ -52,6 +55,11 @@ REQUIRED_CORPUS = {
         "data/_vectors/clc-d/containment-vectors.json",
         "data/_vectors/clc-d/authorize-chain-vectors.json",
     ),
+}
+MAINTAINERS = ROOT / "MAINTAINERS.md"
+SCOPE_CLASSES = {
+    "CLC-A core": "CLC-A core",
+    "CLC-D": "CLC-D",
 }
 
 
@@ -120,6 +128,10 @@ def check_row(row: dict[str, str], problems: list[str]) -> None:
     for column in ("Class", "Reviewer", "Result"):
         if not row[column]:
             problems.append(f"{identifier}: {column} is empty")
+    if row["Class"] and row["Class"] not in CLASS_CORPUS:
+        problems.append(
+            f"{identifier}: class {row['Class']!r} is not one of {sorted(CLASS_CORPUS)}"
+        )
     if not COMMIT_RE.match(row["Impl. commit"]):
         problems.append(
             f"{identifier}: implementation commit {row['Impl. commit']!r} is not a hash"
@@ -194,13 +206,11 @@ def check_pins(text: str, rows: list[dict[str, str]], problems: list[str]) -> No
         if not pins:
             problems.append(f"{identifier}: notes pin no corpus file hash")
         pinned = {path for path, _ in pins}
-        for family, required in REQUIRED_CORPUS.items():
-            if family in row["Class"]:
-                for path in required:
-                    if path not in pinned:
-                        problems.append(
-                            f"{identifier}: class {family} needs {path} pinned"
-                        )
+        for path in CLASS_CORPUS.get(row["Class"], ()):
+            if path not in pinned:
+                problems.append(
+                    f"{identifier}: class {row['Class']} needs {path} pinned"
+                )
         for path, expected in pins:
             blob = subprocess.run(
                 ["git", "--no-pager", "show", f"{commit}:{path}"],
@@ -216,6 +226,90 @@ def check_pins(text: str, rows: list[dict[str, str]], problems: list[str]) -> No
                     f"{identifier}: {path} at {commit} hashes to {actual[:16]}…, "
                     f"registry says {expected[:16]}…"
                 )
+
+
+def reviewers() -> list[dict[str, str]]:
+    """Appointed reviewer rows from MAINTAINERS.md, one per scope."""
+    if not MAINTAINERS.exists():
+        return []
+    text = MAINTAINERS.read_text(encoding="utf-8")
+    body = section(text, "## Conformance reviewers")
+    header = None
+    rows = []
+    for line in body.splitlines():
+        if not line.startswith("|"):
+            continue
+        if header is None:
+            header = cells(line)
+            continue
+        if set(line.replace("|", "").strip()) <= {"-"}:
+            continue
+        rows.append(dict(zip(header, cells(line))))
+    return rows
+
+
+def covers(scope_text: str, claim_class: str) -> bool:
+    return any(
+        phrase in scope_text and klass == claim_class
+        for phrase, klass in SCOPE_CLASSES.items()
+    )
+
+
+def check_reviewers(
+    rows: list[dict[str, str]], problems: list[str]
+) -> None:
+    """A claim is signed by an appointed reviewer whose scope covers its class.
+
+    A bootstrap review is the one exception, and it is allowed only when both the
+    reviewer cell and the scope cell say so: the mark is a statement about the
+    evidence, not a free-text note.
+    """
+    appointed = reviewers()
+    if not appointed:
+        problems.append("MAINTAINERS.md has no '## Conformance reviewers' table")
+        return
+    for row in rows:
+        identifier = row["ID"]
+        reviewer = row["Reviewer"]
+        scope_cell = row["Scope / term"]
+        if "bootstrap" in reviewer.lower():
+            if "bootstrap" not in scope_cell.lower():
+                problems.append(
+                    f"{identifier}: reviewer cell says bootstrap but the scope cell does not"
+                )
+            continue
+        names = [
+            entry.get("Reviewer", "") for entry in appointed
+        ]
+        matched = None
+        for entry, name in zip(appointed, names):
+            person = name.split(" (")[0].strip()
+            if person and person in reviewer:
+                matched = entry
+                break
+        if matched is None:
+            problems.append(
+                f"{identifier}: reviewer {reviewer!r} is not an appointed reviewer "
+                "in MAINTAINERS.md"
+            )
+            continue
+        if not covers(matched.get("Scope", ""), row["Class"]):
+            problems.append(
+                f"{identifier}: reviewer scope {matched.get('Scope', '')!r} does not "
+                f"cover {row['Class']}"
+            )
+        ends = matched.get("Term ends", "").strip()
+        term = TERM_RE.search(ends)
+        if term:
+            year, month = int(term.group(1)), int(term.group(2))
+            if 1 <= month <= 12:
+                due = datetime.date(year, month, calendar.monthrange(year, month)[1])
+                claimed = datetime.date.fromisoformat(row["Date"])
+                if claimed > due:
+                    problems.append(
+                        f"{identifier}: claim dated {claimed} after the reviewer's "
+                        f"appointment ended {due}"
+                    )
 
 
 def check_closed(text: str, problems: list[str]) -> None:
@@ -251,6 +345,7 @@ def main() -> int:
         check_row(row, problems)
     check_notes(text, rows, problems)
     check_pins(text, rows, problems)
+    check_reviewers(rows, problems)
     check_closed(text, problems)
     if problems:
         fail(problems)
