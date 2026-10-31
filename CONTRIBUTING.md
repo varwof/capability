@@ -51,7 +51,8 @@ A proposal must include:
 - positive and negative vectors;
 - reason-code and error-ordering analysis;
 - compatibility impact for existing inputs;
-- an implementation-impact statement; and
+- an implementation-impact statement;
+- affected bindings or projections, named by `BINDINGS.md` entry; and
 - a public review period under `GOVERNANCE.md`.
 
 ### Carrier bindings or projections
