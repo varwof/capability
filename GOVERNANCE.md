@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 # CLC Governance
 
 Status: initial public governance, effective 2026-10-24.
-Revision: 2, 2026-10-31.
+Revision: 2, 2026-10-31 (Revision 1 was the initial text).
 Operating mode: `bootstrap` — one maintainer and no second independent
 implementation.
 
@@ -95,7 +95,8 @@ own statement, not only to the implementation author's.
 
 Anyone who submits an issue, review, vector, implementation report or pull
 request is a contributor. Contribution credit is recorded according to the
-contribution and the applicable license and IPR process.
+contribution and the applicable license and IPR process; contributors are listed
+in `CONTRIBUTORS.md`.
 
 ## Decisions
 
