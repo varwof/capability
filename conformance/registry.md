@@ -7,6 +7,16 @@ SPDX-License-Identifier: Apache-2.0
 
 Status: initial registry, effective 2026-10-27.
 
+This registry records evidence. It assigns nothing: no code points, media types,
+namespaces, reason codes or binding names are allocated here, and this is not an
+IANA registry. Parameters are defined by the specification; where CLC is
+published through the IETF, registration follows the IANA Considerations section
+of the draft. If an entry here ever conflicts with a registered parameter, the
+registered parameter governs.
+
+An entry records a corpus run at a pinned commit. It is not an endorsement of an
+implementation, and its absence means a claim is unrecorded, not that it failed.
+
 One row per verified conformance claim. The procedure and checklist are in
 `CONFORMANCE.md`. Rows are append-only in substance: a superseded claim gets a
 new row and the old row is marked `superseded`; a wrong claim is marked
