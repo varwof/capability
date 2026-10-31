@@ -5,6 +5,16 @@
 也不参与 `data/` 的 schema 校验；它们的门是
 `.github/workflows/clc-vectors.yml` 末尾的"两实现一致性"一步。
 
+## In English
+
+Everything in `contrib/` is informational or experimental. Nothing here is
+normative, nothing here is cited as conformance evidence, and a passing probe is
+not a claim: claims are made against `data/_vectors/` and recorded in
+`conformance/registry.md`. A change confined to `contrib/` merges on CI alone
+(`GOVERNANCE.md`, "Non-normative work in `contrib/`"). Promotion out of `contrib/`
+into a vector, a registered binding (`BINDINGS.md`) or normative text is a normal
+or core change, reviewed as one.
+
 ## 状态（audit C-6）
 
 本目录内的一切均为 **informative / experimental**：可运行、可复核，但不构成
