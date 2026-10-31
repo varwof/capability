@@ -46,3 +46,4 @@ later reader needs to be able to tell which one happened.
 | [0004](0004-bootstrap-mode-and-exit-triggers.md) | Operating modes, dormant-rule tags, exit triggers from `bootstrap` | 2026-10-31 | accepted |
 | [0005](0005-merge-path-and-measurable-criteria.md) | Single-maintainer merge path, editorial path, measurable transfer criteria, term expiry | 2026-10-31 | accepted |
 | [0006](0006-projection-collaboration.md) | `contrib/` lane, external evidence field, reviewer re-run is not approval | 2026-10-31 | accepted |
+| [0007](0007-binding-names-and-entry-points.md) | Binding name allocation, affected projections in proposals, English entry point | 2026-10-31 | accepted |
