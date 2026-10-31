@@ -9,9 +9,10 @@ const ROOT = path.resolve(HERE, '..', '..');
 const FIXTURE = process.env.CLC_EMILIA_BINDING_FIXTURE
   || path.resolve(ROOT, '..', 'register', 'cmd', 'emilia-projection-probe',
     'testdata', 'emilia-binding-fixture-v1.json');
+// Resolved beside the binding fixture so a caller that points
+// CLC_EMILIA_BINDING_FIXTURE at a non-sibling checkout still finds the schema.
 const SCHEMA_FIXTURE = process.env.CLC_EMILIA_SCHEMA_FIXTURE
-  || path.resolve(ROOT, '..', 'register', 'cmd', 'emilia-projection-probe',
-    'testdata', 'emilia-binding-fixture-v2.json');
+  || path.join(path.dirname(FIXTURE), 'emilia-binding-fixture-v2.json');
 const CLC_TS_FILE = process.env.CLC_TS_FILE
   || path.resolve(ROOT, '..', 'aic-capability-demo', 'ts', 'clc_semantics.ts');
 const CLC_TS_URL = CLC_TS_FILE.startsWith('file://')

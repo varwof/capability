@@ -21,11 +21,14 @@ FIXTURE = pathlib.Path(
             "testdata" / "emilia-binding-fixture-v1.json"),
     )
 )
+# The schema fixture sits beside the binding fixture, so it is resolved from
+# whichever binding fixture the caller supplied. Deriving it here keeps the two
+# in step when CLC_EMILIA_BINDING_FIXTURE points at a checkout that is not a
+# sibling directory.
 SCHEMA_FIXTURE = pathlib.Path(
     os.environ.get(
         "CLC_EMILIA_SCHEMA_FIXTURE",
-        str(ROOT.parent / "register" / "cmd" / "emilia-projection-probe" /
-            "testdata" / "emilia-binding-fixture-v2.json"),
+        str(FIXTURE.with_name("emilia-binding-fixture-v2.json")),
     )
 )
 PY_DIR = pathlib.Path(
