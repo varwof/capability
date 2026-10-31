@@ -24,7 +24,8 @@ patent commitments and conformance-reporting guidance are in
 [ADOPTION.md](ADOPTION.md); contribution requirements and DCO sign-off are in
 [CONTRIBUTING.md](CONTRIBUTING.md). Conformance claims are verified under
 [CONFORMANCE.md](CONFORMANCE.md) and recorded in
-[conformance/registry.md](conformance/registry.md). Security reports follow
+[conformance/registry.md](conformance/registry.md). Bindings and projections are
+registered in [BINDINGS.md](BINDINGS.md). Security reports follow
 [SECURITY.md](SECURITY.md).
 
 ## What is varwof-capability?
