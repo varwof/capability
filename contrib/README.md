@@ -87,11 +87,11 @@ done
 
 ## 版本说明（重要）
 
-- 本仓规范正文 `docs/capability-language-core-v1.md` 当前声明 **CLC-1.17**；
+- 本仓规范正文 `docs/capability-language-core-v1.md` 当前声明 **CLC-1.19**；
   语料与三个实现（`register` 的 Go、`aic-capability-demo` 的 Python/TypeScript）
   在同一版本上。
 - **已发布 Internet-Draft `draft-wei-capability-language-core-00` 为 CLC-1.15**——
-  落后两版，其中 **CLC-1.16 含裁决变更**（I-JSON 整数上界、前导 BOM 拒绝、
+  落后四版（1.16–1.19），其中 **CLC-1.16 起含裁决变更**（I-JSON 整数上界、前导 BOM 拒绝、
   宿主数值载体归一化、§13.4.3 params 收窄决策表）。差异逐条列在规范正文的
   changelog 表里。**引用本仓行为时请以仓库版本为准并注明。**
 
