@@ -139,8 +139,9 @@ recorded in `decisions/`, one file per decision, named `NNNN-slug.md`.
 
 A record states the decision, its date, the governance revision it was taken
 under, the alternatives rejected, any substantive objection and how it was
-resolved, and the artifacts it binds (clauses, corpora, registry rows, pull
-requests). The pull request that makes the change links its record, and the
+resolved, the artifacts it binds (clauses, corpora, registry rows, pull
+requests), and what external evidence exists for it: who re-ran the change at
+which commit, or `none`. The pull request that makes the change links its record, and the
 record links back.
 
 A record is not a vote log and creates no authority. It exists so that a later
@@ -177,6 +178,18 @@ text may merge once CI passes, without a review window and without invoking the
 bootstrap exception, provided it changes no normative statement, no vector
 expectation, no reason code, no registry row and no decision record. A change
 that touches any of those is a normal change, however small its diff looks.
+
+### Non-normative work in `contrib/`
+
+`contrib/` holds probes and experimental projections. A change confined to it
+merges on CI alone and needs no review window, because nothing there is cited as
+conformance evidence: a claim is made against `data/_vectors/` and recorded in
+`conformance/registry.md`. The condition is that `contrib/README.md` says what
+is there and what status it has.
+
+Promotion out of `contrib/` — a vector in `data/`, a registered binding, a
+normative sentence — is a normal or core change and is reviewed as one. The
+status of a probe is not evidence that its promotion is agreed.
 
 ### Security fixes
 
@@ -278,6 +291,11 @@ A reviewer may not:
 - merge a change to `docs/`, `data/`, `scripts/`, `tools/` or `decisions/`;
 - approve an implementation they authored, employ or depend on;
 - create, remove or reclassify a conformance class.
+
+A reviewer does not approve a change to the specification, the corpora or a
+binding. Where such a change bears on a claim, the reviewer re-runs the pinned
+corpora at the candidate commit and publishes the result; that is evidence, and
+evidence about someone else's change is not approval of it.
 
 Repository permissions implement this boundary; they do not replace it.
 [activates: organization repository] A reviewer may hold `triage`; where the
