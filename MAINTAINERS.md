@@ -33,20 +33,25 @@ Maintainer eligibility and appointment are defined in `GOVERNANCE.md`.
 
 Appointed 2026-10-27 on the reviewer's written acceptance, which carried a
 P12 independence statement and a standing commitment to rerun the corpora on
-each revision published here. The appointment is one person with three separate
-scopes, not one combined scope. CLC-A is active. The CLC-1.19 and CLC-D scopes
-were verified at `ac4f9aa` in public run
+each revision published here. That acceptance took the CLC-A core corpus and
+pre-committed the appointment to two further scopes on completion of their
+runs: CLC-1.19 once the minor-gate corpora had been run, and CLC-D once the 64
+containment and 15 authorize-chain vectors had been run. Both runs were
+published on 2026-10-31 at `ac4f9aa` in
 [41163351869](https://github.com/jdieselny/ecr-wg/actions/runs/41163351869):
 669/669 required and 50/50 optional symmetry for the minor gate, and 64/64
 containment plus 15/15 authorize-chain for CLC-D. The 14 vendored corpus pins
-match `capability@80e483f`. Each scope keeps its own evidence and expiry; if one
-lapses or is withdrawn, the others do not move. CLC-E and governance votes are
-outside the reviewer role. Claims authored by the reviewer are outside the
-reviewer's scope in every class: the reviewer authored `reg-2026-001` and
-recuses from it. Term 12 months, renewable; the end date is in the `Term ends` column and a row
-whose date has passed is marked `expired` until it is renewed. The role and its limits are in
+match `capability@80e483f`. The CLC-A scope is active from 2026-10-27 and the
+other two from 2026-10-31: one person holding three separate scopes, each with
+its own evidence and expiry, and if one lapses or is withdrawn the others do
+not move. CLC-E and governance votes are outside the reviewer role. Claims
+authored by the reviewer are outside the reviewer's scope in every class: the
+reviewer authored `reg-2026-001` and recuses from it. Term 12 months,
+renewable; the end date is in the `Term ends` column and a row whose date has
+passed is marked `expired` until it is renewed. The role and its limits are in
 `GOVERNANCE.md`; review ownership is recorded in `.github/CODEOWNERS`, which
-takes effect only if the reviewer is given write access.
+takes effect only if the reviewer is given write access, granted 2026-10-31
+(invitation 340674568, accepted).
 
 Reviewer scope, term and recusal rules are in `GOVERNANCE.md`; the procedure
 and checklist are in `CONFORMANCE.md`; verified claims are recorded in
