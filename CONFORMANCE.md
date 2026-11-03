@@ -37,9 +37,9 @@ thread, or agreement between implementations that share an author.
   `CLC-1.19` must also satisfy the §12.1 minor gate: `param_bounds` grammar and
   §6.6 meet, `Resolve`, `ConstraintUnion`, and §6.2 canonicalization.
 - **CLC-D**: `containment-vectors.json` (64) and
-  `authorize-chain-vectors.json` (15) pass. The crosswalk (45), reason-collapse
-  (3), mode-lattice (5) and containment property (784) corpora are required for
-  a profile claim, not for the base CLC-D claim.
+  `authorize-chain-vectors.json` (15) pass. The crosswalk (47 containment, 1
+  authorize), reason-collapse (3), mode-lattice (5) and containment property
+  (784) corpora are required for a profile claim, not for the base CLC-D claim.
 - **CLC-E**: implemented and pinned by `evidence-vectors.json` (32), but **not
   claimed**. No review records a CLC-E claim until two independent
   implementations exist and the EMILIA joint review is complete.
