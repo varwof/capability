@@ -4,10 +4,10 @@
   "corpus_base_revision_note": "Committed on top of this revision; the commit that introduces this manifest is the corpus revision to cite after publication.",
   "probe_repository": "https://github.com/varwof/register",
   "probe_base_revision": "c4cbc53f117e7e7dc3eae980267c5b6e12f08e50",
-  "probe_revision": "1ee8efb24c50d247f805fa712a9e8edd51339245",
+  "probe_revision": "4d17624450d8aa2830b8a7dba7cd3622fe4014ce",
   "probe_source_sha256": {
     "cmd/asor-projection-probe/main.go": "871fbf53ef27ef710537b87e4240a9fbfcf170c4057a37038ce9c0673a7b1fda",
-    "cmd/emilia-projection-probe/main.go": "d7b70030e71be80634e612384da1155c2f39217ddc41fbfd3dd79bab0cfab15d",
+    "cmd/emilia-projection-probe/main.go": "632de2d83f8281b7323823f0b1cdb9590635c87b0980ba840ac9084f423e1496",
     "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json": "37654a11d7666c4165ac38f9cc03a688cb8bc1eb7dfd2fd8e8226d0cc5c0715f",
     "cmd/gilda-projection-probe/main.go": "ee22fe91ac42999514509336db470b9864ab631541a971b97ea4beffd2c87ffb",
     "cmd/oasnt-projection-probe/main.go": "7df80215f3833b4f64c3bb35ed43774c3ec448aa922defcd3acb6a56fc2ac421",
@@ -19,7 +19,7 @@
     "cmd/izmaylov-projection-probe/testdata/izmaylov-conditions-fixture-v1.json": "2063d24834dfa8dc542fa38db033deeaf28aba88c4b73eb11c874615ea59223c",
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-inclusion-fixture-v1.json": "178736e4a31d0d6b50e8c31a285e77597b0170109d3843b6cc8a8e0da9933f6c",
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-consistency-fixture-v1.json": "74f70077581ba05e4cfb2fe22ae40ade7b10b9163149680162d3735c2315b262",
-    "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json": "544ab449d307d9a3249f01bf6cc9e30fe3fb94cf55d594991685469df5314783"
+    "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json": "1b62c69cec240ac04f88dcd1dcabc54d644b687c0eebd4c01597b6def2312a7d"
   },
   "total_cases": 115,
   "cross_language_binding": {
@@ -49,7 +49,7 @@
       "command": "node --disable-warning=ExperimentalWarning --experimental-strip-types contrib/emilia-projection/probe.mjs"
     },
     "fixture_schema": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json",
-    "fixture_schema_sha256": "544ab449d307d9a3249f01bf6cc9e30fe3fb94cf55d594991685469df5314783"
+    "fixture_schema_sha256": "1b62c69cec240ac04f88dcd1dcabc54d644b687c0eebd4c01597b6def2312a7d"
   },
   "probes": {
     "emilia-projection": {
@@ -210,7 +210,7 @@
       ]
     }
   },
-  "probe_source_note": "These source and output hashes describe register at probe_revision (committed 2026-10-28). Replace the hashes and advance probe_revision when the probes change.",
+  "probe_source_note": "These source and output hashes describe register at probe_revision (committed 2026-11-03). Replace the hashes and advance probe_revision when the probes change.",
   "native_check_assessment": {
     "corpus": "contrib/native-check-assessment/cases-v1.json",
     "corpus_sha256": "14ab79de5fa6dff8ff5c4075946425c2a8224370de84b81886f585940f1011b8",
