@@ -31,6 +31,7 @@ claimed.
 |---|---|---|---|---|---|---|---|---|---|---|
 | `reg-2026-001` | `jdieselny/ecr-wg` → `rust/clc-rust-cleanroom` | CLC-A core | CLC-1.19, Section 12 core corpus | `8db495ac68f9` | `1f3cbdf` | 44 tests; 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | bootstrap review; no appointed scope | 2026-10-27 | verified |
 | `reg-2026-002` | `varwof/register` (Go) | CLC-A core | CLC-1.19, Section 12 core corpus | `e422020b0e55` | `1ef567c` | 154/154; 1,184/1,184 | Jijie Wei (editor, bootstrap) | bootstrap review; not independent | 2026-10-31 | verified |
+| `reg-2026-003` | `jdieselny/ecr-wg` → `rust/clc-rust-cleanroom` | CLC-D | CLC-1.19, §13.4 and §13.11 base corpora | `3c1a97e` | `80e483f` | 79/79 (64 containment + 15 authorize-chain) | Jijie Wei (editor, bootstrap) | bootstrap review; no appointed scope | 2026-11-03 | verified |
 
 ### `reg-2026-001` — notes
 
@@ -90,6 +91,43 @@ claimed.
   (`CLC_CAPABILITY_SHA`), asserts the checked-out commit, and prints it with the
   two corpus hashes at the start of every run. This row was recorded before that
   pin existed and cites the corpus it was reproduced against.
+
+### `reg-2026-003` — notes
+
+- Report: `varwof/capability#14`.
+- Public CI: <https://github.com/jdieselny/ecr-wg/actions/runs/41191306714>
+  (success at `3c1a97e`).
+- Corpus hashes at `80e483f`, byte-identical at `1f3cbdf` and at `18f6b1a`:
+  - `data/_vectors/clc-d/containment-vectors.json`
+    `3d03e5318f1e0cef07bd6cb38111cf6b7fbcc24aa13bd83fb7728ee1d4527b13`
+  - `data/_vectors/clc-d/authorize-chain-vectors.json`
+    `1ae22422c4c8632fa2d391473f1a9a244845d079baf381875134597409fcfa12`
+- Commands: `cargo run --release -- --clc-d`;
+  `python3 scripts/verify_vector_pins.py`.
+- Assertion coverage checked against the corpus rather than taken from the
+  report: 31 of 64 containment vectors assert `contains: false` with a reason
+  (`params_not_narrower` 20, `child_exceeds_parent` 4, `different_namespace` 2,
+  `unsupported_wildcard` 2, `invalid_params_null` 2, `missing_capability_id`
+  1); 8 of 15 chain vectors assert a non-empty reason; `expect.unresolved` is
+  present on 10 of 15 and non-empty on `ac-011`, whose verdict is
+  `allow_unresolved`.
+- Independence: cleanroom implementation, no author or organization in common
+  with the `varwof` implementations; the author states that no reference
+  implementation was read, and the repository's cleanroom leash, the pinned
+  upstream corpora and a history predating the reference runner's crosswalk
+  output support that statement.
+- Bootstrap: the author recuses as author of the implementation, and no other
+  appointed reviewer covers CLC-D, so the editor recorded it. The mark stands
+  until a different appointed reviewer re-checks the claim.
+- Residual gaps: this row claims the CLC-D base corpora only. Not claimed or not
+  run: the profile corpora (containment crosswalk 47, authorize crosswalk 1,
+  reason-collapse 3, mode lattice 5, containment property 784), the §13.8.1
+  carrier mapping, and CLC-E.
+- Corpus errata recorded against the next corpus revision, deferred so this
+  row's pins stay valid: `ac-012` asserts `"reason": ""` where `ac-011` uses
+  `null`; the chain corpus tags vectors `clc_revision` `CLC-1.13` (13) or
+  `CLC-1.14` (2), and the containment corpus carries no revision tag, while the
+  claim is CLC-1.19.
 
 ## Baseline (not a claim)
 
