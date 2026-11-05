@@ -46,7 +46,9 @@ other two from 2026-10-31: one person holding three separate scopes, each with
 its own evidence and expiry, and if one lapses or is withdrawn the others do
 not move. CLC-E and governance votes are outside the reviewer role. Claims
 authored by the reviewer are outside the reviewer's scope in every class: the
-reviewer authored `reg-2026-001` and recuses from it. Term 12 months,
+reviewer authored the CLC-A and CLC-D rows for `rust/clc-rust-cleanroom`
+(`reg-2026-004`, which supersedes `reg-2026-001`, and `reg-2026-003`) and
+recuses from them. Term 12 months,
 renewable; the end date is in the `Term ends` column and a row whose date has
 passed is marked `expired` until it is renewed. The role and its limits are in
 `GOVERNANCE.md`; review ownership is recorded in `.github/CODEOWNERS`, which
