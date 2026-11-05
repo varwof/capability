@@ -94,7 +94,7 @@ def main() -> int:
     after_term = REGISTRY.replace("bootstrap review; not independent | 2026-10-31", "CLC-A core, 2026-01 | 2026-10-31", 1)
     results.append(expect("claim inside its term", after_term, "after its scope ended"))
 
-    junk_commit = REGISTRY.replace("`8db495ac68f9`", "`not-a-hash`", 1)
+    junk_commit = REGISTRY.replace("`e422020b0e55`", "`not-a-hash`", 1)
     results.append(expect("implementation commit is a hash", junk_commit, "is not a hash"))
 
     unknown_class = REGISTRY.replace("| CLC-A core | CLC-1.19", "| CLC-E | CLC-1.19", 1)
@@ -109,9 +109,10 @@ def main() -> int:
     results.append(expect("required corpus is pinned", dropped_pin, "needs data/_vectors"))
 
     placeholder = REGISTRY.replace(
-        "- Independence: cleanroom implementation; no access to the `varwof` reference\n"
-        "  implementations, stated by the author and supported by the repository's\n"
-        "  cleanroom leash.",
+        "- Independence: cleanroom implementation, no author or organization in common\n"
+        "  with the `varwof` implementations; the author states that no reference\n"
+        "  implementation was read, and the cleanroom leash, the hash-pinned corpora and\n"
+        "  a history predating the reference runner's crosswalk output support it.",
         "- Independence: none",
         1,
     )
@@ -128,12 +129,18 @@ def main() -> int:
         expect("project-owned code cannot claim independence", owned_claim, "shares an author")
     )
 
-    dangling = REGISTRY.replace(
-        "## Superseded or withdrawn\n\nNone.",
+    # The closed section starts as "None." and gains a table the first time a
+    # claim is superseded, so this case has to work on both shapes.
+    dangling_table = (
         "## Superseded or withdrawn\n\n| ID | Status | Superseded by |\n|---|---|---|\n"
-        "| `reg-2026-001` | superseded | `reg-2026-999` |",
-        1,
+        "| `reg-2026-001` | superseded | `reg-2026-999` |"
     )
+    if "## Superseded or withdrawn\n\nNone." in REGISTRY:
+        dangling = REGISTRY.replace(
+            "## Superseded or withdrawn\n\nNone.", dangling_table, 1
+        )
+    else:
+        dangling = REGISTRY.replace("| `reg-2026-004` |", "| `reg-2026-999` |", 1)
     results.append(expect("superseded names a real row", dangling, "which is not a row"))
 
     future = REGISTRY.replace("| 2026-10-31 | verified |", "| 2099-01-01 | verified |", 1)
