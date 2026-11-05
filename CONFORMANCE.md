@@ -73,6 +73,8 @@ thread, or agreement between implementations that share an author.
 - [ ] Public CI builds and runs the same commands at the same commit.
 - [ ] Independence is stated for this implementation, and same-author parity is
       not presented as independent validation.
+- [ ] The review did not require the implementation source; if a source review was
+      needed, `decisions/0009` was recorded first.
 - [ ] Residual gaps are listed, including corpora that were not run.
 
 ## 5. Independence
@@ -90,6 +92,9 @@ cleanroom evidence (repository history, leash checks, pinned inputs).
 - It does not change the specification, a corpus, a reason code, or a class.
 - It does not endorse an organization or a product.
 - It does not replace the change process for normative text.
+- It does not read the implementation source. A source review is a separate
+  decision, recorded before the source is opened, and it states what it does to
+  that reviewer's independence statement (`decisions/0009`).
 
 ## 7. Registry and withdrawal
 

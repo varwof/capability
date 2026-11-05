@@ -48,3 +48,4 @@ later reader needs to be able to tell which one happened.
 | [0006](0006-projection-collaboration.md) | `contrib/` lane, external evidence field, reviewer re-run is not approval | 2026-10-31 | accepted |
 | [0007](0007-binding-names-and-entry-points.md) | Binding name allocation, affected projections in proposals, English entry point | 2026-10-31 | accepted |
 | [0008](0008-reference-implementation-claim.md) | Record the reference implementation as a bootstrap CLC-A claim | 2026-10-31 | accepted |
+| [0009](0009-review-is-a-claim-review.md) | A claim review is not a code review; source review needs its own decision first | 2026-11-05 | accepted |
