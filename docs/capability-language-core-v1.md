@@ -1696,9 +1696,8 @@ symmetry cases, and the CLC-D base corpora at 64 containment and 15
 authorize-chain vectors, and those counts are read from that run's log rather
 than reproduced locally.  The claims are recorded in the repository's
 conformance registry as `reg-2026-003` (CLC-D base corpora) and `reg-2026-004`
-(CLC-A core and the minor gate) against the corpus of Section 12 above.  What is
-not reported is the clearinghouse operational-profile corpora, or any part of
-CLC-E.
+(CLC-A core and the minor gate).  What is not reported is the clearinghouse
+operational-profile corpora, or any part of CLC-E.
 
 This is **one** independent implementation, so the bar this document sets for
 its own claim — two independent implementations agreeing on verdict and reason
@@ -3376,9 +3375,9 @@ implementation of this document (Section 12) from the published text, and
 contributed two vectors to the published corpora, merged in `varwof/capability`
 as `e95b0e3`: `ccx-046` in `containment-crosswalk-vectors.json` and
 `resolve-027` in `resolve-vectors.json`, the latter a `Resolve` case at
-CLC-1.19.  Reviewing that work also surfaced a defect in his crosswalk runner:
-`ccx-047` was reported as passing without its expectation being evaluated, and
-the runner now refuses an expectation key it cannot assert.
+CLC-1.19.  A crosswalk vector added here, `ccx-047`, exposed a defect in his
+runner: it reported the vector as passing without evaluating its expectation,
+and he changed the runner to refuse an expectation key it cannot assert.
 
 ## References
 
