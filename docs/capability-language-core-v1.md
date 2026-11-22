@@ -3370,14 +3370,11 @@ retiring the formerly separate containment extension, and pins it against six
 adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
 2026-09-21.
 
-Justin D. Kintzele (J Diesel NY / ECR-WG) built the first independent
-implementation of this document (Section 12) from the published text, and
-contributed two vectors to the published corpora, merged in `varwof/capability`
-as `e95b0e3`: `ccx-046` in `containment-crosswalk-vectors.json` and
-`resolve-027` in `resolve-vectors.json`, the latter a `Resolve` case at
-CLC-1.19.  A crosswalk vector added here, `ccx-047`, exposed a defect in his
-runner: it reported the vector as passing without evaluating its expectation,
-and he changed the runner to refuse an expectation key it cannot assert.
+Justin D. Kintzele (J Diesel NY / ECR-WG) wrote the independent implementation
+recorded in Section 12 from the published text, and contributed two vectors to
+the published corpora, merged in `varwof/capability` as `e95b0e3`: `ccx-046` in
+`containment-crosswalk-vectors.json` and `resolve-027` in `resolve-vectors.json`,
+the latter a `Resolve` case at CLC-1.19.
 
 ## References
 
