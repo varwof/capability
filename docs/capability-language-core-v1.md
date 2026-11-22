@@ -4,7 +4,7 @@
 
 > **Preview** — Not for production use. APIs and features may change before official release.
 
-**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-10-24
+**Category**: Experimental | **Status**: Working Draft | **Date**: 2026-09-10 | **Last amended**: 2026-11-22
 
 ## Abstract
 
@@ -25,14 +25,16 @@ are separate.**  An implementation conforms to CLC-A when it meets the
 obligations Section 12 lists for that class, and it may claim that conformance on
 its own, whatever other implementations exist.  Section 12 additionally sets a
 maturity bar for *this document's* claim — two independent implementations
-agreeing on verdict and reason.  That bar is **not** met here: as Section 12
-states under "Independence of implementations", the three implementations named in
-the README share an author, so their agreement is a regression test for the text,
-not independent validation.  CLC-A is still claimed by this revision as the
-baseline authorization class, whose obligations are implementable and exercised by
-a published corpus; the independent-implementation threshold is recorded as
-unmet.  The evidence-side class CLC-E is **not** claimed: its relations, value
-grammar, reference implementation and corpus ship here.
+agreeing on verdict and reason.  That bar is **not** met here.  The three
+implementations named in the README share an author, so their agreement is a
+regression test for the text, not independent validation; one independent
+implementation now passes the CLC-A core corpus (Section 12, "Independence of
+implementations"), which is the first of the two the bar asks for.  CLC-A is
+still claimed by this revision as the baseline authorization class, whose
+obligations are implementable and exercised by a published corpus; the
+two-implementation threshold remains recorded as unmet.  The evidence-side
+class CLC-E is **not** claimed: its relations, value grammar, reference
+implementation and corpus ship here.
 
 This revision also folds the delegation **containment** relation into the
 document (Section 13): `Contains(parent, child)` decides whether a child grant
@@ -1681,25 +1683,45 @@ wildcards, or broaden bounds during canonicalization.
 **Independence of implementations (honest scope).**  The three implementations
 named in this repository's README (Go, Python, TypeScript) are **not independent
 evidence**: they share an author, and their agreement is a regression test for
-the specification, not third-party validation.  An independent implementation is
-invited; until one exists, the parity claim in this document is scoped to
-"same-author, three languages, one corpus".  Reviewers SHOULD treat a
-single-author parity claim as evidence that the text is *implementable*, not
-that it has been independently *interpreted*.
+the specification, not third-party validation.
 
-**Participated in the cross-check vs. published here.**  The normative gaps that
-this revision closes were found by checking each rule against several
+One independent implementation exists.  `clc-rust-cleanroom`, written by
+J Diesel NY in Rust under a stated cleanroom rule that its author does not read
+the three ports, was built from the published text and the official vectors.  Its
+core-corpus numbers — 154/154 vectors and 1,184/1,184 property cases — were
+reproduced locally at commit `8db495a`, whose public CI run `40503426566`
+passes; a later run at `3c1a97e` (public CI run `41191306714`) reports the CLC-A
+core corpus, the Section 12.1 minor-gate corpora at 669 required and 50 optional
+symmetry cases, and the CLC-D base corpora at 64 containment and 15
+authorize-chain vectors, and those counts are read from that run's log rather
+than reproduced locally.  The claims are recorded in the repository's
+conformance registry as `reg-2026-003` (CLC-D base corpora) and `reg-2026-004`
+(CLC-A core and the minor gate) against the corpus of Section 12 above.  What is
+not reported is the clearinghouse operational-profile corpora, or any part of
+CLC-E.
+
+This is **one** independent implementation, so the bar this document sets for
+its own claim — two independent implementations agreeing on verdict and reason
+(Section 12, P12 of the principles document) — remains **unmet**, and the parity
+claim here stays scoped to "same-author, three languages, one corpus".
+Reviewers SHOULD treat same-author parity as evidence that the text is
+*implementable*, and a single independent implementation as evidence that the
+text has been *interpreted* by one third party; neither is evidence that two
+independent implementations agree.
+
+**Participated in the cross-check vs. published here.**  The normative gaps
+that this revision closes were found by checking each rule against several
 same-author implementations written in different host languages, because a
 carrier-specific value model is exactly where a decision rule goes wrong — an
 integer that one runtime widens and another refuses, a string comparison that
 orders by UTF-16 code units instead of UTF-8 octets.  **Only the three ports
-named above are published**, and they run the machine-readable corpora at their
-ordinary test entry points.  This document asserts nothing about the behaviour
-of any implementation it does not publish: a further same-author port that took
-part in the cross-check carries no public conformance claim, and its results are
-not part of the parity claim above.  Readers SHOULD evaluate the rules on their
-merits — each is anchored to a cited requirement — and not on the number of
-ports that happened to surface it.
+named above are published by this repository**, and they run the
+machine-readable corpora at their ordinary test entry points.  This document
+asserts nothing about the behaviour of any implementation it does not publish:
+a further same-author port that took part in the cross-check carries no public
+conformance claim, and its results are not part of the parity claim above.
+Readers SHOULD evaluate the rules on their merits — each is anchored to a cited
+requirement — and not on the number of ports that happened to surface it.
 
 **Experimental neighbours are not CLC.**  The WIT/WPT interop study in
 `varwof/aic-jwt` (`wit-wpt-interop/`) is an **experimental** research artifact that
@@ -3348,6 +3370,15 @@ relation and the CLC-D class into this document (Section 13, Appendix C),
 retiring the formerly separate containment extension, and pins it against six
 adjacent capability drafts (ATN, AAT, AIP, AAE, AOA, AEGIS) reviewed on
 2026-09-21.
+
+Justin D. Kintzele (J Diesel NY / ECR-WG) built the first independent
+implementation of this document (Section 12) from the published text, and
+contributed two vectors to the published corpora, merged in `varwof/capability`
+as `e95b0e3`: `ccx-046` in `containment-crosswalk-vectors.json` and
+`resolve-027` in `resolve-vectors.json`, the latter a `Resolve` case at
+CLC-1.19.  Reviewing that work also surfaced a defect in his crosswalk runner:
+`ccx-047` was reported as passing without its expectation being evaluated, and
+the runner now refuses an expectation key it cannot assert.
 
 ## References
 
