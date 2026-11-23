@@ -83,6 +83,29 @@ const bindingSubject = (binding) => createHash('sha256')
   .update(Buffer.from(clc.canonicalJSON(relationTuple(binding)), 'utf8'))
   .digest('base64url');
 
+function tupleSubject(tuple) {
+  return createHash('sha256')
+    .update(Buffer.from(clc.canonicalJSON(tuple), 'utf8'))
+    .digest('base64url');
+}
+
+// Nothing computes a subject this way; it exists to show that an implementation
+// that did would land on a different one.
+function dedupTuple(tuple) {
+  const out = JSON.parse(JSON.stringify(tuple));
+  for (const key of ['subjects', 'evidence_issued_at']) {
+    const seen = new Set();
+    const unique = [];
+    for (const value of out[key]) {
+      if (seen.has(value)) continue;
+      seen.add(value);
+      unique.push(value);
+    }
+    out[key] = unique;
+  }
+  return out;
+}
+
 function mutate(binding, mutation) {
   const value = JSON.parse(JSON.stringify(binding));
   const parts = mutation.path;
@@ -474,6 +497,34 @@ printCase('EMI-BIND-007',
   'artifact set order does not change the relation subject',
   'unchanged',
   bindingSubject(reversedBinding) === subject ? 'unchanged' : 'different');
+
+const sharedBinding = JSON.parse(JSON.stringify(fixture.binding));
+sharedBinding.targets = [
+  {
+    type: 'ep-quorum',
+    artifact_id: 'approval-alice-1',
+    subject: 'alice',
+    issued_at: '2026-09-13T11:59:30Z',
+    verified: true,
+  },
+  {
+    type: 'ep-quorum',
+    artifact_id: 'approval-alice-2',
+    subject: 'alice',
+    issued_at: '2026-09-13T11:59:30Z',
+    verified: true,
+  },
+];
+const sharedTuple = relationTuple(sharedBinding);
+const sharedKept = sharedTuple.subjects.length === 2
+  && sharedTuple.subjects[0] === sharedTuple.subjects[1]
+  && sharedTuple.evidence_issued_at.length === 3
+  && sharedTuple.evidence_issued_at[1] === sharedTuple.evidence_issued_at[2]
+  && tupleSubject(sharedTuple) !== tupleSubject(dedupTuple(sharedTuple));
+printCase('EMI-BIND-012',
+  'two targets sharing a subject and timestamp keep both entries',
+  'repeats-kept',
+  sharedKept ? 'repeats-kept' : 'deduplicated-or-other');
 
 let duplicateVerdict = 'accepted';
 try {

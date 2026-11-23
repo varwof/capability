@@ -22,6 +22,7 @@ PASS EMI-PROJ-018 unknown nested binding member rejected                  want=r
 PASS EMI-PROJ-019 unpinned status_required role rejected                  want=rejected got=rejected
 PASS EMI-BIND-001 base relation tuple has the pinned subject              want=wy00iyR8vT7-WXT-kVbBJjVW16FINmmvDmhy2FGO5hY got=wy00iyR8vT7-WXT-kVbBJjVW16FINmmvDmhy2FGO5hY
 PASS EMI-BIND-007 artifact set order does not change the relation subject want=unchanged got=unchanged
+PASS EMI-BIND-012 two targets sharing a subject and timestamp keep both entries want=repeats-kept got=repeats-kept
 PASS EMI-BIND-008 duplicate artifact member rejected                      want=rejected got=rejected
 PASS EMI-BIND-009 mixed target types rejected                             want=rejected got=rejected
 PASS EMI-BIND-010 empty artifact set rejected                             want=rejected got=rejected

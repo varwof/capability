@@ -107,6 +107,28 @@ def binding_subject(binding):
     ).rstrip(b"=").decode("ascii")
 
 
+def tuple_subject(tuple_obj):
+    canonical = clc.canonical_json(tuple_obj).encode("utf-8")
+    return base64.urlsafe_b64encode(
+        hashlib.sha256(canonical).digest()
+    ).rstrip(b"=").decode("ascii")
+
+
+def dedup_tuple(tuple_obj):
+    # Nothing computes a subject this way; it exists to show that an
+    # implementation that did would land on a different one.
+    out = json.loads(json.dumps(tuple_obj))
+    for key in ("subjects", "evidence_issued_at"):
+        seen, unique = set(), []
+        for value in out[key]:
+            if value in seen:
+                continue
+            seen.add(value)
+            unique.append(value)
+        out[key] = unique
+    return out
+
+
 def mutate(binding, mutation):
     value = json.loads(json.dumps(binding))
     path = mutation["path"]
@@ -481,6 +503,38 @@ def main():
         "artifact set order does not change the relation subject",
         "unchanged",
         "unchanged" if binding_subject(reversed_binding) == subject else "different",
+    )
+
+    shared = json.loads(json.dumps(binding))
+    shared["targets"] = [
+        {
+            "type": "ep-quorum",
+            "artifact_id": "approval-alice-1",
+            "subject": "alice",
+            "issued_at": "2026-09-13T11:59:30Z",
+            "verified": True,
+        },
+        {
+            "type": "ep-quorum",
+            "artifact_id": "approval-alice-2",
+            "subject": "alice",
+            "issued_at": "2026-09-13T11:59:30Z",
+            "verified": True,
+        },
+    ]
+    shared_tuple = relation_tuple(shared)
+    shared_kept = (
+        len(shared_tuple["subjects"]) == 2
+        and shared_tuple["subjects"][0] == shared_tuple["subjects"][1]
+        and len(shared_tuple["evidence_issued_at"]) == 3
+        and shared_tuple["evidence_issued_at"][1] == shared_tuple["evidence_issued_at"][2]
+        and tuple_subject(shared_tuple) != tuple_subject(dedup_tuple(shared_tuple))
+    )
+    print_case(
+        "EMI-BIND-012",
+        "two targets sharing a subject and timestamp keep both entries",
+        "repeats-kept",
+        "repeats-kept" if shared_kept else "deduplicated-or-other",
     )
     duplicated = dict(binding)
     duplicated["targets"] = list(binding["targets"]) + [binding["targets"][0]]

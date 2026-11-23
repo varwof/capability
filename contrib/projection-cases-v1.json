@@ -1,13 +1,13 @@
 {
   "@version": "clc-projection-cases-v1",
-  "corpus_base_revision": "4872e3a000575daba5bbfd4ef4ec6a8ae535c433",
+  "corpus_base_revision": "3d7a3f2d34f0fe002d2fec55f0f347b6991a6938",
   "corpus_base_revision_note": "Committed on top of this revision; the commit that introduces this manifest is the corpus revision to cite after publication.",
   "probe_repository": "https://github.com/varwof/register",
-  "probe_base_revision": "c4cbc53f117e7e7dc3eae980267c5b6e12f08e50",
-  "probe_revision": "4d17624450d8aa2830b8a7dba7cd3622fe4014ce",
+  "probe_base_revision": "4d17624450d8aa2830b8a7dba7cd3622fe4014ce",
+  "probe_revision": "7994f3c6e8850d38387cc86675d1693c84415ae9",
   "probe_source_sha256": {
     "cmd/asor-projection-probe/main.go": "871fbf53ef27ef710537b87e4240a9fbfcf170c4057a37038ce9c0673a7b1fda",
-    "cmd/emilia-projection-probe/main.go": "632de2d83f8281b7323823f0b1cdb9590635c87b0980ba840ac9084f423e1496",
+    "cmd/emilia-projection-probe/main.go": "8578ef77105f9547daf15635d62ca6ddde2de8176dc3c241c5daac56abba75d6",
     "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json": "37654a11d7666c4165ac38f9cc03a688cb8bc1eb7dfd2fd8e8226d0cc5c0715f",
     "cmd/gilda-projection-probe/main.go": "ee22fe91ac42999514509336db470b9864ab631541a971b97ea4beffd2c87ffb",
     "cmd/oasnt-projection-probe/main.go": "7df80215f3833b4f64c3bb35ed43774c3ec448aa922defcd3acb6a56fc2ac421",
@@ -21,7 +21,7 @@
     "cmd/izmaylov-projection-probe/testdata/izmaylov-log-consistency-fixture-v1.json": "74f70077581ba05e4cfb2fe22ae40ade7b10b9163149680162d3735c2315b262",
     "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json": "1b62c69cec240ac04f88dcd1dcabc54d644b687c0eebd4c01597b6def2312a7d"
   },
-  "total_cases": 115,
+  "total_cases": 116,
   "cross_language_binding": {
     "case_set": "emilia-projection",
     "fixture": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v1.json",
@@ -38,14 +38,14 @@
       "source": "contrib/emilia-projection/probe.py",
       "source_sha256": "c62681f1bdd33424cf85c33388dc44523f6c489004ab3b93b3f5f7224f661f8f",
       "output": "contrib/emilia-projection/out-python.txt",
-      "output_sha256": "1eeebbd8bf612ff4826ea2159ffec11214c9053bcdb03bf66ef26816bc58a2c4",
+      "output_sha256": "ec5f5f548579f03ffd21e600c725d58eac82f858ac4444809e855bf6c3ff72d9",
       "command": "python3 contrib/emilia-projection/probe.py"
     },
     "typescript": {
       "source": "contrib/emilia-projection/probe.mjs",
       "source_sha256": "a10a0ab6cd37fdc496f36bfd24d1100b7c2526b4b523cf941ea66ef04d37956e",
       "output": "contrib/emilia-projection/out-typescript.txt",
-      "output_sha256": "f369051a295fb869498a877fea2e96f27efb6b8298fda8a49f12148657a8a97d",
+      "output_sha256": "c55a25818feed914565e4779d2d160af83e940265844a2848c473e614e3e7ea8",
       "command": "node --disable-warning=ExperimentalWarning --experimental-strip-types contrib/emilia-projection/probe.mjs"
     },
     "fixture_schema": "cmd/emilia-projection-probe/testdata/emilia-binding-fixture-v2.json",
@@ -54,7 +54,7 @@
   "probes": {
     "emilia-projection": {
       "output": "contrib/emilia-projection/out-probe.txt",
-      "output_sha256": "206bbf78e4f03d2691526664beb4a1643f240e1bf40a76ed566e05ae5f872dfe",
+      "output_sha256": "8917ba8acfbda7cbcb04a4cc0083abd753c302aaa75bc53535a699eb819e707e",
       "command": "go run ./cmd/emilia-projection-probe",
       "cases": [
         {"id": "EMI-PROJ-001", "want": "match", "got": "match"},
@@ -94,6 +94,7 @@
         {"id": "EMI-BIND-005", "want": "different", "got": "different"},
         {"id": "EMI-BIND-006", "want": "opaque-subject-accepted", "got": "opaque-subject-accepted"},
         {"id": "EMI-BIND-011", "want": "eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg", "got": "eMgM0gUtM5K0aH-x5ykSP0FrrKNUK8zTfaPd9DmDqJg"},
+        {"id": "EMI-BIND-012", "want": "repeats-kept", "got": "repeats-kept"},
         {"id": "EMI-SCHEMA-001", "want": "accept", "got": "accept"},
         {"id": "EMI-SCHEMA-002", "want": "reject", "got": "reject"},
         {"id": "EMI-SCHEMA-003", "want": "reject", "got": "reject"},
@@ -210,7 +211,7 @@
       ]
     }
   },
-  "probe_source_note": "These source and output hashes describe register at probe_revision (committed 2026-11-03). Replace the hashes and advance probe_revision when the probes change.",
+  "probe_source_note": "These source and output hashes describe register at probe_revision (committed 2026-11-23). Replace the hashes and advance probe_revision when the probes change.",
   "native_check_assessment": {
     "corpus": "contrib/native-check-assessment/cases-v1.json",
     "corpus_sha256": "14ab79de5fa6dff8ff5c4075946425c2a8224370de84b81886f585940f1011b8",
