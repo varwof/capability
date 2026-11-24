@@ -3035,9 +3035,9 @@
     },
     "expect": {
       "verdict": "deny",
-      "reason": "different_namespace"
+      "reason": "unsupported_wildcard"
     },
-    "derivation": "* at class position (product-segment) is not a trailing action wildcard; namespace mismatch (§3; §9.1 layer 3)"
+    "derivation": "a `*` with no action before it is a v1-forbidden wildcard shape; the shape check precedes the grammar, so the layer-1 code is `unsupported_wildcard`, not a namespace mismatch (§3; §9.1 layer 1)"
   },
   {
     "id": "entail-008",
@@ -3053,9 +3053,9 @@
     },
     "expect": {
       "verdict": "deny",
-      "reason": "different_namespace"
+      "reason": "unsupported_wildcard"
     },
-    "derivation": "same class-position wildcard vs different action; still namespace mismatch (§3; §9.1 layer 3)"
+    "derivation": "a `*` with no action before it is a v1-forbidden wildcard shape; the shape check precedes the grammar, so the layer-1 code is `unsupported_wildcard`, not a namespace mismatch (§3; §9.1 layer 1)"
   },
   {
     "id": "decide-035",

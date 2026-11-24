@@ -34,7 +34,7 @@ segment       = 1*( ALPHA / DIGIT / "-" / "_" / "." )
 |------|-----------|---------|---------|
 | 格式正确的普通形式 | 符合完整语法，无通配符 | `valid` | `std/database-v1:query:SELECT` |
 | 格式正确的通配符形式 | 只能有末尾 `*` | 对 grant/request patterns 而言为 `valid` | `std/database-v1:query:*` |
-| 禁止的通配符形态 | partial / bare / nested / bracket | `unsupported_wildcard`（v2 保留） | `std/crm-v1:re*`、`*`、`**`、 `{a,b}`、`[a-z]` |
+| 禁止的通配符形态 | partial / bare / class 位置 / nested / bracket | `unsupported_wildcard`（v2 保留） | `std/crm-v1:re*`、`*`、`std/database-v1:*`、`**`、 `{a,b}`、`[a-z]` |
 | 格式错误的 scheme/action | 缺少 scheme、major 无效、`-v` 有歧义 | `invalid_capability_id` | `database:query`、`a/b-v1-v2` |
 
 ## 字段示例（真实测试集 ids）
@@ -70,10 +70,10 @@ request = { "id": "std/database-v1:admin:DDL" }   →  deny  different_namespace
 
 ## Class 位置通配符陷阱
 
-距离末尾**一个 segment**的 `*` 并非“开头就匹配全部内容”的通配符。class 位置通配符属于 v1 禁止形态，其 request 会在语法阶段被拒绝（§9.1 layer 3，`unsupported_wildcard`），不会在 entailment 阶段被静默拓宽。测试集同时固定了“窄化后 deny（相同 action）”和“无论 action 是否相同都 deny”两种读法：
+前面没有 action 的 `*` —— `std/database-v1:*` —— 属于 v1 禁止形态，不是“匹配所有 class”的通配符：它在标识符检查处即被拒绝（§9.1 layer 1，`unsupported_wildcard`），先于任何名字空间或路径比较，也不会在 entailment 阶段被静默拓宽。测试集固定了“窄时 deny”与“无论 action 都 deny”两种读法：
 
-[`entail-007`](../../../data/_vectors/clc-v1/vectors.json) `grant std/database-v1:*` 对 `request std/database-v1:query:SELECT` → `deny` `different_namespace`。class 位置的 `*` 不是末尾 action 通配符，namespace 不匹配。class 位置通配符为 v1 所禁止（§3；request operation 自身的 id 会因 scheme 位置存在 `*` 而被拒绝），entailment 根本不会执行到 path 覆盖判断。
-[`entail-008`](../../../data/_vectors/clc-v1/vectors.json) 相同 grant 对 `request std/database-v1:SELECT` → `deny` `different_namespace`，class 不匹配。
+[`entail-007`](../../../data/_vectors/clc-v1/vectors.json) `grant std/database-v1:*` 对 `request std/database-v1:query:SELECT` → `deny` `unsupported_wildcard`。该形态先于覆盖判断被拒（§3）。
+[`entail-008`](../../../data/_vectors/clc-v1/vectors.json) 相同 grant 对 `request std/database-v1:admin:DDL` → 同样 `deny` `unsupported_wildcard`：拒绝与 grant 面对哪个 action 无关。
 
 与**唯一**合法的完整通配符比较：[`entail-002`](../../../data/_vectors/clc-v1/vectors.json) 中，`grant …query:*` 覆盖 `request …query:SELECT`（`allow`），因为 `*` 占据完整的末尾 segment，而且末尾**至少有一个** segment。末尾通配符绝不会匹配空余部分（[`entail-005`](../../../data/_vectors/clc-v1/vectors.json)、`wildcard_requires_trailing_segment`）。
 

@@ -56,7 +56,7 @@ grant   = { "id": "std/database-v1:*" }
 request = { "id": "std/database-v1:query:SELECT" }
 ```
 
-**输出**：`deny` `different_namespace`。位于 *class*（product）位置的 `*`**不是**末尾 action 通配符（§6.1/§9.1 layer 3）。完整规则见 [`03-identifiers.md`](03-identifiers.md)。
+**输出**：`deny` `unsupported_wildcard`。前面没有 action 的 `*` 属于 v1 禁止形态，在标识符检查处被拒（§3/§9.1 layer 1），不做名字空间比较。完整规则见 [`03-identifiers.md`](03-identifiers.md)。
 
 ## 第 3 步——添加 params 和边界（收窄 grant）
 
@@ -128,14 +128,14 @@ request    = { "id": "std/database-v1:query:SELECT" }
 | 步骤 | Grant 特性 | 得到的 Verdict | 真实测试集 id |
 |------|---------------|--------------|----------------|
 | 1 | literal identifier | allow | `entail-001` |
-| 2 | 末尾 `*` 通配符 / class 位置的 `*` | allow / `different_namespace` | `entail-002` / `entail-007` |
+| 2 | 末尾 `*` 通配符 / class 位置的 `*` | allow / `unsupported_wildcard` | `entail-002` / `entail-007` |
 | 3 | params 上限、`param_bounds` 范围、enum set | allow / `params_out_of_range` / `not_in_enum` | `params-001`、`pb-001`/`pb-004`、`params-004` |
 | 4 | 已求值 + 剩余 constraints | `max_rows:violated` / `allow_unresolved` | `decide-006` / `decide-035` |
 
 ## 常见误区
 
 - **末尾 `*` 匹配一个或多个 segment，而不是零个。** `std/database-v1:query:*` 这一 grant **不**覆盖裸值 `std/database-v1:query`。该 request 没有可匹配的末尾 segment，因此返回 `wildcard_requires_trailing_segment`（[`entail-005`](../../../data/_vectors/clc-v1/vectors.json)）。
-- **`*` 只能作为 action 通配符。** 放在其他任何位置，都会使标识符变成另一类别，而不是通配符的超集（`different_namespace`）。
+- **`*` 只能作为末尾的 action 通配符。** `std/database-v1:*` 没有 class：它是 v1 禁止形态，以 `unsupported_wildcard` 被拒，而不是所有 class 的超集。
 - **`params` 中的数组是枚举，不是范围。** request 只能选择集合成员。若 grant 为 `["a"]`，request 为 `["a","b"]`，结果就是 `deny`，因为整个 request 集合都必须被覆盖。
 - **字面量不匹配**——grant 为 `...:SELECT`，request 为 `...:INSERT`——会返回 `literal_mismatch`，即使二者都属于“一种 query action”（[`entail-006`](../../../data/_vectors/clc-v1/vectors.json)）。
 - **`allow_unresolved` 不是 `allow`。** 消费方绝不能把第三种 verdict 并入 allow 决定。

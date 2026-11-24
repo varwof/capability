@@ -56,7 +56,7 @@ grant   = { "id": "std/database-v1:*" }
 request = { "id": "std/database-v1:query:SELECT" }
 ```
 
-**Output**: `deny` `different_namespace`. A `*` at *class* (product) position is **not** a trailing action wildcard (§6.1/§9.1 layer 3). Full rules live in [`03-identifiers.md`](03-identifiers.md).
+**Output**: `deny` `unsupported_wildcard`. A `*` with no action before it is a v1-forbidden wildcard shape, refused at the identifier check (§3/§9.1 layer 1) rather than compared as a namespace. Full rules live in [`03-identifiers.md`](03-identifiers.md).
 
 ## Step 3 — add params and bounds (narrow the grant)
 
@@ -128,14 +128,14 @@ request    = { "id": "std/database-v1:query:SELECT" }
 | Step | Grant feature | Verdict seen | Real corpus id |
 |------|---------------|--------------|----------------|
 | 1 | literal identifier | allow | `entail-001` |
-| 2 | trailing `*` wildcard / class-position `*` | allow / `different_namespace` | `entail-002` / `entail-007` |
+| 2 | trailing `*` wildcard / class-position `*` | allow / `unsupported_wildcard` | `entail-002` / `entail-007` |
 | 3 | params ceiling, `param_bounds` range, enum set | allow / `params_out_of_range` / `not_in_enum` | `params-001`, `pb-001`/`pb-004`, `params-004` |
 | 4 | evaluated + residual constraints | `max_rows:violated` / `allow_unresolved` | `decide-006` / `decide-035` |
 
 ## Common pitfalls
 
 - **Trailing `*` matches one-or-more segments, not zero.** A grant `std/database-v1:query:*` does **not** cover the bare `std/database-v1:query` — that request has no trailing segment to match and denies `wildcard_requires_trailing_segment` ([`entail-005`](../../data/_vectors/clc-v1/vectors.json)).
-- **`*` is only legal as an action wildcard.** Any other position makes the identifier a different class, not a wildcard superset (`different_namespace`).
+- **`*` is only legal as an action wildcard, after an action.** `std/database-v1:*` has no class: it is a v1-forbidden shape and is refused as `unsupported_wildcard`, not read as a superset of every class.
 - **An array in `params` is an enumeration, not a range.** The request must pick members of the set; a request `["a","b"]` against grant `["a"]` is `deny`, because the whole request set must be covered.
 - **A **literal** mismatch** — grant `...:SELECT`, request `...:INSERT` — denies `literal_mismatch`, even though both are "a query action" ([`entail-006`](../../data/_vectors/clc-v1/vectors.json)).
 - **`allow_unresolved` is not `allow`.** Consumers MUST NOT fold the third verdict into an allow decision.

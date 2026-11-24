@@ -22,7 +22,7 @@ Grant G covers operation O when one of two things is true:
 | `std/database-v1:query:*` | `std/database-v1:admin:DDL` | ❌ different namespace ([`entail-004`](../../data/_vectors/clc-v1/vectors.json)) |
 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | ❌ literal mismatch ([`entail-006`](../../data/_vectors/clc-v1/vectors.json)) |
 
-Two shapes are **always refused** (§6.3 steps 1–2): a namespace mismatch (`different_namespace`, layer 3) and a wildcard with no trailing segment ([`entail-005`](../../data/_vectors/clc-v1/vectors.json), `wildcard_requires_trailing_segment`). The class-position wildcard (`std/database-v1:*`) is a grammar defect, not a superset — see [03-identifiers.md](03-identifiers.md) for the `different_namespace` pair `entail-007/-008`.
+Two shapes are **always refused** (§6.3 steps 1–2): a namespace mismatch (`different_namespace`, layer 3) and a wildcard with no trailing segment ([`entail-005`](../../data/_vectors/clc-v1/vectors.json), `wildcard_requires_trailing_segment`). The class-position wildcard (`std/database-v1:*`) is a forbidden shape refused at the identifier check (`unsupported_wildcard`, layer 1), not a superset — see [03-identifiers.md](03-identifiers.md) for `entail-007/-008`.
 
 ## §6.3 — The `Entails` algorithm
 

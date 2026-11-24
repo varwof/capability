@@ -25,7 +25,7 @@ IDS = [
     "std/database-v1:query:*",
     "std/database-v1:admin:DDL",
     "std/database-v1:query:INSERT",
-    "std/database-v1:*",
+    "std/database-v1:report:*",
 ]
 
 # None = params absent; {} = params present but empty (identity, §6.2.1)

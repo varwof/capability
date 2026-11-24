@@ -15,7 +15,7 @@ Reason selection follows the §9.1 layer order (the *first applicable* layer win
 | Code | Meaning (§9.2) |
 |------|----------------|
 | **Layer 1 — CapabilityId validity** | |
-| `unsupported_wildcard` | Wildcard shape forbidden in v1 (bare `*`, partial segment, `**`, `{a,b}`, `[a-z]`) |
+| `unsupported_wildcard` | Wildcard shape forbidden in v1 (bare `*`, partial segment, class-position `*`, `**`, `{a,b}`, `[a-z]`) |
 | `invalid_capability_id` | CapabilityId does not conform to the §3 grammar |
 | `missing_capability_id` | Operation has no `id` (layer 1) |
 | **Layer 2 — Params normalization** | |

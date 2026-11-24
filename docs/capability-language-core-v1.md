@@ -170,7 +170,12 @@ this rule that relies on such a product is out of grammar in v1.
 A v1 identifier is `scheme:action` (e.g. `std/database-v1:query:SELECT`).
 Trailing `*` as a complete segment matches **one or more** remaining segments
 (it does not match the empty remainder: `std/database-v1:query:*` does not
-cover `std/database-v1:query`).
+cover `std/database-v1:query`).  A trailing `*` needs a non-empty action
+before it: `std/database-v1:*` names no class and is a v1-forbidden wildcard
+shape, refused as `unsupported_wildcard` by the shape check below rather than
+compared as a namespace (`entail-007`, `entail-008`).  A grant that carries it
+fails §3 in Entails; in `Authorize` that identifier-level failure collapses to
+`capability_not_authorized` (`decide-026`).
 
 **Wildcard scope for v1**: CLC-v1 core defines exactly one wildcard shape:
 the complete trailing segment `*`.  Partial (`std/crm-v1:re*`), bare `*`,
@@ -371,7 +376,7 @@ layer runs, the `params` object is normalized at the input boundary:
    `deny("invalid_params_number")` when it is **non-finite or out of IEEE-754
    range** (e.g. `1e400`, an exponent beyond the representable maximum — it is
    an overflow, not an over-precision case) or **over-precision** (more than 17
-   significant decimal digits, e.g. `1.0000000000000001`).  The digit count operates on the
+   significant decimal digits, e.g. `1.00000000000000001`).  The digit count operates on the
    **JSON token as received** — the raw digit-character sequence at the input
    boundary, before it enters any storage / float / decimal representation —
    so float64 and decimal/bignum implementations MUST NOT diverge: the judged
@@ -415,7 +420,9 @@ layer runs, the `params` object is normalized at the input boundary:
    top-level object therefore = depth 32).
 5. **Order of checks.** Size/depth (4) precede duplicate keys (2), which
    precedes number shape (3); the first failing check wins.  All five run
-   before §9.1 layer 1, so normalized params are the only view the layers see.
+   before §9.1 layer 1, so normalized params are the only view the layers see
+   (when a decoded value arrives with the text, that value is the normalized
+   one — step 6).
    The size in step 4 is measured with every token in its JCS spelling
    (numbers re-spelled per ECMAScript `Number::toString`, strings per JCS
    §3.2.2.2) but **without** requiring key uniqueness, so it is defined even
@@ -430,6 +437,12 @@ layer runs, the `params` object is normalized at the input boundary:
    Byte-exactness against a specific original text is guaranteed only for
    the raw path; but **both** entry points MUST reject the caps — an
    oversized/deep params object is denied whichever way it arrives.
+   When a caller supplies both the received text and a decoded value, steps
+   1-5 judge the text and the normalized value is that decoded one;
+   normalization does not substitute the text for it.  The corpus supplies
+   two different values in this shape to probe §6.2 in isolation
+   (`raw_params` for the boundary, `request.params` for the decision); an
+   implementation MUST NOT evaluate the text as a second operation.
 
 7. **Malformed Unicode is a property of the received text.**  A lone surrogate
    escape, or an octet that is not valid UTF-8, has no JCS form (§3.2.2.2):
@@ -1266,7 +1279,10 @@ denies with `capability_not_authorized` even when the operation is absent as wel
 input gets that reason and not `missing_capability_id`.  The algorithm below
 therefore runs the grant-side pre-check **first**, ahead of the numbered
 operation steps — the numbering mirrors §9.1's layer order for what follows, not
-the precedence of the pre-check.
+the precedence of the pre-check.  The order is: this pre-check, then the §6.2
+boundary checks on the received text, then step 1's operation-identifier
+validation — so a §6.2 refusal precedes a layer-1 identifier refusal when an
+input carries both.
 0. (Pre-check) An absent or empty grant set → `deny("capability_not_authorized")`
    (§9.1 layer 10), before any operation check; this is why the absent-grant /
    absent-operation pair resolves here and not to a layer-1 code.
@@ -1427,7 +1443,7 @@ compatibility checks MUST compare the canonical prefix only.
 
 | Reason code | Meaning |
 |-------------|---------|
-| `unsupported_wildcard` | Wildcard shape forbidden in v1 (bare `*`, partial segment, `**`, `{a,b}`, `[a-z]`) |
+| `unsupported_wildcard` | Wildcard shape forbidden in v1 (bare `*`, partial segment, class-position `*` with no action before it, `**`, `{a,b}`, `[a-z]`) |
 | `invalid_capability_id` | CapabilityId does not conform to the §3 grammar |
 | `missing_capability_id` | Operation has no `id` (layer 1) |
 | `invalid_params_duplicate_key` | Params contain a duplicate JSON key (§6.2 representation, §9.1 layer 2) |
@@ -2035,8 +2051,8 @@ the reason code.  Every layer is fail-closed: any doubt yields `false`.
 
 - If a grant identifier is malformed per §3, `Contains` returns
   `false` with the matching CLC-A syntax code (`invalid_capability_id` /
-  `missing_capability_id`).  Validation errors are reused from the core,
-  not re-invented.
+  `missing_capability_id` / `unsupported_wildcard`).  Validation errors are
+  reused from the core, not re-invented.
 - If `GC.Params` violates the grant-side parameter grammar (§6.2), the child is
   not a valid grant and `Contains` yields `false`
   (`invalid_params_<n>` codes as in the core).
@@ -2879,8 +2895,8 @@ machine-checkable rather than maintained by hand.
 | E4 | `std/database-v1:query:*` | `std/database-v1:admin:DDL` | deny | different namespace |
 | E5 | `std/database-v1:query:*` | `std/database-v1:query` | deny | no trailing segment |
 | E6 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | deny | literal mismatch |
-| E7 | `std/database-v1:*` | `std/database-v1:query:SELECT` | deny | class-position (product-segment) wildcard is v1-forbidden: only a trailing action segment may be `*` (§3; §9.1 layer 3) |
-| E8 | `std/database-v1:*` | `std/database-v1:admin:DDL` | deny | same class-position wildcard; the v1-forbidden shape denies regardless of the action it faces (§3; §9.1 layer 3) |
+| E7 | `std/database-v1:*` | `std/database-v1:query:SELECT` | deny | class-position wildcard is a v1-forbidden shape — only a trailing action segment may be `*`; the shape check precedes the grammar, so the code is `unsupported_wildcard`, not a namespace mismatch (§3; §9.1 layer 1) |
+| E8 | `std/database-v1:*` | `std/database-v1:admin:DDL` | deny | same forbidden shape; it is refused before any comparison, whatever action it faces (§3; §9.1 layer 1) |
 
 ### B.3 Params (70 vectors)
 

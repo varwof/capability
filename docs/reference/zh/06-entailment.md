@@ -22,7 +22,7 @@
 | `std/database-v1:query:*` | `std/database-v1:admin:DDL` | ❌ 不同命名空间（[`entail-004`](../../../data/_vectors/clc-v1/vectors.json)） |
 | `std/database-v1:query:SELECT` | `std/database-v1:query:INSERT` | ❌ 字面值不匹配（[`entail-006`](../../../data/_vectors/clc-v1/vectors.json)） |
 
-以下两种形式**始终拒绝**（§6.3 步骤 1–2）：命名空间不匹配（`different_namespace`，layer 3），以及通配符后没有尾部段（[`entail-005`](../../../data/_vectors/clc-v1/vectors.json)，`wildcard_requires_trailing_segment`）。类位置通配符（`std/database-v1:*`）是语法缺陷，不是超集——关于 `different_namespace` 组合 `entail-007/-008`，参见 [03-identifiers.md](03-identifiers.md)。
+以下两种形式**始终拒绝**（§6.3 步骤 1–2）：命名空间不匹配（`different_namespace`，layer 3），以及通配符后没有尾部段（[`entail-005`](../../../data/_vectors/clc-v1/vectors.json)，`wildcard_requires_trailing_segment`）。类位置通配符（`std/database-v1:*`）是禁止形态，在标识符检查处以 `unsupported_wildcard`（layer 1）被拒，不是超集——`entail-007/-008` 见 [03-identifiers.md](03-identifiers.md)。
 
 ## §6.3 —— `Entails` 算法
 

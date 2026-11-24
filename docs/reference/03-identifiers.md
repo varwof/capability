@@ -34,7 +34,7 @@ When the same string would fail both the wildcard-shape check and the generic gr
 |------|-----------|---------|---------|
 | Well-formed plain | full grammar, no wildcard | `valid` | `std/database-v1:query:SELECT` |
 | Well-formed wildcard | trailing `*` only | `valid` for grant/request patterns | `std/database-v1:query:*` |
-| Forbidden wildcard shapes | partial / bare / nested / bracket | `unsupported_wildcard` (v2-reserved) | `std/crm-v1:re*`, `*`, `**` , `{a,b}`, `[a-z]` |
+| Forbidden wildcard shapes | partial / bare / class-position / nested / bracket | `unsupported_wildcard` (v2-reserved) | `std/crm-v1:re*`, `*`, `std/database-v1:*`, `**` , `{a,b}`, `[a-z]` |
 | Ill-formed scheme/action | missing scheme, bad major, `-v` ambiguity | `invalid_capability_id` | `database:query`, `a/b-v1-v2` |
 
 ## Field examples (real corpus ids)
@@ -70,10 +70,10 @@ request = { "id": "std/database-v1:admin:DDL" }   →  deny  different_namespace
 
 ## The class-position wildcard trap
 
-A `*` one segment **before** the end is NOT a wildcard that matches everything up front — a class-position wildcard is a v1-forbidden shape, and its request is rejected at grammar time (§9.1 layer 3, `unsupported_wildcard`), not silently widened at entailment time. The corpus pins both the deny-being-narrow (same action) and the deny-anyway (different action) readings:
+A `*` with no action before it — `std/database-v1:*` — is a v1-forbidden shape, not a wildcard that matches every class: it is refused at the identifier check (§9.1 layer 1, `unsupported_wildcard`) before any namespace or path comparison, and never silently widened at entailment time. The corpus pins both the deny-when-narrow and the deny-regardless readings:
 
-[`entail-007`](../../data/_vectors/clc-v1/vectors.json) `grant std/database-v1:*` vs `request std/database-v1:query:SELECT` → `deny` `different_namespace` — the `*` at class position is not a trailing action wildcard; namespace mismatch. Class-position wildcards are v1-forbidden (§3; the requested operation’s own id would be rejected as a `*` in scheme position), and entailment never gets to path coverage.
-[`entail-008`](../../data/_vectors/clc-v1/vectors.json) same grant vs `request std/database-v1:SELECT` → `deny` `different_namespace`, class mismatch.
+[`entail-007`](../../data/_vectors/clc-v1/vectors.json) `grant std/database-v1:*` vs `request std/database-v1:query:SELECT` → `deny` `unsupported_wildcard` — the shape is refused before coverage is considered (§3).
+[`entail-008`](../../data/_vectors/clc-v1/vectors.json) same grant vs `request std/database-v1:admin:DDL` → `deny` `unsupported_wildcard` as well: the refusal does not depend on the action the grant faces.
 
 Compare with the **one** full wildcard: [`entail-002`](../../data/_vectors/clc-v1/vectors.json) `grant …query:*` covers `request …query:SELECT` (`allow`) because the `*` occupies the complete trailing segment and there is **at least one** trailing segment. The trailing wildcard never matches the empty remainder ([`entail-005`](../../data/_vectors/clc-v1/vectors.json), `wildcard_requires_trailing_segment`).
 

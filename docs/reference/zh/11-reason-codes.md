@@ -15,7 +15,7 @@
 | 代码 | 含义（§9.2） |
 |------|----------------|
 | **第 1 层 — CapabilityId 有效性** | |
-| `unsupported_wildcard` | v1 禁止通配符形式（裸 `*`、部分段、`**`、`{a,b}`、`[a-z]`） |
+| `unsupported_wildcard` | v1 禁止通配符形式（裸 `*`、部分段、前面没有 action 的 class 位置 `*`、`**`、`{a,b}`、`[a-z]`） |
 | `invalid_capability_id` | CapabilityId 不符合 §3 文法 |
 | `missing_capability_id` | 操作没有 `id`（第 1 层） |
 | **第 2 层 — params 规范化** | |
