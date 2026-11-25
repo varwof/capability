@@ -439,10 +439,14 @@ layer runs, the `params` object is normalized at the input boundary:
    oversized/deep params object is denied whichever way it arrives.
    When a caller supplies both the received text and a decoded value, steps
    1-5 judge the text and the normalized value is that decoded one;
-   normalization does not substitute the text for it.  The corpus supplies
-   two different values in this shape to probe §6.2 in isolation
-   (`raw_params` for the boundary, `request.params` for the decision); an
-   implementation MUST NOT evaluate the text as a second operation.
+   normalization does not substitute the text for it. Establishing that the
+   decoded value came from that text is not a decision CLC can make: the
+   carrier establishes it, and CLC only decides on the value it is given.
+   Which carrier component establishes it, and how, is the binding profile's
+   to define. The corpus supplies two different values in this shape to
+   probe §6.2 in isolation (`raw_params` for the boundary, `request.params`
+   for the decision): such a vector tests the layer boundary and is not a
+   licence to evaluate the text as a second operation.
 
 7. **Malformed Unicode is a property of the received text.**  A lone surrogate
    escape, or an octet that is not valid UTF-8, has no JCS form (§3.2.2.2):
